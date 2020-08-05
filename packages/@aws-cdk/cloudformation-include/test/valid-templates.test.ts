@@ -106,7 +106,7 @@ describe('CDK Include', () => {
     );
   });
 
-  xtest('correctly changes the logical IDs, including references, if imported with preserveLogicalIds=false', () => {
+  test('correctly changes the logical IDs, including references, if imported with preserveLogicalIds=false', () => {
     const cfnTemplate = includeTestTemplate(stack, 'bucket-with-encryption-key.json', {
       preserveLogicalIds: false,
     });
