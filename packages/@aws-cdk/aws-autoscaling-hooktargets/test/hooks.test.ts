@@ -1,5 +1,5 @@
-import '@aws-cdk/assert/jest';
-import { arrayWith } from '@aws-cdk/assert';
+import '@aws-cdk/assert-internal/jest';
+import { arrayWith } from '@aws-cdk/assert-internal';
 import * as autoscaling from '@aws-cdk/aws-autoscaling';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as kms from '@aws-cdk/aws-kms';
@@ -98,7 +98,10 @@ describe('given an AutoScalingGroup', () => {
     // THEN
     expect(stack).toHaveResourceLike('AWS::SNS::Topic', {
       KmsMasterKeyId: {
-        Ref: 'keyFEDD6EC0',
+        'Fn::GetAtt': [
+          'keyFEDD6EC0',
+          'Arn',
+        ],
       },
     });
     expect(stack).toHaveResourceLike('AWS::IAM::Policy', {

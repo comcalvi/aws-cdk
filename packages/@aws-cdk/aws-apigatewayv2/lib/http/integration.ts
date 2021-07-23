@@ -1,8 +1,14 @@
-import { Construct, Resource } from '@aws-cdk/core';
+/* eslint-disable quotes */
+import { Resource } from '@aws-cdk/core';
+import { Construct } from 'constructs';
 import { CfnIntegration } from '../apigatewayv2.generated';
 import { IIntegration } from '../common';
 import { IHttpApi } from './api';
 import { HttpMethod, IHttpRoute } from './route';
+
+// v2 - keep this import as a separate section to reduce merge conflict when forward merging with the v2 branch.
+// eslint-disable-next-line
+import { Construct as CoreConstruct } from '@aws-cdk/core';
 
 /**
  * Represents an Integration for an HTTP API.
@@ -26,6 +32,20 @@ export enum HttpIntegrationType {
    * @see https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html
    */
   HTTP_PROXY = 'HTTP_PROXY',
+}
+
+/**
+ * Supported connection types
+ */
+export enum HttpConnectionType {
+  /**
+   * For private connections between API Gateway and resources in a VPC
+   */
+  VPC_LINK = 'VPC_LINK',
+  /**
+   * For connections through public routable internet
+   */
+  INTERNET = 'INTERNET',
 }
 
 /**
@@ -82,11 +102,32 @@ export interface HttpIntegrationProps {
   readonly method?: HttpMethod;
 
   /**
+   * The ID of the VPC link for a private integration. Supported only for HTTP APIs.
+   *
+   * @default - undefined
+   */
+  readonly connectionId?: string;
+
+  /**
+   * The type of the network connection to the integration endpoint
+   *
+   * @default HttpConnectionType.INTERNET
+   */
+  readonly connectionType?: HttpConnectionType;
+
+  /**
    * The version of the payload format
    * @see https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html
    * @default - defaults to latest in the case of HttpIntegrationType.LAMBDA_PROXY`, irrelevant otherwise.
    */
   readonly payloadFormatVersion?: PayloadFormatVersion;
+
+  /**
+   * Specifies the TLS configuration for a private integration
+   * @see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-apigatewayv2-integration-tlsconfig.html
+   * @default undefined private integration traffic will use HTTP protocol
+   */
+  readonly secureServerName?: string;
 }
 
 /**
@@ -101,12 +142,21 @@ export class HttpIntegration extends Resource implements IHttpIntegration {
   constructor(scope: Construct, id: string, props: HttpIntegrationProps) {
     super(scope, id);
     const integ = new CfnIntegration(this, 'Resource', {
-      apiId: props.httpApi.httpApiId,
+      apiId: props.httpApi.apiId,
       integrationType: props.integrationType,
       integrationUri: props.integrationUri,
       integrationMethod: props.method,
+      connectionId: props.connectionId,
+      connectionType: props.connectionType,
       payloadFormatVersion: props.payloadFormatVersion?.version,
     });
+
+    if (props.secureServerName) {
+      integ.tlsConfig = {
+        serverNameToVerify: props.secureServerName,
+      };
+    }
+
     this.integrationId = integ.ref;
     this.httpApi = props.httpApi;
   }
@@ -126,7 +176,7 @@ export interface HttpRouteIntegrationBindOptions {
    * If the `HttpRouteIntegration` being bound creates additional constructs,
    * this will be used as their parent scope.
    */
-  readonly scope: Construct;
+  readonly scope: CoreConstruct;
 }
 
 /**
@@ -161,9 +211,30 @@ export interface HttpRouteIntegrationConfig {
   readonly method?: HttpMethod;
 
   /**
+   * The ID of the VPC link for a private integration. Supported only for HTTP APIs.
+   *
+   * @default - undefined
+   */
+  readonly connectionId?: string;
+
+  /**
+   * The type of the network connection to the integration endpoint
+   *
+   * @default HttpConnectionType.INTERNET
+   */
+  readonly connectionType?: HttpConnectionType;
+
+  /**
    * Payload format version in the case of lambda proxy integration
    * @see https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html
    * @default - undefined
    */
   readonly payloadFormatVersion: PayloadFormatVersion;
+
+  /**
+   * Specifies the server name to verified by HTTPS when calling the backend integration
+   * @see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-apigatewayv2-integration-tlsconfig.html
+   * @default undefined private integration traffic will use HTTP protocol
+   */
+  readonly secureServerName?: string;
 }

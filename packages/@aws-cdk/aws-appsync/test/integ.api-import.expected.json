@@ -8,18 +8,6 @@
           "Name": "baseApi"
         }
       },
-      "baseApiDefaultAPIKeyApiKey4804ACE5": {
-        "Type": "AWS::AppSync::ApiKey",
-        "Properties": {
-          "ApiId": {
-            "Fn::GetAtt": [
-              "baseApiCDA4D43A",
-              "ApiId"
-            ]
-          },
-          "Description": "Default API Key created by CDK"
-        }
-      },
       "baseApiSchemaB12C7BB0": {
         "Type": "AWS::AppSync::GraphQLSchema",
         "Properties": {
@@ -29,8 +17,22 @@
               "ApiId"
             ]
           },
-          "Definition": "type test {\n  version: String!\n}\n\ntype Query {\n  getTests: [ test! ]!\n}\n\ntype Mutation {\n  addTest(version: String!): test\n}\n"
+          "Definition": "type test {\n  version: String!\n}\ntype Query {\n  getTests: [test]!\n}\ntype Mutation {\n  addTest(version: String!): test\n}\n"
         }
+      },
+      "baseApiDefaultApiKeyA3A0A16A": {
+        "Type": "AWS::AppSync::ApiKey",
+        "Properties": {
+          "ApiId": {
+            "Fn::GetAtt": [
+              "baseApiCDA4D43A",
+              "ApiId"
+            ]
+          }
+        },
+        "DependsOn": [
+          "baseApiSchemaB12C7BB0"
+        ]
       }
     },
     "Outputs": {
@@ -79,6 +81,7 @@
                   "dynamodb:Query",
                   "dynamodb:GetItem",
                   "dynamodb:Scan",
+                  "dynamodb:ConditionCheckItem",
                   "dynamodb:BatchWriteItem",
                   "dynamodb:PutItem",
                   "dynamodb:UpdateItem",
@@ -194,6 +197,45 @@
           },
           "Name": "none",
           "Type": "NONE"
+        }
+      },
+      "api2nonepipelinefunctionFunction2426F465": {
+        "Type": "AWS::AppSync::FunctionConfiguration",
+        "Properties": {
+          "ApiId": {
+            "Fn::ImportValue": "baseStack:ExportsOutputFnGetAttbaseApiCDA4D43AApiId50287E68"
+          },
+          "DataSourceName": "none",
+          "FunctionVersion": "2018-05-29",
+          "Name": "pipeline_function",
+          "RequestMappingTemplate": "{\"version\":\"2017-02-28\"}",
+          "ResponseMappingTemplate": "{\"version\":\"v1\"}"
+        },
+        "DependsOn": [
+          "api2noneC88DB89F"
+        ]
+      },
+      "pipelineresolver843133EA": {
+        "Type": "AWS::AppSync::Resolver",
+        "Properties": {
+          "ApiId": {
+            "Fn::ImportValue": "baseStack:ExportsOutputFnGetAttbaseApiCDA4D43AApiId50287E68"
+          },
+          "FieldName": "version",
+          "TypeName": "test",
+          "Kind": "PIPELINE",
+          "PipelineConfig": {
+            "Functions": [
+              {
+                "Fn::GetAtt": [
+                  "api2nonepipelinefunctionFunction2426F465",
+                  "FunctionId"
+                ]
+              }
+            ]
+          },
+          "RequestMappingTemplate": "{\"version\":\"2017-02-28\"}",
+          "ResponseMappingTemplate": "{\"version\":\"v1\"}"
         }
       }
     }

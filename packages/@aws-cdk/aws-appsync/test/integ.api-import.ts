@@ -11,7 +11,7 @@ import * as appsync from '../lib';
  *
  * Stack verification steps:
  * Install dependencies and deploy integration test. Check if data sources are
- * connected to the graphQL Api
+ * connected to the GraphQL Api
  *
  * -- cdk deploy --app 'node integ.api-import.js' stack            -- start         --
  * -- aws appsync list-graphql-apis                                -- obtain api id --
@@ -22,14 +22,13 @@ import * as appsync from '../lib';
 const app = new cdk.App();
 const baseStack = new cdk.Stack(app, 'baseStack');
 
-const baseApi = new appsync.GraphQLApi(baseStack, 'baseApi', {
+const baseApi = new appsync.GraphqlApi(baseStack, 'baseApi', {
   name: 'baseApi',
-  schemaDefinition: appsync.SchemaDefinition.FILE,
-  schemaDefinitionFile: path.join(__dirname, 'appsync.test.graphql'),
+  schema: appsync.Schema.fromAsset(path.join(__dirname, 'appsync.test.graphql')),
 });
 
 const stack = new cdk.Stack(app, 'stack');
-const api = appsync.GraphQLApi.fromGraphqlApiAttributes(stack, 'Api', {
+const api = appsync.GraphqlApi.fromGraphqlApiAttributes(stack, 'Api', {
   graphqlApiId: `${baseApi.apiId}`,
 });
 
@@ -58,11 +57,34 @@ testDS.createResolver({
   responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem(),
 });
 
-const api2 = appsync.GraphQLApi.fromGraphqlApiAttributes(stack, 'api2', {
+const api2 = appsync.GraphqlApi.fromGraphqlApiAttributes(stack, 'api2', {
   graphqlApiId: baseApi.apiId,
   graphqlApiArn: baseApi.arn,
 });
 
-api2.addNoneDataSource('none');
+const none = api2.addNoneDataSource('none');
+
+const func = none.createFunction({
+  name: 'pipeline_function',
+  requestMappingTemplate: appsync.MappingTemplate.fromString(JSON.stringify({
+    version: '2017-02-28',
+  })),
+  responseMappingTemplate: appsync.MappingTemplate.fromString(JSON.stringify({
+    version: 'v1',
+  })),
+});
+
+new appsync.Resolver(stack, 'pipeline_resolver', {
+  api: api2,
+  typeName: 'test',
+  fieldName: 'version',
+  pipelineConfig: [func],
+  requestMappingTemplate: appsync.MappingTemplate.fromString(JSON.stringify({
+    version: '2017-02-28',
+  })),
+  responseMappingTemplate: appsync.MappingTemplate.fromString(JSON.stringify({
+    version: 'v1',
+  })),
+});
 
 app.synth();

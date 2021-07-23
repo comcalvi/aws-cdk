@@ -374,3 +374,210 @@ test('adding and removing quotes from a numeric property causes no changes', () 
   differences = diffTemplate(newTemplate, currentTemplate);
   expect(differences.resources.differenceCount).toBe(0);
 });
+
+test('versions are correctly detected as not numbers', () => {
+  const currentTemplate = {
+    Resources: {
+      ImageBuilderComponent: {
+        Type: 'AWS::ImageBuilder::Component',
+        Properties: {
+          Platform: 'Linux',
+          Version: '0.0.1',
+        },
+      },
+    },
+  };
+  const newTemplate = {
+    Resources: {
+      ImageBuilderComponent: {
+        Type: 'AWS::ImageBuilder::Component',
+        Properties: {
+          Platform: 'Linux',
+          Version: '0.0.2',
+        },
+      },
+    },
+  };
+
+  const differences = diffTemplate(currentTemplate, newTemplate);
+  expect(differences.resources.differenceCount).toBe(1);
+});
+
+test('single element arrays are equivalent to the single element in DependsOn expressions', () => {
+  // GIVEN
+  const currentTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        DependsOn: ['SomeResource'],
+      },
+    },
+  };
+
+  // WHEN
+  const newTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        DependsOn: 'SomeResource',
+      },
+    },
+  };
+
+  let differences = diffTemplate(currentTemplate, newTemplate);
+  expect(differences.resources.differenceCount).toBe(0);
+
+  differences = diffTemplate(newTemplate, currentTemplate);
+  expect(differences.resources.differenceCount).toBe(0);
+});
+
+test('array equivalence is independent of element order in DependsOn expressions', () => {
+  // GIVEN
+  const currentTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        DependsOn: ['SomeResource', 'AnotherResource'],
+      },
+    },
+  };
+
+  // WHEN
+  const newTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        DependsOn: ['AnotherResource', 'SomeResource'],
+      },
+    },
+  };
+
+  let differences = diffTemplate(currentTemplate, newTemplate);
+  expect(differences.resources.differenceCount).toBe(0);
+
+  differences = diffTemplate(newTemplate, currentTemplate);
+  expect(differences.resources.differenceCount).toBe(0);
+});
+
+test('arrays of different length are considered unequal in DependsOn expressions', () => {
+  // GIVEN
+  const currentTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        DependsOn: ['SomeResource', 'AnotherResource', 'LastResource'],
+      },
+    },
+  };
+
+  // WHEN
+  const newTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        DependsOn: ['AnotherResource', 'SomeResource'],
+      },
+    },
+  };
+
+  let differences = diffTemplate(currentTemplate, newTemplate);
+  expect(differences.resources.differenceCount).toBe(1);
+
+  differences = diffTemplate(newTemplate, currentTemplate);
+  expect(differences.resources.differenceCount).toBe(1);
+});
+
+test('arrays that differ only in element order are considered unequal outside of DependsOn expressions', () => {
+  // GIVEN
+  const currentTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        BucketName: { 'Fn::Select': [0, ['name1', 'name2']] },
+      },
+    },
+  };
+
+  // WHEN
+  const newTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        BucketName: { 'Fn::Select': [0, ['name2', 'name1']] },
+      },
+    },
+  };
+
+  let differences = diffTemplate(currentTemplate, newTemplate);
+  expect(differences.resources.differenceCount).toBe(1);
+
+  differences = diffTemplate(newTemplate, currentTemplate);
+  expect(differences.resources.differenceCount).toBe(1);
+});
+
+test('boolean properties are considered equal with their stringified counterparts', () => {
+  // GIVEN
+  const currentTemplate = {
+    Resources: {
+      Bucket: {
+        Type: 'AWS::S3::Bucket',
+        Properties: {
+          PublicAccessBlockConfiguration: {
+            BlockPublicAcls: 'true',
+          },
+        },
+      },
+    },
+  };
+  const newTemplate = {
+    Resources: {
+      Bucket: {
+        Type: 'AWS::S3::Bucket',
+        Properties: {
+          PublicAccessBlockConfiguration: {
+            BlockPublicAcls: true,
+          },
+        },
+      },
+    },
+  };
+
+  // WHEN
+  const differences = diffTemplate(currentTemplate, newTemplate);
+
+  // THEN
+  expect(differences.differenceCount).toBe(0);
+});
+
+test('when a property changes including equivalent DependsOn', () => {
+  // GIVEN
+  const bucketName = 'ShineyBucketName';
+  const currentTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        DependsOn: ['SomeResource'],
+        BucketName: bucketName,
+      },
+    },
+  };
+
+  // WHEN
+  const newBucketName = `${bucketName}-v2`;
+  const newTemplate = {
+    Resources: {
+      BucketResource: {
+        Type: 'AWS::S3::Bucket',
+        DependsOn: ['SomeResource'],
+        BucketName: newBucketName,
+      },
+    },
+  };
+
+  // THEN
+  let differences = diffTemplate(currentTemplate, newTemplate);
+  expect(differences.resources.differenceCount).toBe(1);
+
+  differences = diffTemplate(newTemplate, currentTemplate);
+  expect(differences.resources.differenceCount).toBe(1);
+});

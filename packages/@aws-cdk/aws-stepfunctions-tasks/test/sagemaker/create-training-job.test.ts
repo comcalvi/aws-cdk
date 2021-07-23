@@ -1,4 +1,4 @@
-import '@aws-cdk/assert/jest';
+import '@aws-cdk/assert-internal/jest';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as iam from '@aws-cdk/aws-iam';
 import * as kms from '@aws-cdk/aws-kms';
@@ -153,6 +153,7 @@ test('create complex training job', () => {
         recordWrapperType: tasks.RecordWrapperType.RECORD_IO,
         dataSource: {
           s3DataSource: {
+            attributeNames: ['source-ref', 'class'],
             s3DataType: tasks.S3DataType.S3_PREFIX,
             s3Location: tasks.S3Location.fromBucket(s3.Bucket.fromBucketName(stack, 'InputBucketA', 'mybucket'), 'mytrainpath'),
           },
@@ -165,6 +166,7 @@ test('create complex training job', () => {
         recordWrapperType: tasks.RecordWrapperType.RECORD_IO,
         dataSource: {
           s3DataSource: {
+            attributeNames: ['source-ref', 'class'],
             s3DataType: tasks.S3DataType.S3_PREFIX,
             s3Location: tasks.S3Location.fromBucket(s3.Bucket.fromBucketName(stack, 'InputBucketB', 'mybucket'), 'mytestpath'),
           },
@@ -230,6 +232,7 @@ test('create complex training job', () => {
           ContentType: 'image/jpeg',
           DataSource: {
             S3DataSource: {
+              AttributeNames: ['source-ref', 'class'],
               S3DataType: 'S3Prefix',
               S3Uri: {
                 'Fn::Join': ['', ['https://s3.', { Ref: 'AWS::Region' }, '.', { Ref: 'AWS::URLSuffix' }, '/mybucket/mytrainpath']],
@@ -244,6 +247,7 @@ test('create complex training job', () => {
           ContentType: 'image/jpeg',
           DataSource: {
             S3DataSource: {
+              AttributeNames: ['source-ref', 'class'],
               S3DataType: 'S3Prefix',
               S3Uri: {
                 'Fn::Join': ['', ['https://s3.', { Ref: 'AWS::Region' }, '.', { Ref: 'AWS::URLSuffix' }, '/mybucket/mytestpath']],
@@ -316,7 +320,7 @@ test('pass param to training job', () => {
     },
     resourceConfig: {
       instanceCount: 1,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.P3, ec2.InstanceSize.XLARGE2),
+      instanceType: new ec2.InstanceType(sfn.JsonPath.stringAt('$.TrainingJob.InstanceType')),
       volumeSize: cdk.Size.gibibytes(50),
     },
     stoppingCondition: {
@@ -364,9 +368,9 @@ test('pass param to training job', () => {
         },
       },
       'ResourceConfig': {
-        InstanceCount: 1,
-        InstanceType: 'ml.p3.2xlarge',
-        VolumeSizeInGB: 50,
+        'InstanceCount': 1,
+        'InstanceType.$': '$.TrainingJob.InstanceType',
+        'VolumeSizeInGB': 50,
       },
       'StoppingCondition': {
         MaxRuntimeInSeconds: 3600,

@@ -20,6 +20,9 @@ import { ISecurityGroup } from './security-group';
  * An object that has a Connections object
  */
 export interface IConnectable {
+  /**
+   * The network connections associated with this resource.
+   */
   readonly connections: Connections;
 }
 
@@ -228,7 +231,7 @@ export class Connections implements IConnectable {
    */
   public allowToDefaultPort(other: IConnectable, description?: string) {
     if (other.connections.defaultPort === undefined) {
-      throw new Error('Cannot call alloToDefaultPort(): other resource has no default port');
+      throw new Error('Cannot call allowToDefaultPort(): other resource has no default port');
     }
 
     this.allowTo(other, other.connections.defaultPort, description);

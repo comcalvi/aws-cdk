@@ -1,4 +1,5 @@
-import { Construct, Duration, Lazy, Resource, Stack, Token } from '@aws-cdk/core';
+import { Duration, Resource, Stack, Token, TokenComparison } from '@aws-cdk/core';
+import { Construct, Node } from 'constructs';
 import { Grant } from './grant';
 import { CfnRole } from './iam.generated';
 import { IIdentity } from './identity-base';
@@ -8,7 +9,7 @@ import { PolicyDocument } from './policy-document';
 import { PolicyStatement } from './policy-statement';
 import { AddToPrincipalPolicyResult, ArnPrincipal, IPrincipal, PrincipalPolicyFragment } from './principals';
 import { ImmutableRole } from './private/immutable-role';
-import { AttachedPolicies } from './util';
+import { AttachedPolicies, UniqueStringSet } from './util';
 
 /**
  * Properties for defining an IAM Role
@@ -101,7 +102,7 @@ export interface RoleProps {
    * Acknowledging IAM Resources in AWS CloudFormation Templates.
    *
    * @default - AWS CloudFormation generates a unique physical ID and uses that ID
-   * for the group name.
+   * for the role name.
    */
   readonly roleName?: string;
 
@@ -142,10 +143,20 @@ export interface FromRoleArnOptions {
    * Whether the imported role can be modified by attaching policy resources to it.
    *
    * @default true
-   *
-   * @experimental
    */
   readonly mutable?: boolean;
+
+  /**
+   * For immutable roles: add grants to resources instead of dropping them
+   *
+   * If this is `false` or not specified, grant permissions added to this role are ignored.
+   * It is your own responsibility to make sure the role has the required permissions.
+   *
+   * If this is `true`, any grant permissions will be added to the resource instead.
+   *
+   * @default false
+   */
+  readonly addGrantsToResources?: boolean;
 }
 
 /**
@@ -176,6 +187,7 @@ export class Role extends Resource implements IRole {
     const scopeStack = Stack.of(scope);
     const parsedArn = scopeStack.parseArn(roleArn);
     const resourceName = parsedArn.resourceName!;
+    const roleAccount = parsedArn.account;
     // service roles have an ARN like 'arn:aws:iam::<account>:role/service-role/<roleName>'
     // or 'arn:aws:iam::<account>:role/service-role/servicename.amazonaws.com/service-role/<roleName>'
     // we want to support these as well, so we just use the element after the last slash as role name
@@ -183,12 +195,19 @@ export class Role extends Resource implements IRole {
 
     class Import extends Resource implements IRole {
       public readonly grantPrincipal: IPrincipal = this;
+      public readonly principalAccount = roleAccount;
       public readonly assumeRoleAction: string = 'sts:AssumeRole';
       public readonly policyFragment = new ArnPrincipal(roleArn).policyFragment;
       public readonly roleArn = roleArn;
       public readonly roleName = roleName;
       private readonly attachedPolicies = new AttachedPolicies();
       private defaultPolicy?: Policy;
+
+      constructor(_scope: Construct, _id: string) {
+        super(_scope, _id, {
+          account: roleAccount,
+        });
+      }
 
       public addToPolicy(statement: PolicyStatement): boolean {
         return this.addToPrincipalPolicy(statement).statementAdded;
@@ -204,9 +223,11 @@ export class Role extends Resource implements IRole {
       }
 
       public attachInlinePolicy(policy: Policy): void {
-        const policyAccount = Stack.of(policy).account;
-
-        if (accountsAreEqualOrOneIsUnresolved(policyAccount, roleAccount)) {
+        const thisAndPolicyAccountComparison = Token.compareStrings(this.env.account, policy.env.account);
+        const equalOrAnyUnresolved = thisAndPolicyAccountComparison === TokenComparison.SAME ||
+          thisAndPolicyAccountComparison === TokenComparison.BOTH_UNRESOLVED ||
+          thisAndPolicyAccountComparison === TokenComparison.ONE_UNRESOLVED;
+        if (equalOrAnyUnresolved) {
           this.attachedPolicies.attach(policy);
           policy.attachToRole(this);
         }
@@ -236,23 +257,23 @@ export class Role extends Resource implements IRole {
       }
     }
 
-    const roleAccount = parsedArn.account;
-
-    const scopeAccount = scopeStack.account;
-
-    return options.mutable !== false && accountsAreEqualOrOneIsUnresolved(scopeAccount, roleAccount)
-      ? new Import(scope, id)
-      : new ImmutableRole(scope, `ImmutableRole${id}`, new Import(scope, id));
-
-    function accountsAreEqualOrOneIsUnresolved(
-      account1: string | undefined,
-      account2: string | undefined): boolean {
-      return Token.isUnresolved(account1) || Token.isUnresolved(account2) ||
-        account1 === account2;
+    if (options.addGrantsToResources !== undefined && options.mutable !== false) {
+      throw new Error('\'addGrantsToResources\' can only be passed if \'mutable: false\'');
     }
+
+    const importedRole = new Import(scope, id);
+    const roleArnAndScopeStackAccountComparison = Token.compareStrings(importedRole.env.account, scopeStack.account);
+    const equalOrAnyUnresolved = roleArnAndScopeStackAccountComparison === TokenComparison.SAME ||
+      roleArnAndScopeStackAccountComparison === TokenComparison.BOTH_UNRESOLVED ||
+      roleArnAndScopeStackAccountComparison === TokenComparison.ONE_UNRESOLVED;
+    // we only return an immutable Role if both accounts were explicitly provided, and different
+    return options.mutable !== false && equalOrAnyUnresolved
+      ? importedRole
+      : new ImmutableRole(scope, `ImmutableRole${id}`, importedRole, options.addGrantsToResources ?? false);
   }
 
   public readonly grantPrincipal: IPrincipal = this;
+  public readonly principalAccount: string | undefined = this.env.account;
 
   public readonly assumeRoleAction: string = 'sts:AssumeRole';
 
@@ -319,7 +340,7 @@ export class Role extends Resource implements IRole {
 
     const role = new CfnRole(this, 'Resource', {
       assumeRolePolicyDocument: this.assumeRolePolicy as any,
-      managedPolicyArns: Lazy.listValue({ produce: () => this.managedPolicies.map(p => p.managedPolicyArn) }, { omitEmpty: true }),
+      managedPolicyArns: UniqueStringSet.from(() => this.managedPolicies.map(p => p.managedPolicyArn)),
       policies: _flatten(this.inlinePolicies),
       path: props.path,
       permissionsBoundary: this.permissionsBoundary ? this.permissionsBoundary.managedPolicyArn : undefined,
@@ -415,9 +436,9 @@ export class Role extends Resource implements IRole {
    * If you do, you are responsible for adding the correct statements to the
    * Role's policies yourself.
    */
-  public withoutPolicyUpdates(): IRole {
+  public withoutPolicyUpdates(options: WithoutPolicyUpdatesOptions = {}): IRole {
     if (!this.immutableRole) {
-      this.immutableRole = new ImmutableRole(this.node.scope as Construct, `ImmutableRole${this.node.id}`, this);
+      this.immutableRole = new ImmutableRole(Node.of(this).scope as Construct, `ImmutableRole${this.node.id}`, this, options.addGrantsToResources ?? false);
     }
 
     return this.immutableRole;
@@ -502,4 +523,21 @@ class AwsStarStatement extends PolicyStatement {
 
     return stat;
   }
+}
+
+/**
+ * Options for the `withoutPolicyUpdates()` modifier of a Role
+ */
+export interface WithoutPolicyUpdatesOptions {
+  /**
+   * Add grants to resources instead of dropping them
+   *
+   * If this is `false` or not specified, grant permissions added to this role are ignored.
+   * It is your own responsibility to make sure the role has the required permissions.
+   *
+   * If this is `true`, any grant permissions will be added to the resource instead.
+   *
+   * @default false
+   */
+  readonly addGrantsToResources?: boolean;
 }

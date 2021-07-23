@@ -1,6 +1,7 @@
 import * as path from 'path';
-import '@aws-cdk/assert/jest';
+import '@aws-cdk/assert-internal/jest';
 import * as core from '@aws-cdk/core';
+import * as constructs from 'constructs';
 import * as inc from '../lib';
 import * as futils from '../lib/file-utils';
 
@@ -53,9 +54,33 @@ describe('CDK Include for templates with SAM transform', () => {
       loadTestFileToJsObject('only-sam-function-policies-array-ddb-crud-if.yaml'),
     );
   });
+
+  test('can ingest a template with a a union-type property provided as an object, and output it unchanged', () => {
+    includeTestTemplate(stack, 'api-endpoint-config-object.yaml');
+
+    expect(stack).toMatchTemplate(
+      loadTestFileToJsObject('api-endpoint-config-object.yaml'),
+    );
+  });
+
+  test('can ingest a template with a a union-type property provided as a string, and output it unchanged', () => {
+    includeTestTemplate(stack, 'api-endpoint-config-string.yaml');
+
+    expect(stack).toMatchTemplate(
+      loadTestFileToJsObject('api-endpoint-config-string.yaml'),
+    );
+  });
+
+  test('can ingest a template with a a union-type property provided as an empty string, and output it unchanged', () => {
+    includeTestTemplate(stack, 'api-endpoint-config-string-empty.yaml');
+
+    expect(stack).toMatchTemplate(
+      loadTestFileToJsObject('api-endpoint-config-string-empty.yaml'),
+    );
+  });
 });
 
-function includeTestTemplate(scope: core.Construct, testTemplate: string): inc.CfnInclude {
+function includeTestTemplate(scope: constructs.Construct, testTemplate: string): inc.CfnInclude {
   return new inc.CfnInclude(scope, 'MyScope', {
     templateFile: _testTemplateFilePath(testTemplate),
   });

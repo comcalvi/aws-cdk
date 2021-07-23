@@ -16,7 +16,7 @@ export abstract class MappingTemplate {
    * Create a mapping template from the given file
    */
   public static fromFile(fileName: string): MappingTemplate {
-    return new StringMappingTemplate(readFileSync(fileName).toString('UTF-8'));
+    return new StringMappingTemplate(readFileSync(fileName).toString('utf-8'));
   }
 
   /**
@@ -45,8 +45,8 @@ export abstract class MappingTemplate {
    *
    * @param cond the key condition for the query
    */
-  public static dynamoDbQuery(cond: KeyCondition): MappingTemplate {
-    return this.fromString(`{"version" : "2017-02-28", "operation" : "Query", ${cond.renderTemplate()}}`);
+  public static dynamoDbQuery(cond: KeyCondition, indexName?: string): MappingTemplate {
+    return this.fromString(`{"version" : "2017-02-28", "operation" : "Query", ${indexName ? `"index" : "${indexName}", ` : ''}${cond.renderTemplate()}}`);
   }
 
   /**
@@ -91,9 +91,10 @@ export abstract class MappingTemplate {
    *
    * @param payload the VTL template snippet of the payload to send to the lambda.
    * If no payload is provided all available context fields are sent to the Lambda function
+   * @param operation the type of operation AppSync should perform on the data source
    */
-  public static lambdaRequest(payload: string = '$util.toJson($ctx)'): MappingTemplate {
-    return this.fromString(`{"version": "2017-02-28", "operation": "Invoke", "payload": ${payload}}`);
+  public static lambdaRequest(payload: string = '$util.toJson($ctx)', operation: string = 'Invoke'): MappingTemplate {
+    return this.fromString(`{"version": "2017-02-28", "operation": "${operation}", "payload": ${payload}}`);
   }
 
   /**

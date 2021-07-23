@@ -1,4 +1,4 @@
-import { expect, haveResource, haveResourceLike } from '@aws-cdk/assert';
+import { expect, haveResource, haveResourceLike } from '@aws-cdk/assert-internal';
 import * as iam from '@aws-cdk/aws-iam';
 import * as cdk from '@aws-cdk/core';
 import { Test } from 'nodeunit';
@@ -46,6 +46,39 @@ export = {
       RuleName: { Ref: 'MyRuleA44AB831' },
     }));
 
+    test.done();
+  },
+
+  'get rate as token'(test: Test) {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'MyScheduledStack');
+    const lazyDuration = cdk.Duration.minutes(cdk.Lazy.number({ produce: () => 5 }));
+
+    new Rule(stack, 'MyScheduledRule', {
+      ruleName: 'rateInMinutes',
+      schedule: Schedule.rate(lazyDuration),
+    });
+
+    // THEN
+    expect(stack).to(haveResourceLike('AWS::Events::Rule', {
+      'Name': 'rateInMinutes',
+      'ScheduleExpression': 'rate(5 minutes)',
+    }));
+
+    test.done();
+  },
+
+  'Seconds is not an allowed value for Schedule rate'(test: Test) {
+    const lazyDuration = cdk.Duration.seconds(cdk.Lazy.number({ produce: () => 5 }));
+    test.throws(() => Schedule.rate(lazyDuration), /Allowed units for scheduling/i);
+    test.done();
+  },
+
+  'Millis is not an allowed value for Schedule rate'(test: Test) {
+    const lazyDuration = cdk.Duration.millis(cdk.Lazy.number({ produce: () => 5 }));
+
+    // THEN
+    test.throws(() => Schedule.rate(lazyDuration), /Allowed units for scheduling/i);
     test.done();
   },
 
@@ -126,14 +159,14 @@ export = {
     rule.addEventPattern({
       account: ['12345'],
       detail: {
-        foo: ['hello'],
+        foo: ['hello', 'bar', 'hello'],
       },
     });
 
     rule.addEventPattern({
       source: ['aws.source'],
       detail: {
-        foo: ['bar'],
+        foo: ['bar', 'hello'],
         goo: {
           hello: ['world'],
         },
@@ -162,6 +195,37 @@ export = {
               },
               'source': [
                 'aws.source',
+              ],
+            },
+            'State': 'ENABLED',
+          },
+        },
+      },
+    });
+    test.done();
+  },
+
+  'addEventPattern can de-duplicate filters and keep the order'(test: Test) {
+    const stack = new cdk.Stack();
+
+    const rule = new Rule(stack, 'MyRule');
+    rule.addEventPattern({
+      detailType: ['AWS API Call via CloudTrail', 'AWS API Call via CloudTrail'],
+    });
+
+    rule.addEventPattern({
+      detailType: ['EC2 Instance State-change Notification', 'AWS API Call via CloudTrail'],
+    });
+
+    expect(stack).toMatch({
+      'Resources': {
+        'MyRuleA44AB831': {
+          'Type': 'AWS::Events::Rule',
+          'Properties': {
+            'EventPattern': {
+              'detail-type': [
+                'AWS API Call via CloudTrail',
+                'EC2 Instance State-change Notification',
               ],
             },
             'State': 'ENABLED',
@@ -362,7 +426,7 @@ export = {
     const t1: IRuleTarget = {
       bind: (eventRule: IRule) => {
         receivedRuleArn = eventRule.ruleArn;
-        receivedRuleId = eventRule.node.uniqueId;
+        receivedRuleId = cdk.Names.nodeUniqueId(eventRule.node);
 
         return {
           id: '',
@@ -376,7 +440,7 @@ export = {
     rule.addTarget(t1);
 
     test.deepEqual(stack.resolve(receivedRuleArn), stack.resolve(rule.ruleArn));
-    test.deepEqual(receivedRuleId, rule.node.uniqueId);
+    test.deepEqual(receivedRuleId, cdk.Names.uniqueId(rule));
     test.done();
   },
 
@@ -440,22 +504,6 @@ export = {
         },
       ],
     }));
-
-    test.done();
-  },
-
-  'rule and target must be in the same region'(test: Test) {
-    const app = new cdk.App();
-
-    const sourceStack = new cdk.Stack(app, 'SourceStack');
-    const rule = new Rule(sourceStack, 'Rule');
-
-    const targetStack = new cdk.Stack(app, 'TargetStack', { env: { region: 'us-west-2' } });
-    const resource = new cdk.Construct(targetStack, 'Resource');
-
-    test.throws(() => {
-      rule.addTarget(new SomeTarget('T', resource));
-    }, /Rule and target must be in the same region/);
 
     test.done();
   },
@@ -526,7 +574,38 @@ export = {
     test.done();
   },
 
-  'for cross-account targets': {
+  'allow an imported target if is in the same account and region'(test: Test) {
+    const app = new cdk.App();
+
+    const sourceAccount = '123456789012';
+    const sourceRegion = 'us-west-2';
+    const sourceStack = new cdk.Stack(app, 'SourceStack', { env: { account: sourceAccount, region: sourceRegion } });
+    const rule = new Rule(sourceStack, 'Rule', {
+      eventPattern: {
+        source: ['some-event'],
+      },
+    });
+
+    const resource = EventBus.fromEventBusArn(sourceStack, 'TargetEventBus', `arn:aws:events:${sourceRegion}:${sourceAccount}:event-bus/default`);
+
+    rule.addTarget(new SomeTarget('T', resource));
+
+    expect(sourceStack).to(haveResource('AWS::Events::Rule', {
+      Targets: [
+        {
+          'Arn': 'ARN1',
+          'Id': 'T',
+          'KinesisParameters': {
+            'PartitionKeyPath': 'partitionKeyPath',
+          },
+        },
+      ],
+    }));
+
+    test.done();
+  },
+
+  'for cross-account and/or cross-region targets': {
     'requires that the source stack specify a concrete account'(test: Test) {
       const app = new cdk.App();
 
@@ -539,7 +618,7 @@ export = {
 
       test.throws(() => {
         rule.addTarget(new SomeTarget('T', resource));
-      }, /You need to provide a concrete account for the source stack when using cross-account events/);
+      }, /You need to provide a concrete account for the source stack when using cross-account or cross-region events/);
 
       test.done();
     },
@@ -556,7 +635,7 @@ export = {
 
       test.throws(() => {
         rule.addTarget(new SomeTarget('T', resource));
-      }, /You need to provide a concrete account for the target stack when using cross-account events/);
+      }, /You need to provide a concrete account for the target stack when using cross-account or cross-region events/);
 
       test.done();
     },
@@ -574,7 +653,197 @@ export = {
 
       test.throws(() => {
         rule.addTarget(new SomeTarget('T', resource));
-      }, /You need to provide a concrete region for the target stack when using cross-account events/);
+      }, /You need to provide a concrete region for the target stack when using cross-account or cross-region events/);
+
+      test.done();
+    },
+
+    'creates cross-account targets if in the same region'(test: Test) {
+      const app = new cdk.App();
+
+      const sourceAccount = '123456789012';
+      const sourceRegion = 'eu-west-2';
+      const sourceStack = new cdk.Stack(app, 'SourceStack', { env: { account: sourceAccount, region: sourceRegion } });
+      const rule = new Rule(sourceStack, 'Rule', {
+        eventPattern: {
+          source: ['some-event'],
+        },
+      });
+
+      const targetAccount = '234567890123';
+      const targetRegion = sourceRegion;
+      const targetStack = new cdk.Stack(app, 'TargetStack', { env: { account: targetAccount, region: targetRegion } });
+      const resource = new cdk.Construct(targetStack, 'Resource');
+
+      rule.addTarget(new SomeTarget('T', resource));
+
+      expect(sourceStack).to(haveResourceLike('AWS::Events::Rule', {
+        'State': 'ENABLED',
+        'Targets': [
+          {
+            'Id': 'T',
+            'Arn': {
+              'Fn::Join': [
+                '',
+                [
+                  'arn:',
+                  { 'Ref': 'AWS::Partition' },
+                  `:events:${targetRegion}:${targetAccount}:event-bus/default`,
+                ],
+              ],
+            },
+          },
+        ],
+      }));
+
+      expect(targetStack).to(haveResource('AWS::Events::Rule', {
+        Targets: [
+          {
+            'Arn': 'ARN1',
+            'Id': 'T',
+            'KinesisParameters': {
+              'PartitionKeyPath': 'partitionKeyPath',
+            },
+          },
+        ],
+      }));
+
+      test.done();
+    },
+
+    'creates cross-region targets'(test: Test) {
+      const app = new cdk.App();
+
+      const sourceAccount = '123456789012';
+      const sourceRegion = 'us-west-2';
+      const sourceStack = new cdk.Stack(app, 'SourceStack', { env: { account: sourceAccount, region: sourceRegion } });
+      const rule = new Rule(sourceStack, 'Rule', {
+        eventPattern: {
+          source: ['some-event'],
+        },
+      });
+
+      const targetAccount = '234567890123';
+      const targetRegion = 'us-east-1';
+      const targetStack = new cdk.Stack(app, 'TargetStack', { env: { account: targetAccount, region: targetRegion } });
+      const resource = new cdk.Construct(targetStack, 'Resource');
+
+      rule.addTarget(new SomeTarget('T', resource));
+
+      expect(sourceStack).to(haveResourceLike('AWS::Events::Rule', {
+        'State': 'ENABLED',
+        'Targets': [
+          {
+            'Id': 'T',
+            'Arn': {
+              'Fn::Join': [
+                '',
+                [
+                  'arn:',
+                  { 'Ref': 'AWS::Partition' },
+                  `:events:${targetRegion}:${targetAccount}:event-bus/default`,
+                ],
+              ],
+            },
+          },
+        ],
+      }));
+
+      expect(targetStack).to(haveResource('AWS::Events::Rule', {
+        Targets: [
+          {
+            'Arn': 'ARN1',
+            'Id': 'T',
+            'KinesisParameters': {
+              'PartitionKeyPath': 'partitionKeyPath',
+            },
+          },
+        ],
+      }));
+
+      test.done();
+    },
+
+    'do not create duplicated targets'(test: Test) {
+      const app = new cdk.App();
+
+      const sourceAccount = '123456789012';
+      const sourceRegion = 'us-west-2';
+      const sourceStack = new cdk.Stack(app, 'SourceStack', { env: { account: sourceAccount, region: sourceRegion } });
+      const rule = new Rule(sourceStack, 'Rule', {
+        eventPattern: {
+          source: ['some-event'],
+        },
+      });
+
+      const targetAccount = '234567890123';
+      const targetRegion = 'us-east-1';
+      const targetStack = new cdk.Stack(app, 'TargetStack', { env: { account: targetAccount, region: targetRegion } });
+      const resource = new cdk.Construct(targetStack, 'Resource');
+
+      rule.addTarget(new SomeTarget('T', resource));
+      // same target should be skipped
+      rule.addTarget(new SomeTarget('T1', resource));
+
+      expect(sourceStack).to(haveResourceLike('AWS::Events::Rule', {
+        'State': 'ENABLED',
+        'Targets': [
+          {
+            'Id': 'T',
+            'Arn': {
+              'Fn::Join': [
+                '',
+                [
+                  'arn:',
+                  { 'Ref': 'AWS::Partition' },
+                  `:events:${targetRegion}:${targetAccount}:event-bus/default`,
+                ],
+              ],
+            },
+          },
+        ],
+      }));
+
+      expect(sourceStack).notTo(haveResourceLike('AWS::Events::Rule', {
+        'State': 'ENABLED',
+        'Targets': [
+          {
+            'Id': 'T1',
+            'Arn': {
+              'Fn::Join': [
+                '',
+                [
+                  'arn:',
+                  { 'Ref': 'AWS::Partition' },
+                  `:events:${targetRegion}:${targetAccount}:event-bus/default`,
+                ],
+              ],
+            },
+          },
+        ],
+      }));
+
+      test.done();
+    },
+
+    'requires that the target is not imported'(test: Test) {
+      const app = new cdk.App();
+
+      const sourceAccount = '123456789012';
+      const sourceRegion = 'us-west-2';
+      const sourceStack = new cdk.Stack(app, 'SourceStack', { env: { account: sourceAccount, region: sourceRegion } });
+      const rule = new Rule(sourceStack, 'Rule', {
+        eventPattern: {
+          source: ['some-event'],
+        },
+      });
+
+      const targetAccount = '123456789012';
+      const targetRegion = 'us-west-1';
+      const resource = EventBus.fromEventBusArn(sourceStack, 'TargetEventBus', `arn:aws:events:${targetRegion}:${targetAccount}:event-bus/default`);
+      test.throws(() => {
+        rule.addTarget(new SomeTarget('T', resource));
+      }, /Cannot create a cross-account or cross-region rule with an imported resource/);
 
       test.done();
     },
@@ -737,6 +1006,7 @@ export = {
 };
 
 class SomeTarget implements IRuleTarget {
+  // eslint-disable-next-line cdk/no-core-construct
   public constructor(private readonly id?: string, private readonly resource?: cdk.IConstruct) {
   }
 

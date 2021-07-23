@@ -43,6 +43,13 @@ export interface ISynthesisSession {
    * Cloud assembly builder.
    */
   assembly: cxapi.CloudAssemblyBuilder;
+
+  /**
+   * Whether the stack should be validated after synthesis to check for error metadata
+   *
+   * @default - false
+   */
+  validateOnSynth?: boolean;
 }
 
 /**
@@ -64,7 +71,7 @@ export class Construct extends constructs.Construct implements IConstruct {
    */
   public readonly node: ConstructNode;
 
-  constructor(scope: Construct, id: string) {
+  constructor(scope: constructs.Construct, id: string) {
     super(scope, id, {
       nodeFactory: {
         createNode: (h: constructs.Construct, s: constructs.IConstruct, i: string) =>
@@ -203,6 +210,13 @@ export interface SynthesisOptions extends cxapi.AssemblyBuildOptions {
    * @default false
    */
   readonly skipValidation?: boolean;
+
+  /**
+   * Whether the stack should be validated after synthesis to check for error metadata
+   *
+   * @default - false
+   */
+  readonly validateOnSynthesis?: boolean;
 }
 
 /**
@@ -308,10 +322,30 @@ export class ConstructNode {
   public get path(): string { return this._actualNode.path; }
 
   /**
-   * A tree-global unique alphanumeric identifier for this construct.
-   * Includes all components of the tree.
+   * A tree-global unique alphanumeric identifier for this construct. Includes
+   * all components of the tree.
+   *
+   * @deprecated use `node.addr` to obtain a consistent 42 character address for
+   * this node (see https://github.com/aws/constructs/pull/314)
    */
   public get uniqueId(): string { return this._actualNode.uniqueId; }
+
+  /**
+   * Returns an opaque tree-unique address for this construct.
+   *
+   * Addresses are 42 characters hexadecimal strings. They begin with "c8"
+   * followed by 40 lowercase hexadecimal characters (0-9a-f).
+   *
+   * Addresses are calculated using a SHA-1 of the components of the construct
+   * path.
+   *
+   * To enable refactorings of construct trees, constructs with the ID `Default`
+   * will be excluded from the calculation. In those cases constructs in the
+   * same tree may have the same addreess.
+   *
+   * @example c83a2846e506bcc5f10682b564084bca2d275709ee
+   */
+  public get addr(): string { return this._actualNode.addr; }
 
   /**
    * Return a direct child by id, or undefined
@@ -383,7 +417,7 @@ export class ConstructNode {
    * Context is usually initialized at the root, but can be overridden at any point in the tree.
    *
    * @param key The context key
-   * @returns The context value or `undefined` if there is no context value for thie key.
+   * @returns The context value or `undefined` if there is no context value for the key.
    */
   public tryGetContext(key: string): any {
     if (Token.isUnresolved(key)) {
@@ -393,10 +427,16 @@ export class ConstructNode {
   }
 
   /**
+   * DEPRECATED
+   * @deprecated use `metadataEntry`
+   */
+  public get metadata() { return this._actualNode.metadata as cxapi.MetadataEntry[]; }
+
+  /**
    * An immutable array of metadata objects associated with this construct.
    * This can be used, for example, to implement support for deprecation notices, source mapping, etc.
    */
-  public get metadata() { return this._actualNode.metadata as cxapi.MetadataEntry[]; }
+  public get metadataEntry() { return this._actualNode.metadata; }
 
   /**
    * Adds a metadata entry to this construct.
@@ -447,7 +487,17 @@ export class ConstructNode {
    * @deprecated This API is going to be removed in the next major version of
    * the AWS CDK. Please use `Aspects.of(scope).add()` instead.
    */
-  public applyAspect(aspect: IAspect): void { Aspects.of(this.host).add(aspect); }
+  public applyAspect(aspect: IAspect): void {
+    Annotations.of(this.host).addDeprecation('@aws-cdk/core.ConstructNode.applyAspect', 'Use "Aspects.of(construct).add(aspect)" instead');
+    Aspects.of(this.host).add(aspect);
+  }
+
+  /**
+   * Add a validator to this construct Node
+   */
+  public addValidation(validation: constructs.IValidation) {
+    this._actualNode.addValidation(validation);
+  }
 
   /**
    * All parent scopes of this construct.
@@ -486,7 +536,6 @@ export class ConstructNode {
    * Remove the child with the given name, if present.
    *
    * @returns Whether a child with the given name was deleted.
-   * @experimental
    */
   public tryRemoveChild(childName: string): boolean { return this._actualNode.tryRemoveChild(childName); }
 }

@@ -1,10 +1,12 @@
 # CDK Construct Library for Amazon Simple Notification Service Subscriptions
 <!--BEGIN STABILITY BANNER-->
+
 ---
 
 ![cdk-constructs: Stable](https://img.shields.io/badge/cdk--constructs-stable-success.svg?style=for-the-badge)
 
 ---
+
 <!--END STABILITY BANNER-->
 
 This library provides constructs for adding subscriptions to an Amazon SNS topic.
@@ -63,6 +65,9 @@ const myQueue = new sqs.Queue(this, 'MyQueue');
 myTopic.addSubscription(new subscriptions.SqsSubscription(queue));
 ```
 
+KMS key permissions will automatically be granted to SNS when a subscription is made to
+an encrypted queue.
+
 Note that subscriptions of queues in different accounts need to be manually confirmed by
 reading the initial message from the queue and visiting the link found in it.
 
@@ -76,7 +81,7 @@ import * as subscriptions from '@aws-cdk/aws-sns-subscriptions';
 
 const myFunction = new lambda.Function(this, 'Echo', {
   handler: 'index.handler',
-  runtime: lambda.Runtime.NODEJS_10_X,
+  runtime: lambda.Runtime.NODEJS_12_X,
   code: lambda.Code.fromInline(`exports.handler = ${handler.toString()}`)
 });
 

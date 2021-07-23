@@ -11,31 +11,43 @@ export class Test {
   constructor(private readonly cb: () => void) {
   }
 
-  public equal(a: any, b: any, _message?: string) {
-    expect(a).toEqual(b);
+  public equal(actual: any, expected: any, _message?: string) {
+    expect(actual).toEqual(expected);
   }
 
-  public equals(a: any, b: any, _message?: string) {
-    expect(a).toEqual(b);
+  public notEqual(actual: any, expected: any, _message?: string) {
+    expect(actual).not.toEqual(expected);
   }
 
-  public strictEqual(a: any, b: any, _message?: string) {
-    expect(a).toEqual(b);
+  public equals(actual: any, expected: any, _message?: string) {
+    expect(actual).toEqual(expected);
   }
 
-  public deepEqual(a: any, b: any) {
-    expect(a).toEqual(b);
+  public strictEqual(actual: any, expected: any, _message?: string) {
+    expect(actual).toEqual(expected);
   }
 
-  public ok(a: any) {
-    expect(a).toBeTruthy();
+  public deepEqual(actual: any, expected: any, _message?: string) {
+    expect(actual).toEqual(expected);
   }
 
-  public throws(block: () => any, error?: string | RegExp | ErrorConstructor) {
+  public notDeepEqual(actual: any, expected: any, _message?: string) {
+    expect(actual).not.toEqual(expected);
+  }
+
+  public ok(actual: any, _message?: string) {
+    expect(actual).toBeTruthy();
+  }
+
+  public same(actual: any, expected: any) {
+    expect(actual).toBe(expected);
+  }
+
+  public throws(block: () => any, error?: string | RegExp | ErrorConstructor, _message?: string) {
     expect(block).toThrow(error);
   }
 
-  public doesNotThrow(block: () => any, error?: string | RegExp | ErrorConstructor) {
+  public doesNotThrow(block: () => any, error?: string | RegExp | ErrorConstructor, _message?: string) {
     expect(block).not.toThrow(error);
   }
 
@@ -69,7 +81,7 @@ export function nodeunitShim(exports: Record<string, any>) {
       });
     } else {
       // It's a test
-      test(testName, () => new Promise(ok => {
+      test(testName, () => new Promise<void>(ok => {
         testObj(new Test(ok));
       }));
     }

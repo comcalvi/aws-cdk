@@ -211,7 +211,7 @@ export class InitCommand extends InitElement {
    * need to be preceded by a `\` if you want to treat them as part of a filename.
    */
   public static shellCommand(shellCommand: string, options: InitCommandOptions = {}): InitCommand {
-    return new InitCommand([shellCommand], options);
+    return new InitCommand(shellCommand, options);
   }
 
   /**
@@ -228,7 +228,7 @@ export class InitCommand extends InitElement {
 
   public readonly elementType = InitElementType.COMMAND.toString();
 
-  private constructor(private readonly command: string[], private readonly options: InitCommandOptions) {
+  private constructor(private readonly command: string[] | string, private readonly options: InitCommandOptions) {
     super();
   }
 
@@ -327,6 +327,9 @@ export abstract class InitFile extends InitElement {
    * Use a literal string as the file content
    */
   public static fromString(fileName: string, content: string, options: InitFileOptions = {}): InitFile {
+    if (!content) {
+      throw new Error(`InitFile ${fileName}: cannot create empty file. Please supply at least one character of content.`);
+    }
     return new class extends InitFile {
       protected _doBind(bindOptions: InitBindOptions) {
         return {
@@ -432,6 +435,7 @@ export abstract class InitFile extends InitElement {
             source: asset.httpUrl,
           }),
           authentication: standardS3Auth(bindOptions.instanceRole, asset.s3BucketName),
+          assetHash: asset.assetHash,
         };
       }
     }(targetFileName, options);
@@ -449,6 +453,7 @@ export abstract class InitFile extends InitElement {
             source: asset.httpUrl,
           }),
           authentication: standardS3Auth(bindOptions.instanceRole, asset.s3BucketName),
+          assetHash: asset.assetHash,
         };
       }
     }(targetFileName, options);
@@ -487,7 +492,9 @@ export abstract class InitFile extends InitElement {
       if (fileOptions.group || fileOptions.owner || fileOptions.mode) {
         throw new Error('Owner, group, and mode options not supported for Windows.');
       }
-      return {};
+      return {
+        [this.fileName]: { ...contentVars },
+      };
     }
 
     return {
@@ -899,6 +906,7 @@ export abstract class InitSource extends InitElement {
         return {
           config: { [this.targetDirectory]: asset.httpUrl },
           authentication: standardS3Auth(bindOptions.instanceRole, asset.s3BucketName),
+          assetHash: asset.assetHash,
         };
       }
     }(targetDirectory, options.serviceRestartHandles);
@@ -915,6 +923,7 @@ export abstract class InitSource extends InitElement {
         return {
           config: { [this.targetDirectory]: asset.httpUrl },
           authentication: standardS3Auth(bindOptions.instanceRole, asset.s3BucketName),
+          assetHash: asset.assetHash,
         };
       }
     }(targetDirectory, options.serviceRestartHandles);

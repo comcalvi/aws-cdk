@@ -1,8 +1,12 @@
 import * as iam from '@aws-cdk/aws-iam';
 import * as sns from '@aws-cdk/aws-sns';
 import * as sqs from '@aws-cdk/aws-sqs';
-import { Construct, Stack } from '@aws-cdk/core';
+import { Names, Stack } from '@aws-cdk/core';
 import { SubscriptionProps } from './subscription';
+
+// keep this import separate from other imports to reduce chance for merge conflicts with v2-main
+// eslint-disable-next-line no-duplicate-imports, import/order
+import { Construct } from '@aws-cdk/core';
 
 /**
  * Properties for an SQS subscription
@@ -34,21 +38,32 @@ export class SqsSubscription implements sns.ITopicSubscription {
     if (!Construct.isConstruct(this.queue)) {
       throw new Error('The supplied Queue object must be an instance of Construct');
     }
+    const snsServicePrincipal = new iam.ServicePrincipal('sns.amazonaws.com');
 
     // add a statement to the queue resource policy which allows this topic
     // to send messages to the queue.
     this.queue.addToResourcePolicy(new iam.PolicyStatement({
       resources: [this.queue.queueArn],
       actions: ['sqs:SendMessage'],
-      principals: [new iam.ServicePrincipal('sns.amazonaws.com')],
+      principals: [snsServicePrincipal],
       conditions: {
         ArnEquals: { 'aws:SourceArn': topic.topicArn },
       },
     }));
 
+    // if the queue is encrypted, add a statement to the key resource policy
+    // which allows this topic to decrypt KMS keys
+    if (this.queue.encryptionMasterKey) {
+      this.queue.encryptionMasterKey.addToResourcePolicy(new iam.PolicyStatement({
+        resources: ['*'],
+        actions: ['kms:Decrypt', 'kms:GenerateDataKey'],
+        principals: [snsServicePrincipal],
+      }));
+    }
+
     return {
       subscriberScope: this.queue,
-      subscriberId: topic.node.uniqueId,
+      subscriberId: Names.nodeUniqueId(topic.node),
       endpoint: this.queue.queueArn,
       protocol: sns.SubscriptionProtocol.SQS,
       rawMessageDelivery: this.props.rawMessageDelivery,

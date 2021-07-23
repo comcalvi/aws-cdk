@@ -147,6 +147,17 @@ export class FactName {
   public static readonly DLC_REPOSITORY_ACCOUNT = 'dlcRepositoryAccount';
 
   /**
+   * The ID of the AWS account that owns the public ECR repository that contains the
+   * AWS App Mesh Envoy Proxy images in a given region.
+   */
+  public static readonly APPMESH_ECR_ACCOUNT = 'appMeshRepositoryAccount';
+
+  /**
+   * The CIDR block used by Kinesis Data Firehose servers.
+   */
+  public static readonly FIREHOSE_CIDR_BLOCK = 'firehoseCidrBlock';
+
+  /**
    * The name of the regional service principal for a given service.
    *
    * @param service the service name, either simple (e.g: `s3`, `codedeploy`) or qualified (e.g: `s3.amazonaws.com`).

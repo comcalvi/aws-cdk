@@ -1,4 +1,6 @@
 import * as cxapi from '@aws-cdk/cx-api';
+import { Construct } from 'constructs';
+import { addCustomSynthesis, ICustomSynthesis } from './private/synthesis';
 import { TreeMetadata } from './private/tree-metadata';
 import { Stage } from './stage';
 
@@ -35,10 +37,19 @@ export interface AppProps {
   readonly stackTraces?: boolean;
 
   /**
-   * Include runtime versioning information in cloud assembly manifest
-   * @default true runtime info is included unless `aws:cdk:disable-runtime-info` is set in the context.
+   * Include runtime versioning information in the Stacks of this app
+   *
+   * @deprecated use `versionReporting` instead
+   * @default Value of 'aws:cdk:version-reporting' context key
    */
   readonly runtimeInfo?: boolean;
+
+  /**
+   * Include runtime versioning information in the Stacks of this app
+   *
+   * @default Value of 'aws:cdk:version-reporting' context key
+   */
+  readonly analyticsReporting?: boolean;
 
   /**
    * Additional context values for the application.
@@ -101,11 +112,13 @@ export class App extends Stage {
       this.node.setContext(cxapi.DISABLE_METADATA_STACK_TRACE, true);
     }
 
-    if (props.runtimeInfo === false) {
-      this.node.setContext(cxapi.DISABLE_VERSION_REPORTING, true);
+    const analyticsReporting = props.analyticsReporting ?? props.runtimeInfo;
+
+    if (analyticsReporting !== undefined) {
+      this.node.setContext(cxapi.ANALYTICS_REPORTING_ENABLED_CONTEXT, analyticsReporting);
     }
 
-    const autoSynth = props.autoSynth !== undefined ? props.autoSynth : cxapi.OUTDIR_ENV in process.env;
+    const autoSynth = props.autoSynth ?? cxapi.OUTDIR_ENV in process.env;
     if (autoSynth) {
       // synth() guarantuees it will only execute once, so a default of 'true'
       // doesn't bite manual calling of the function.
@@ -133,4 +146,20 @@ export class App extends Stage {
       this.node.setContext(k, v);
     }
   }
+}
+
+/**
+ * Add a custom synthesis for the given construct
+ *
+ * When the construct is being synthesized, this allows it to add additional items
+ * into the Cloud Assembly output.
+ *
+ * This feature is intended for use by official AWS CDK libraries only; 3rd party
+ * library authors and CDK users should not use this function. That's why it's not
+ * exposed via jsii.
+ */
+export function attachCustomSynthesis(construct: Construct, synthesis: ICustomSynthesis): void {
+  // synthesis.ts where the implementation lives is not exported. So
+  // this function is just a re-export of that function.
+  addCustomSynthesis(construct, synthesis);
 }

@@ -2,14 +2,18 @@
  * Get access to construct internals that we need but got removed from the Stages PR.
  */
 import * as path from 'path';
-import { App, IConstruct, Stage } from '@aws-cdk/core';
+import { App, Stage } from '@aws-cdk/core';
 import * as cxapi from '@aws-cdk/cx-api';
+import { Construct, IConstruct, Node } from 'constructs';
+
+// eslint-disable-next-line no-duplicate-imports,import/order
+import { Construct as CoreConstruct } from '@aws-cdk/core';
 
 export function appOf(construct: IConstruct): App {
-  const root = construct.node.root;
+  const root = Node.of(construct).root;
 
   if (!App.isApp(root)) {
-    throw new Error(`Construct must be created under an App, but is not: ${construct.node.path}`);
+    throw new Error(`Construct must be created under an App, but is not: ${Node.of(construct).path}`);
   }
 
   return root;
@@ -17,6 +21,10 @@ export function appOf(construct: IConstruct): App {
 
 export function assemblyBuilderOf(stage: Stage): cxapi.CloudAssemblyBuilder {
   return (stage as any)._assemblyBuilder;
+}
+
+export function pipelineSynth(stage: Stage) {
+  return stage.synth({ validateOnSynthesis: true });
 }
 
 /**
@@ -34,4 +42,12 @@ export function embeddedAsmPath(scope: IConstruct) {
  */
 export function cloudAssemblyBuildSpecDir(scope: IConstruct) {
   return assemblyBuilderOf(appOf(scope)).outdir;
+}
+
+export function obtainScope(parent: Construct, id: string): Construct {
+  const existing = Node.of(parent).tryFindChild(id);
+  if (existing) {
+    return existing as Construct;
+  }
+  return new CoreConstruct(parent, id);
 }

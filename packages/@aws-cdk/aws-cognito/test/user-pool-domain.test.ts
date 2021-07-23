@@ -1,4 +1,4 @@
-import '@aws-cdk/assert/jest';
+import { TemplateAssertions } from '@aws-cdk/assertions';
 import { Certificate } from '@aws-cdk/aws-certificatemanager';
 import { CfnParameter, Stack } from '@aws-cdk/core';
 import { UserPool, UserPoolDomain } from '../lib';
@@ -21,7 +21,7 @@ describe('User Pool Client', () => {
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::Cognito::UserPoolDomain', {
+    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Cognito::UserPoolDomain', {
       UserPoolId: stack.resolve(pool.userPoolId),
       Domain: 'test-domain.example.com',
       CustomDomainConfig: {
@@ -44,7 +44,7 @@ describe('User Pool Client', () => {
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::Cognito::UserPoolDomain', {
+    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Cognito::UserPoolDomain', {
       UserPoolId: stack.resolve(pool.userPoolId),
       Domain: 'cognito-domain-prefix',
     });
@@ -124,8 +124,8 @@ describe('User Pool Client', () => {
       ],
     });
 
-    expect(stack).toHaveResource('Custom::UserPoolCloudFrontDomainName');
-    expect(stack).toHaveResource('AWS::IAM::Policy', {
+    TemplateAssertions.fromStack(stack).resourceCountIs('Custom::UserPoolCloudFrontDomainName', 1);
+    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
       PolicyDocument: {
         Statement: [{
           Action: 'cognito-idp:DescribeUserPoolDomain',
@@ -150,6 +150,18 @@ describe('User Pool Client', () => {
     const cfDomainNameSecond = domain.cloudFrontDomainName;
 
     expect(cfDomainNameSecond).toEqual(cfDomainNameFirst);
+  });
+
+  test('import', () => {
+    // GIVEN
+    const stack = new Stack();
+
+    // WHEN
+    const client = UserPoolDomain.fromDomainName(stack, 'Domain', 'domain-name-1');
+
+    // THEN
+    expect(client.domainName).toEqual('domain-name-1');
+    TemplateAssertions.fromStack(stack).resourceCountIs('AWS::Cognito::UserPoolDomain', 0);
   });
 
   describe('signInUrl', () => {

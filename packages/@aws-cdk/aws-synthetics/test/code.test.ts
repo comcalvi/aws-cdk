@@ -1,5 +1,5 @@
-import '@aws-cdk/assert/jest';
 import * as path from 'path';
+import { TemplateAssertions } from '@aws-cdk/assertions';
 import * as s3 from '@aws-cdk/aws-s3';
 import { App, Stack } from '@aws-cdk/core';
 import * as synthetics from '../lib';
@@ -49,10 +49,11 @@ describe(synthetics.Code.fromAsset, () => {
         handler: 'canary.handler',
         code: directoryAsset,
       }),
+      runtime: synthetics.Runtime.SYNTHETICS_NODEJS_2_0,
     });
 
     // THEN
-    expect(stack).toHaveResourceLike('AWS::Synthetics::Canary', {
+    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
       Code: {
         Handler: 'canary.handler',
         S3Bucket: stack.resolve(directoryAsset.bind(stack, 'canary.handler').s3Location?.bucketName),
@@ -73,12 +74,15 @@ describe(synthetics.Code.fromAsset, () => {
         handler: 'canary.handler',
         code: directoryAsset,
       }),
+      runtime: synthetics.Runtime.SYNTHETICS_NODEJS_2_0,
     });
+
     new synthetics.Canary(stack, 'Canary2', {
       test: synthetics.Test.custom({
         handler: 'canary.handler',
         code: directoryAsset,
       }),
+      runtime: synthetics.Runtime.SYNTHETICS_NODEJS_2_0,
     });
 
     // THEN
