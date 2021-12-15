@@ -99,6 +99,12 @@ export class CloudAssembly {
     const allTopLevel = selector.allTopLevel ?? false;
     const patterns = sanitizePatterns(selector.patterns);
 
+    /*eslint-disable*/
+    //console.log(asm.stacks)
+    //console.log('--------recursively----------')
+    //console.log(asm.stacksRecursively)
+    //console.log('------------------')
+
     if (stacks.length === 0) {
       throw new Error('This app contains no stacks');
     }

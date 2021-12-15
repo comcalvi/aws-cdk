@@ -78,7 +78,12 @@ export class CdkToolkit {
   }
 
   public async diff(options: DiffOptions): Promise<number> {
+    /*eslint-disable*/
+    console.log(options)
+    console.log(options.stackNames)
+    console.log('ahhhhhhhhhhhhhhhhh')
     const stacks = await this.selectStacksForDiff(options.stackNames, options.exclusively);
+    console.log(stacks)
 
     const strict = !!options.strict;
     const contextLines = options.contextLines || 3;
@@ -498,18 +503,28 @@ export class CdkToolkit {
   private async selectStacksForDiff(stackNames: string[], exclusively?: boolean, autoValidate?: boolean): Promise<StackCollection> {
     const assembly = await this.assembly();
 
+    //console.log('--------------------------------------------------')
+    //console.log(assembly)
+
     const selectedForDiff = await assembly.selectStacks({ patterns: stackNames }, {
       extend: exclusively ? ExtendedStackSelection.None : ExtendedStackSelection.Upstream,
       defaultBehavior: DefaultSelection.MainAssembly,
     });
 
     const allStacks = await this.selectStacksForList([]);
+
+    console.log('allStacks')
+    //console.log(allStacks)
     const autoValidateStacks = autoValidate
       ? allStacks.filter(art => art.validateOnSynth ?? false)
       : new StackCollection(assembly, []);
 
     this.validateStacksSelected(selectedForDiff.concat(autoValidateStacks), stackNames);
     this.validateStacks(selectedForDiff.concat(autoValidateStacks));
+
+    console.log('selectedForDiff');
+    //console.log(selectedForDiff);
+    //console.log('--------------------------------------------------')
 
     return selectedForDiff;
   }

@@ -219,6 +219,8 @@ async function initCommandLine() {
   });
 
   const cloudFormation = new CloudFormationDeployments({ sdkProvider });
+  /*eslint-disable*/
+  console.log('creating CX')
 
   const cloudExecutable = new CloudExecutable({
     configuration,

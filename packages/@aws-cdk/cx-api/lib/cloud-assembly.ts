@@ -48,11 +48,18 @@ export class CloudAssembly {
    */
   constructor(directory: string) {
     this.directory = directory;
+    /*eslint-disable*/
+    console.log('actually making assembly')
 
     this.manifest = cxschema.Manifest.loadAssemblyManifest(path.join(directory, MANIFEST_FILE));
     this.version = this.manifest.version;
     this.artifacts = this.renderArtifacts();
     this.runtime = this.manifest.runtime || { libraries: { } };
+    console.log('found manifest: ')
+    console.log(this.manifest)
+
+    console.log('found artifacts: ')
+    console.log(this.artifacts)
 
     // force validation of deps by accessing 'depends' on all artifacts
     this.validateDeps();
