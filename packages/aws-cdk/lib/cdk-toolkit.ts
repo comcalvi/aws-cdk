@@ -6,7 +6,7 @@ import * as colors from 'colors/safe';
 import * as fs from 'fs-extra';
 import * as promptly from 'promptly';
 import { environmentsFromDescriptors, globEnvironmentsFromStacks, looksLikeGlob } from '../lib/api/cxapp/environments';
-import { SdkProvider } from './api/aws-auth';
+import { SdkProvider, Mode } from './api/aws-auth';
 import { Bootstrapper, BootstrapEnvironmentOptions } from './api/bootstrap';
 import { CloudFormationDeployments } from './api/cloudformation-deployments';
 import { CloudAssembly, DefaultSelection, ExtendedStackSelection, StackCollection, StackSelector } from './api/cxapp/cloud-assembly';
@@ -17,6 +17,9 @@ import { data, debug, error, highlight, print, success, warning } from './loggin
 import { deserializeStructure } from './serialize';
 import { Configuration, PROJECT_CONFIG } from './settings';
 import { numberFromBool, partition } from './util';
+
+import { EvaluateCloudFormationTemplate } from './api/hotswap/evaluate-cloudformation-template';
+import { LazyListStackResources } from './api/hotswap-deployments';
 
 export interface CdkToolkitProps {
 
@@ -79,11 +82,82 @@ export class CdkToolkit {
 
   public async diff(options: DiffOptions): Promise<number> {
     /*eslint-disable*/
-    console.log(options)
-    console.log(options.stackNames)
-    console.log('ahhhhhhhhhhhhhhhhh')
+    //console.log(options)
+    //console.log(options.stackNames)
+    //console.log('ahhhhhhhhhhhhhhhh')
     const stacks = await this.selectStacksForDiff(options.stackNames, options.exclusively);
-    console.log(stacks)
+    console.log('--------------------------------------------------------')
+    //console.log(stacks.firstStack.template)
+    //console.log('--------------------------------------------------------')
+    //const nestedStackMetadata = stacks.firstStack.manifest.metadata?.['/DiffNestedStacksStack'][0]
+    //console.log(stacks.firstStack.manifest.metadata?.['/DiffNestedStacksStack'])
+    //console.log(stacks.firstStack.manifest)
+    //console.log(nestedStackMetadata?.type)
+    //const nestedStackTemplatePath = stacks.firstStack.manifest.metadata?.['/DiffNestedStacksStack'][0].data['path'];
+    //console.log(nestedStackTemplatePath)
+    //console.log(stacks.firstStack.assets[0]) 
+    //console.log(stacks.assembly.assembly.stacks[0].assets[0]) // these two ^(line above) both have what we need
+    //console.log(stacks.firstStack.assets[0].path) 
+    //console.log(stacks.assembly.directory)
+    //console.log(stacks.assembly.directory + '/' + stacks.firstStack.assets[0].path)
+    const nestedTemplatePath = stacks.assembly.directory + '/' + stacks.firstStack.assets[0].path;
+    const nestedTemplateAssetPath = stacks.firstStack.assets[0].path;
+    //console.log(path.slice(0, path.indexOf('.nested')))
+    //const NestedStackLogicalId = path.slice(0, path.indexOf('.nested'));
+    let NestedStackLogicalId = '';
+
+    for (const resourceName in stacks.firstStack.template.Resources) {
+      //console.log(resourceName)
+      //console.log(stacks.firstStack.template.Resources[resourceName].Metadata)
+      if (stacks.firstStack.template.Resources[resourceName].Metadata['aws:asset:path'] === nestedTemplateAssetPath) {
+        NestedStackLogicalId = resourceName;
+        break;
+      }
+    }
+
+    const nestedStackTemplate = JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8'));
+    //console.log(nestedStackTemplate)
+    //console.log('--------------------------------------------------------')
+    // TODO: this does not overwrite the old diff, just adds the new one. This is becaues the NestedStackLogicalId is not the name of the NestedStack in the parent template
+    // Note: the actual resource in the parent template has a metadata object that contains the NestedStackLogicalId, so you can match on that and replace the actual ID correctly
+    //console.log(stacks.firstStack.template)
+    //console.log('--------------------------?-----------------------------')
+
+    //nestedStackTemplate.NewResources = nestedStackTemplate.Resources;
+    //delete nestedStackTemplate.Resources;
+    // TODO: don't know when diff happens
+    stacks.firstStack.template.Resources[NestedStackLogicalId] = nestedStackTemplate;
+
+    //console.log(stacks.firstStack.template)
+    //console.log('--------------------------?-----------------------------')
+    //stacks.firstStack.assembly.manifest.
+    //const nestedStackNameInCfn = stacks.firstStack.stackName + '-' + NestedStackLogicalId;
+    //console.log(nestedStackNameInCfn)
+    //console.log(stacks.firstStack.assets)
+    const sdkProvider = this.props.sdkProvider;
+    const resolvedEnv = await sdkProvider.resolveEnvironment(stacks.firstStack.environment);
+    const sdk = await sdkProvider.forEnvironment(resolvedEnv, Mode.ForWriting);
+    const listStackResources = new LazyListStackResources(sdk, stacks.firstStack.stackName);
+
+    const evaluateCfnTemplate = new EvaluateCloudFormationTemplate({
+      stackArtifact: stacks.firstStack,
+      parameters: {},
+      account: resolvedEnv.account,
+      region: resolvedEnv.region,
+      partition: (await sdk.currentAccount()).partition,
+      urlSuffix: sdk.getEndpointSuffix,
+      listStackResources,
+    })
+    console.log('--------------------------?-----------------------------')
+    const nestedStackArn = await evaluateCfnTemplate.findPhysicalNameFor(NestedStackLogicalId);
+    console.log(nestedStackArn)
+    // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute, so we have to do it this way
+    const nestedStackNameInCfn = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
+    if (!nestedStackNameInCfn) {
+      // TODO: if no nested name, then no template diff, I think?
+      return 1;
+    }
+    console.log('--------------------------?-----------------------------')
 
     const strict = !!options.strict;
     const contextLines = options.contextLines || 3;
@@ -108,6 +182,19 @@ export class CdkToolkit {
       for (const stack of stacks.stackArtifacts) {
         stream.write(format('Stack %s\n', colors.bold(stack.displayName)));
         const currentTemplate = await this.props.cloudFormation.readCurrentTemplate(stack);
+        const currentNestedTemplate = await this.props.cloudFormation.readCurrentNestedTemplate(stack, nestedStackNameInCfn);
+
+        //currentNestedTemplate.NewResources = currentNestedTemplate.Resources;
+        //delete currentNestedTemplate.Resources;
+        currentTemplate.Resources[NestedStackLogicalId] = currentNestedTemplate;
+
+        console.log('==================================================')
+        console.log(NestedStackLogicalId)
+        //console.log(currentTemplate.Resources.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3.Resources)
+        //console.log('==================================================')
+        //console.log(stack.template.Resources.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3.Resources)
+        console.log('==================================================')
+
         diffs += options.securityOnly
           ? numberFromBool(printSecurityDiff(currentTemplate, stack, RequireApproval.Broadening))
           : printStackDiff(currentTemplate, stack, strict, contextLines, stream);
@@ -505,6 +592,8 @@ export class CdkToolkit {
 
     //console.log('--------------------------------------------------')
     //console.log(assembly)
+    //console.log('stackNames:')
+    //console.log(stackNames)
 
     const selectedForDiff = await assembly.selectStacks({ patterns: stackNames }, {
       extend: exclusively ? ExtendedStackSelection.None : ExtendedStackSelection.Upstream,
@@ -513,7 +602,12 @@ export class CdkToolkit {
 
     const allStacks = await this.selectStacksForList([]);
 
-    console.log('allStacks')
+    //console.log('diffStacks.count')
+    //console.log(selectedForDiff.stackCount)
+    //console.log('allStacks.count')
+    //console.log(allStacks.stackCount)
+
+    //console.log('allStacks')
     //console.log(allStacks)
     const autoValidateStacks = autoValidate
       ? allStacks.filter(art => art.validateOnSynth ?? false)
@@ -522,7 +616,7 @@ export class CdkToolkit {
     this.validateStacksSelected(selectedForDiff.concat(autoValidateStacks), stackNames);
     this.validateStacks(selectedForDiff.concat(autoValidateStacks));
 
-    console.log('selectedForDiff');
+    //console.log('selectedForDiff');
     //console.log(selectedForDiff);
     //console.log('--------------------------------------------------')
 

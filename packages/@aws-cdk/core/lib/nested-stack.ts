@@ -147,6 +147,12 @@ export class NestedStack extends Stack {
     // component after splitting by "/"
     this._contextualStackName = this.contextualAttribute(Aws.STACK_NAME, Fn.select(1, Fn.split('/', this.resource.ref)));
     this._contextualStackId = this.contextualAttribute(Aws.STACK_ID, this.resource.ref);
+
+    /*eslint-disable*/
+    console.log('AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
+    console.log(this._contextualStackId)
+    console.log(this._contextualStackName)
+    console.log('AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
   }
 
   /**

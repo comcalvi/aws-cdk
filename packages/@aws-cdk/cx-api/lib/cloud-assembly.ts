@@ -49,17 +49,25 @@ export class CloudAssembly {
   constructor(directory: string) {
     this.directory = directory;
     /*eslint-disable*/
-    console.log('actually making assembly')
+    console.log('actually making assembly (cx-api)')
 
     this.manifest = cxschema.Manifest.loadAssemblyManifest(path.join(directory, MANIFEST_FILE));
+    //console.log('?--------------------------------------------------------------?')
+    //console.log(this.manifest.artifacts)
+    //console.log('?--------------------------------------------------------------?')
     this.version = this.manifest.version;
     this.artifacts = this.renderArtifacts();
+    //console.log('ahhhhhhhhhhhhhhhhh')
+    //console.log(this.artifacts)
+    //console.log('ahhhhhhhhhhhhhhhhh')
     this.runtime = this.manifest.runtime || { libraries: { } };
-    console.log('found manifest: ')
-    console.log(this.manifest)
+    //console.log('found manifest: ')
+    //console.log(this.manifest)
+    //console.log('it has this artifact:')
+    //console.log(this.manifest.artifacts?.DiffNestedStacksStack)
 
-    console.log('found artifacts: ')
-    console.log(this.artifacts)
+    //console.log('found artifacts: ')
+    //console.log(this.artifacts)
 
     // force validation of deps by accessing 'depends' on all artifacts
     this.validateDeps();
@@ -201,6 +209,10 @@ export class CloudAssembly {
    * @returns all the CloudFormation stack artifacts that are included in this assembly.
    */
   public get stacks(): CloudFormationStackArtifact[] {
+    /*eslint-disable*/
+    //console.log('---------artifacts----------')
+    //console.log(this.artifacts[0]) //good, this has the Resources; the template has been loaded at this point
+    //console.log('---------artifacts----------')
     return this.artifacts.filter(isCloudFormationStackArtifact);
 
     function isCloudFormationStackArtifact(x: any): x is CloudFormationStackArtifact {
@@ -227,6 +239,10 @@ export class CloudAssembly {
 
   private renderArtifacts() {
     const result = new Array<CloudArtifact>();
+    /*eslint-disable*/
+    //console.log('------manifest artifacts----------')
+    //console.log(this.manifest.artifacts) // have not been loaded yet
+    //console.log('------manifest artifacts----------')
     for (const [name, artifact] of Object.entries(this.manifest.artifacts || { })) {
       const cloudartifact = CloudArtifact.fromManifest(this, name, artifact);
       if (cloudartifact) {

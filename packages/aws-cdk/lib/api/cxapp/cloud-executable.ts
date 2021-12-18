@@ -70,8 +70,8 @@ export class CloudExecutable {
     while (true) {
       const assembly = await this.props.synthesizer(this.props.sdkProvider, this.props.configuration);
       /*eslint-disable*/
-      console.log('CX asm:')
-      console.log(assembly)
+      //console.log('CX asm:')
+      //console.log(assembly)
 
       if (assembly.manifest.missing && assembly.manifest.missing.length > 0) {
         const missingKeys = missingContextKeys(assembly.manifest.missing);

@@ -42,14 +42,19 @@ export class CloudArtifact {
    * @returns the `CloudArtifact` that matches the artifact type or `undefined` if it's an artifact type that is unrecognized by this module.
    */
   public static fromManifest(assembly: CloudAssembly, id: string, artifact: cxschema.ArtifactManifest): CloudArtifact | undefined {
+    /*eslint-disable*/
     switch (artifact.type) {
       case cxschema.ArtifactType.AWS_CLOUDFORMATION_STACK:
+        console.log('stack')
         return new CloudFormationStackArtifact(assembly, id, artifact);
       case cxschema.ArtifactType.CDK_TREE:
+        console.log('tree')
         return new TreeCloudArtifact(assembly, id, artifact);
       case cxschema.ArtifactType.ASSET_MANIFEST:
+        console.log('manifest')
         return new AssetManifestArtifact(assembly, id, artifact);
       case cxschema.ArtifactType.NESTED_CLOUD_ASSEMBLY:
+        console.log('nested assembly')
         return new NestedCloudAssemblyArtifact(assembly, id, artifact);
       default:
         return undefined;

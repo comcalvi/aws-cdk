@@ -193,6 +193,18 @@ export class CloudFormationDeployments {
     return stack.template();
   }
 
+  // TODO: possibly combine this function with the above?
+  // sig is readCurrentTemplate(stackArtifact, nestedStackName?: string)
+  // then if the nestedStackName is provided, do what this function does, and otherwise do the above. Will eliminate some duplication
+  public async readCurrentNestedTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, nestedStackName: string): Promise<Template> {
+    debug(`Reading existing template for stack ${stackArtifact.displayName}.`);
+    const { stackSdk } = await this.prepareSdkFor(stackArtifact, undefined, Mode.ForReading);
+    const cfn = stackSdk.cloudFormation();
+
+    const nestedStack = await CloudFormationStack.lookup(cfn, nestedStackName);
+    return nestedStack.template();
+  }
+
   public async deployStack(options: DeployStackOptions): Promise<DeployStackResult> {
     const { stackSdk, resolvedEnvironment, cloudFormationRoleArn } = await this.prepareSdkFor(options.stack, options.roleArn);
 
