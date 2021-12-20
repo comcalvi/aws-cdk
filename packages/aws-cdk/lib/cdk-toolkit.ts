@@ -118,15 +118,14 @@ export class CdkToolkit {
     const nestedStackTemplate = JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8'));
     //console.log(nestedStackTemplate)
     //console.log('--------------------------------------------------------')
-    // TODO: this does not overwrite the old diff, just adds the new one. This is becaues the NestedStackLogicalId is not the name of the NestedStack in the parent template
-    // Note: the actual resource in the parent template has a metadata object that contains the NestedStackLogicalId, so you can match on that and replace the actual ID correctly
     //console.log(stacks.firstStack.template)
     //console.log('--------------------------?-----------------------------')
 
     //nestedStackTemplate.NewResources = nestedStackTemplate.Resources;
     //delete nestedStackTemplate.Resources;
     // TODO: don't know when diff happens
-    stacks.firstStack.template.Resources[NestedStackLogicalId] = nestedStackTemplate;
+    stacks.firstStack.template.Resources[NestedStackLogicalId] = nestedStackTemplate.Resources;
+    stacks.firstStack.template.Resources[NestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
 
     //console.log(stacks.firstStack.template)
     //console.log('--------------------------?-----------------------------')
@@ -186,13 +185,14 @@ export class CdkToolkit {
 
         //currentNestedTemplate.NewResources = currentNestedTemplate.Resources;
         //delete currentNestedTemplate.Resources;
-        currentTemplate.Resources[NestedStackLogicalId] = currentNestedTemplate;
+        currentTemplate.Resources[NestedStackLogicalId] = currentNestedTemplate['Resources'];
+        currentTemplate.Resources[NestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
 
         console.log('==================================================')
         console.log(NestedStackLogicalId)
-        //console.log(currentTemplate.Resources.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3.Resources)
-        //console.log('==================================================')
-        //console.log(stack.template.Resources.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3.Resources)
+        console.log(currentTemplate.Resources.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3.Type)
+        console.log('==================================================')
+        console.log(stack.template.Resources.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3.Type)
         console.log('==================================================')
 
         diffs += options.securityOnly

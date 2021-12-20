@@ -41,6 +41,10 @@ const DIFF_HANDLERS: HandlerRegistry = {
 export function diffTemplate(currentTemplate: { [key: string]: any }, newTemplate: { [key: string]: any }): types.TemplateDiff {
   // Base diff
   const theDiff = calculateTemplateDiff(currentTemplate, newTemplate);
+  /*eslint-disable*/
+  console.log('-----------AHHHHHHHHHHHHHHH----------------')
+  console.log(theDiff.resources.changes)
+  console.log('-----------AHHHHHHHHHHHHHHH----------------')
 
   // We're going to modify this in-place
   const newTemplateCopy = deepCopy(newTemplate);
@@ -96,12 +100,22 @@ function propagatePropertyReplacement(source: types.ResourceDifference, dest: ty
 function calculateTemplateDiff(currentTemplate: { [key: string]: any }, newTemplate: { [key: string]: any }): types.TemplateDiff {
   const differences: types.ITemplateDiff = {};
   const unknown: { [key: string]: types.Difference<any> } = {};
+  console.log('calling calculatetemplate diff &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
   for (const key of unionOf(Object.keys(currentTemplate), Object.keys(newTemplate)).sort()) {
     const oldValue = currentTemplate[key];
     const newValue = newTemplate[key];
     if (deepEqual(oldValue, newValue)) {
       continue;
     }
+
+    /*if (oldValue.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3) {
+      console.log('===================AHHHHHHH======================')
+      console.log(oldValue.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3)
+      console.log(newValue.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3)
+      console.log(deepEqual(oldValue, newValue))
+      console.log('===================AHHHHHHH======================')
+    }*/
+
     const handler: DiffHandler = DIFF_HANDLERS[key]
                   || ((_diff, oldV, newV) => unknown[key] = impl.diffUnknown(oldV, newV));
     handler(differences, oldValue, newValue);
@@ -110,6 +124,10 @@ function calculateTemplateDiff(currentTemplate: { [key: string]: any }, newTempl
   if (Object.keys(unknown).length > 0) {
     differences.unknown = new types.DifferenceCollection(unknown);
   }
+
+  //console.log('********************************************tempaltediff********************************************')
+  //console.log(differences)
+  //console.log('********************************************tempaltediff********************************************')
 
   return new types.TemplateDiff(differences);
 }
