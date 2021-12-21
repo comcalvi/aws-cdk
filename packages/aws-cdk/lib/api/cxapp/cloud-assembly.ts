@@ -89,8 +89,6 @@ export class CloudAssembly {
   public readonly directory: string;
 
   constructor(public readonly assembly: cxapi.CloudAssembly) {
-    /*eslint-disable*/
-    console.log('creating a CloudAssembly (cxapp)')
     this.directory = assembly.directory;
   }
 
@@ -100,22 +98,6 @@ export class CloudAssembly {
     const stacks = semver.major(asm.version) < 10 ? asm.stacks : asm.stacksRecursively;
     const allTopLevel = selector.allTopLevel ?? false;
     const patterns = sanitizePatterns(selector.patterns);
-
-    //console.log('------------------------------------------------')
-    //console.log(asm.manifest.artifacts?.DiffNestedStacksStack.metadata?.['/DiffNestedStacksStack'])
-    //console.log('------------------------------------------------')
-    //console.log(asm.stacks[0])
-    //console.log(asm.manifest.artifacts)
-    //console.log('------------------------------------------------')
-
-    /*eslint-disable*/
-    //console.log(asm.stacks)
-    //console.log('--------recursively----------')
-    //console.log(asm.stacksRecursively)
-    //console.log('------------------')
-
-    //console.log('stacks.length')
-    //console.log(stacks.length)
 
     if (stacks.length === 0) {
       throw new Error('This app contains no stacks');

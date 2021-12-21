@@ -1,0 +1,10 @@
+{
+  "Resources": {
+    "NestedResourceA": {
+      "Type": "AWS::Something",
+      "Properties": {
+        "Property": "value"
+      }
+    }
+  }
+}

@@ -9,126 +9,206 @@ import { instanceMockFrom, MockCloudExecutable } from './util';
 let cloudExecutable: MockCloudExecutable;
 let cloudFormation: jest.Mocked<CloudFormationDeployments>;
 let toolkit: CdkToolkit;
-beforeEach(() => {
-  cloudExecutable = new MockCloudExecutable({
-    stacks: [{
-      stackName: 'A',
-      template: { resource: 'A' },
-    },
-    {
-      stackName: 'B',
-      depends: ['A'],
-      template: { resource: 'B' },
-    },
-    {
-      stackName: 'C',
-      depends: ['A'],
-      template: { resource: 'C' },
-      metadata: {
-        '/resource': [
+
+describe('non-nested stacks', () => {
+  beforeEach(() => {
+    cloudExecutable = new MockCloudExecutable({
+      stacks: [{
+        stackName: 'A',
+        template: { resource: 'A' },
+      },
+      {
+        stackName: 'B',
+        depends: ['A'],
+        template: { resource: 'B' },
+      },
+      {
+        stackName: 'C',
+        depends: ['A'],
+        template: { resource: 'C' },
+        metadata: {
+          '/resource': [
+            {
+              type: cxschema.ArtifactMetadataEntryType.ERROR,
+              data: 'this is an error',
+            },
+          ],
+        },
+      },
+      {
+        stackName: 'D',
+        template: { resource: 'D' },
+      }],
+    });
+
+    cloudFormation = instanceMockFrom(CloudFormationDeployments);
+
+    toolkit = new CdkToolkit({
+      cloudExecutable,
+      cloudFormation,
+      configuration: cloudExecutable.configuration,
+      sdkProvider: cloudExecutable.sdkProvider,
+    });
+
+    // Default implementations
+    cloudFormation.readCurrentTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact) => {
+      if (stackArtifact.stackName === 'D') {
+        return Promise.resolve({ resource: 'D' });
+      }
+      return Promise.resolve({});
+    });
+    cloudFormation.deployStack.mockImplementation((options) => Promise.resolve({
+      noOp: true,
+      outputs: {},
+      stackArn: '',
+      stackArtifact: options.stack,
+    }));
+  });
+
+  test('diff can diff multiple stacks', async () => {
+    // GIVEN
+    const buffer = new StringWritable();
+
+    // WHEN
+    const exitCode = await toolkit.diff({
+      stackNames: ['B'],
+      stream: buffer,
+    });
+
+    // THEN
+    const plainTextOutput = buffer.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '');
+    expect(plainTextOutput).toContain('Stack A');
+    expect(plainTextOutput).toContain('Stack B');
+
+    expect(exitCode).toBe(0);
+  });
+
+  test('exits with 1 with diffs and fail set to true', async () => {
+    // GIVEN
+    const buffer = new StringWritable();
+
+    // WHEN
+    const exitCode = await toolkit.diff({
+      stackNames: ['A'],
+      stream: buffer,
+      fail: true,
+    });
+
+    // THEN
+    expect(exitCode).toBe(1);
+  });
+
+  test('throws an error if no valid stack names given', async () => {
+    const buffer = new StringWritable();
+
+    // WHEN
+    await expect(() => toolkit.diff({
+      stackNames: ['X', 'Y', 'Z'],
+      stream: buffer,
+    })).rejects.toThrow('No stacks match the name(s) X,Y,Z');
+  });
+
+  test('exits with 1 with diff in first stack, but not in second stack and fail set to true', async () => {
+    // GIVEN
+    const buffer = new StringWritable();
+
+    // WHEN
+    const exitCode = await toolkit.diff({
+      stackNames: ['A', 'D'],
+      stream: buffer,
+      fail: true,
+    });
+
+    // THEN
+    expect(exitCode).toBe(1);
+  });
+
+  test('throws an error during diffs on stack with error metadata', async () => {
+    const buffer = new StringWritable();
+
+    // WHEN
+    await expect(() => toolkit.diff({
+      stackNames: ['C'],
+      stream: buffer,
+    })).rejects.toThrow(/Found errors/);
+  });
+});
+
+describe('nested stacks', () => {
+  beforeEach(() => {
+    cloudExecutable = new MockCloudExecutable({
+      directory: './',
+      stacks: [{
+        stackName: 'A',
+        assets: [
           {
-            type: cxschema.ArtifactMetadataEntryType.ERROR,
-            data: 'this is an error',
+            path: 'diff.nested-stack-A.json',
+            s3BucketParameter: 'bucket-param',
+            packaging: 'file',
+            s3KeyParameter: 'key-param',
+            artifactHashParameter: 'hash-param',
+            id: 'nested-template-A',
+            sourceHash: 'templateSourceHash',
           },
         ],
-      },
-    },
-    {
-      stackName: 'D',
-      template: { resource: 'D' },
-    }],
+        template: {
+          Resources:
+          {
+            NestedStackA: {
+              Type: 'AWS::CloudFormation::Stack',
+            },
+          },
+        },
+      }],
+    });
+
+    cloudFormation = instanceMockFrom(CloudFormationDeployments);
+
+    toolkit = new CdkToolkit({
+      cloudExecutable,
+      cloudFormation,
+      configuration: cloudExecutable.configuration,
+      sdkProvider: cloudExecutable.sdkProvider,
+    });
+
+    cloudFormation.readCurrentTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact) => {
+      stackArtifact;
+
+      return Promise.resolve({
+        Resources: {
+          NestedStackA: {
+            Type: 'AWS::CloudFormation::Stack',
+          },
+        },
+      });
+    });
+    cloudFormation.deployStack.mockImplementation((options) => Promise.resolve({
+      noOp: true,
+      outputs: {},
+      stackArn: '',
+      stackArtifact: options.stack,
+    }));
   });
 
-  cloudFormation = instanceMockFrom(CloudFormationDeployments);
+  test('diff can diff a nested stack', async () => {
+    // GIVEN
+    const buffer = new StringWritable();
 
-  toolkit = new CdkToolkit({
-    cloudExecutable,
-    cloudFormation,
-    configuration: cloudExecutable.configuration,
-    sdkProvider: cloudExecutable.sdkProvider,
+    // WHEN
+    const exitCode = await toolkit.diff({
+      stackNames: ['A'],
+      stream: buffer,
+    });
+
+    // THEN
+    /*eslint-disable*/
+    const plainTextOutput = buffer.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '');
+    console.log(plainTextOutput)
+    expect(plainTextOutput).toContain('Stack A');
+    expect(plainTextOutput).toContain('Stack B');
+
+    expect(exitCode).toBe(0);
   });
-
-  // Default implementations
-  cloudFormation.readCurrentTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact) => {
-    if (stackArtifact.stackName === 'D') {
-      return Promise.resolve({ resource: 'D' });
-    }
-    return Promise.resolve({});
-  });
-  cloudFormation.deployStack.mockImplementation((options) => Promise.resolve({
-    noOp: true,
-    outputs: {},
-    stackArn: '',
-    stackArtifact: options.stack,
-  }));
-});
-
-test('diff can diff multiple stacks', async () => {
-  // GIVEN
-  const buffer = new StringWritable();
-
-  // WHEN
-  const exitCode = await toolkit.diff({
-    stackNames: ['B'],
-    stream: buffer,
-  });
-
-  // THEN
-  const plainTextOutput = buffer.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '');
-  expect(plainTextOutput).toContain('Stack A');
-  expect(plainTextOutput).toContain('Stack B');
-
-  expect(exitCode).toBe(0);
-});
-
-test('exits with 1 with diffs and fail set to true', async () => {
-  // GIVEN
-  const buffer = new StringWritable();
-
-  // WHEN
-  const exitCode = await toolkit.diff({
-    stackNames: ['A'],
-    stream: buffer,
-    fail: true,
-  });
-
-  // THEN
-  expect(exitCode).toBe(1);
-});
-
-test('throws an error if no valid stack names given', async () => {
-  const buffer = new StringWritable();
-
-  // WHEN
-  await expect(() => toolkit.diff({
-    stackNames: ['X', 'Y', 'Z'],
-    stream: buffer,
-  })).rejects.toThrow('No stacks match the name(s) X,Y,Z');
-});
-
-test('exits with 1 with diff in first stack, but not in second stack and fail set to true', async () => {
-  // GIVEN
-  const buffer = new StringWritable();
-
-  // WHEN
-  const exitCode = await toolkit.diff({
-    stackNames: ['A', 'D'],
-    stream: buffer,
-    fail: true,
-  });
-
-  // THEN
-  expect(exitCode).toBe(1);
-});
-
-test('throws an error during diffs on stack with error metadata', async () => {
-  const buffer = new StringWritable();
-
-  // WHEN
-  await expect(() => toolkit.diff({
-    stackNames: ['C'],
-    stream: buffer,
-  })).rejects.toThrow(/Found errors/);
 });
 
 class StringWritable extends Writable {

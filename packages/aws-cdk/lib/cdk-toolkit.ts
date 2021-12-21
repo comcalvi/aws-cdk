@@ -81,34 +81,12 @@ export class CdkToolkit {
   }
 
   public async diff(options: DiffOptions): Promise<number> {
-    /*eslint-disable*/
-    //console.log(options)
-    //console.log(options.stackNames)
-    //console.log('ahhhhhhhhhhhhhhhh')
     const stacks = await this.selectStacksForDiff(options.stackNames, options.exclusively);
-    console.log('--------------------------------------------------------')
-    //console.log(stacks.firstStack.template)
-    //console.log('--------------------------------------------------------')
-    //const nestedStackMetadata = stacks.firstStack.manifest.metadata?.['/DiffNestedStacksStack'][0]
-    //console.log(stacks.firstStack.manifest.metadata?.['/DiffNestedStacksStack'])
-    //console.log(stacks.firstStack.manifest)
-    //console.log(nestedStackMetadata?.type)
-    //const nestedStackTemplatePath = stacks.firstStack.manifest.metadata?.['/DiffNestedStacksStack'][0].data['path'];
-    //console.log(nestedStackTemplatePath)
-    //console.log(stacks.firstStack.assets[0]) 
-    //console.log(stacks.assembly.assembly.stacks[0].assets[0]) // these two ^(line above) both have what we need
-    //console.log(stacks.firstStack.assets[0].path) 
-    //console.log(stacks.assembly.directory)
-    //console.log(stacks.assembly.directory + '/' + stacks.firstStack.assets[0].path)
     const nestedTemplatePath = stacks.assembly.directory + '/' + stacks.firstStack.assets[0].path;
     const nestedTemplateAssetPath = stacks.firstStack.assets[0].path;
-    //console.log(path.slice(0, path.indexOf('.nested')))
-    //const NestedStackLogicalId = path.slice(0, path.indexOf('.nested'));
     let NestedStackLogicalId = '';
 
     for (const resourceName in stacks.firstStack.template.Resources) {
-      //console.log(resourceName)
-      //console.log(stacks.firstStack.template.Resources[resourceName].Metadata)
       if (stacks.firstStack.template.Resources[resourceName].Metadata['aws:asset:path'] === nestedTemplateAssetPath) {
         NestedStackLogicalId = resourceName;
         break;
@@ -116,23 +94,15 @@ export class CdkToolkit {
     }
 
     const nestedStackTemplate = JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8'));
-    //console.log(nestedStackTemplate)
-    //console.log('--------------------------------------------------------')
-    //console.log(stacks.firstStack.template)
-    //console.log('--------------------------?-----------------------------')
 
-    //nestedStackTemplate.NewResources = nestedStackTemplate.Resources;
-    //delete nestedStackTemplate.Resources;
-    // TODO: don't know when diff happens
+    // TODO: this function (getUpdatedNestedStackData) is supposed to replace the above code brick, but it doesn't work when used instead of said brick. Need to fix.
+    /*const nestedStackData =*/ this.getUpdatedNestedStackData(stacks.firstStack, stacks.firstStack.assets[0].path);
+    //const nestedStackTemplate = nestedStackData.nestedStackTemplate;
+    //const NestedStackLogicalId = nestedStackTemplate.nestedStackLogicalId;
+
     stacks.firstStack.template.Resources[NestedStackLogicalId] = nestedStackTemplate.Resources;
     stacks.firstStack.template.Resources[NestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
 
-    //console.log(stacks.firstStack.template)
-    //console.log('--------------------------?-----------------------------')
-    //stacks.firstStack.assembly.manifest.
-    //const nestedStackNameInCfn = stacks.firstStack.stackName + '-' + NestedStackLogicalId;
-    //console.log(nestedStackNameInCfn)
-    //console.log(stacks.firstStack.assets)
     const sdkProvider = this.props.sdkProvider;
     const resolvedEnv = await sdkProvider.resolveEnvironment(stacks.firstStack.environment);
     const sdk = await sdkProvider.forEnvironment(resolvedEnv, Mode.ForWriting);
@@ -146,17 +116,14 @@ export class CdkToolkit {
       partition: (await sdk.currentAccount()).partition,
       urlSuffix: sdk.getEndpointSuffix,
       listStackResources,
-    })
-    console.log('--------------------------?-----------------------------')
+    });
     const nestedStackArn = await evaluateCfnTemplate.findPhysicalNameFor(NestedStackLogicalId);
-    console.log(nestedStackArn)
     // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute, so we have to do it this way
     const nestedStackNameInCfn = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
     if (!nestedStackNameInCfn) {
       // TODO: if no nested name, then no template diff, I think?
       return 1;
     }
-    console.log('--------------------------?-----------------------------')
 
     const strict = !!options.strict;
     const contextLines = options.contextLines || 3;
@@ -183,17 +150,8 @@ export class CdkToolkit {
         const currentTemplate = await this.props.cloudFormation.readCurrentTemplate(stack);
         const currentNestedTemplate = await this.props.cloudFormation.readCurrentNestedTemplate(stack, nestedStackNameInCfn);
 
-        //currentNestedTemplate.NewResources = currentNestedTemplate.Resources;
-        //delete currentNestedTemplate.Resources;
-        currentTemplate.Resources[NestedStackLogicalId] = currentNestedTemplate['Resources'];
+        currentTemplate.Resources[NestedStackLogicalId] = currentNestedTemplate.Resources;
         currentTemplate.Resources[NestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
-
-        console.log('==================================================')
-        console.log(NestedStackLogicalId)
-        console.log(currentTemplate.Resources.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3.Type)
-        console.log('==================================================')
-        console.log(stack.template.Resources.TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3.Type)
-        console.log('==================================================')
 
         diffs += options.securityOnly
           ? numberFromBool(printSecurityDiff(currentTemplate, stack, RequireApproval.Broadening))
@@ -635,6 +593,24 @@ export class CdkToolkit {
     return stacks;
   }
 
+  private getUpdatedNestedStackData(parentStack: cxapi.CloudFormationStackArtifact, nestedTemplateAssetPath: string): nestedStackData {
+    //const nestedTemplateAssetPath = stacks.firstStack.assets[0].path;
+    const nestedTemplatePath = parentStack.assembly.directory + '/' + nestedTemplateAssetPath;
+    let nestedStackLogicalId = '';
+
+    for (const resourceName in parentStack.template.Resources) {
+      if (parentStack.template.Resources[resourceName].Metadata['aws:asset:path'] === nestedTemplateAssetPath) {
+        nestedStackLogicalId = resourceName;
+        break;
+      }
+    }
+
+    return {
+      nestedStackLogicalId,
+      nestedStackTemplate: JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8')),
+    };
+  }
+
   /**
    * Validate the stacks for errors and warnings according to the CLI's current settings
    */
@@ -947,4 +923,9 @@ function tagsForStack(stack: cxapi.CloudFormationStackArtifact): Tag[] {
 export interface Tag {
   readonly Key: string;
   readonly Value: string;
+}
+
+interface nestedStackData {
+  nestedStackLogicalId: string;
+  nestedStackTemplate: any;
 }

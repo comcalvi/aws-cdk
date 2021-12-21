@@ -22,6 +22,7 @@ export interface TestStackArtifact {
 
 export interface TestAssembly {
   stacks: TestStackArtifact[];
+  directory?: string;
   missing?: cxschema.MissingContext[];
   nestedAssemblies?: TestAssembly[];
 }

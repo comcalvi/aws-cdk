@@ -83,15 +83,10 @@ export async function execProgram(aws: SdkProvider, config: Configuration): Prom
 
   await exec(commandLine.join(' '));
 
-  console.log('outdir: ')
-  console.log(outdir)
-
   return createAssembly(outdir);
 
   function createAssembly(appDir: string) {
     try {
-      /*eslint-disable*/
-      console.log('creating new cloud assembly from exec with appDir ' + appDir)
       return new cxapi.CloudAssembly(appDir);
     } catch (error) {
       if (error.message.includes(cxschema.VERSION_MISMATCH)) {

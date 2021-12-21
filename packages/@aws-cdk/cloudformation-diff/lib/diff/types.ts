@@ -319,10 +319,6 @@ export class DifferenceCollection<V, T extends IDifference<V>> {
   constructor(private readonly diffs: { [logicalId: string]: T }) {}
 
   public get changes(): { [logicalId: string]: T } {
-    /*eslint-disable*/
-    //console.log('==========================changes==================================================')
-    //console.log(this.diffs)
-    //console.log('==========================changes==================================================')
     return onlyChanges(this.diffs);
   }
 

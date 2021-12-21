@@ -22,39 +22,16 @@ export function printStackDiff(
   stream?: cfnDiff.FormatStream): number {
 
   const diff = cfnDiff.diffTemplate(oldTemplate, newTemplate.template);
-  /*eslint-disable*/
-  console.log('-------------diff--------------')
-
-  //console.log(diff.resources.get('TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3').oldValue)
-  //console.log(diff.resources.get('TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3').newValue)
-  //console.log(diff.isEmpty)
-  console.log(diff.resources)
-  console.log('diff.resources.changes')
-  console.log(diff.resources.changes)
-  console.log('-------------diff--------------')
 
   // filter out 'AWS::CDK::Metadata' resources from the template
   if (diff.resources && !strict) {
-    //console.log('baaaa')
     diff.resources = diff.resources.filter(change => {
-      console.log('ahhh')
-      console.log(change)
-      console.log('ahhh')
       if (!change) { return true; }
       if (change.newResourceType === 'AWS::CDK::Metadata') { return false; }
       if (change.oldResourceType === 'AWS::CDK::Metadata') { return false; }
       return true;
     });
   }
-  console.log('-------------diff--------------')
-  console.log(diff.resources)
-  console.log('diff.resources.changes')
-  console.log(diff.resources.changes)
-
-  //console.log(diff.resources.get('TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3').oldValue)
-  //console.log(diff.resources.get('TheNestedStackNestedStackTheNestedStackNestedStackResource4BE66FC3').newValue)
-  //console.log(diff.isEmpty)
-  console.log('-------------diff--------------')
 
   if (!diff.isEmpty) {
     cfnDiff.formatDifferences(stream || process.stderr, diff, buildLogicalToPathMap(newTemplate), context);
