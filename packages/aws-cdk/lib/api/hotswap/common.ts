@@ -5,6 +5,7 @@ import { CfnEvaluationException, EvaluateCloudFormationTemplate } from './evalua
 
 export interface ListStackResources {
   listStackResources(): Promise<CloudFormation.StackResourceSummary[]>;
+  listNestedStackResources?(stackName: string): Promise<CloudFormation.StackResourceSummary[]>;
 }
 
 /**

@@ -158,6 +158,7 @@ async function applyHotswappableChange(sdk: ISDK, hotswapOperation: HotswapOpera
 
 export class LazyListStackResources implements ListStackResources {
   private stackResources: CloudFormation.StackResourceSummary[] | undefined;
+  private nestedStackResources: CloudFormation.StackResourceSummary[] | undefined;
 
   constructor(private readonly sdk: ISDK, private readonly stackName: string) {
   }
@@ -169,12 +170,33 @@ export class LazyListStackResources implements ListStackResources {
     return this.stackResources;
   }
 
+  async listNestedStackResources(parentStackName: string): Promise<CloudFormation.StackResourceSummary[]> {
+    if (this.nestedStackResources === undefined) {
+      this.nestedStackResources = await this.getNestedStackResources(parentStackName);
+    }
+    return this.nestedStackResources;
+  }
+
   private async getStackResources(): Promise<CloudFormation.StackResourceSummary[]> {
     const ret = new Array<CloudFormation.StackResourceSummary>();
     let nextToken: string | undefined;
     do {
       const stackResourcesResponse = await this.sdk.cloudFormation().listStackResources({
         StackName: this.stackName,
+        NextToken: nextToken,
+      }).promise();
+      ret.push(...(stackResourcesResponse.StackResourceSummaries ?? []));
+      nextToken = stackResourcesResponse.NextToken;
+    } while (nextToken);
+    return ret;
+  }
+
+  private async getNestedStackResources(parentStackName: string): Promise<CloudFormation.StackResourceSummary[]> {
+    const ret = new Array<CloudFormation.StackResourceSummary>();
+    let nextToken: string | undefined;
+    do {
+      const stackResourcesResponse = await this.sdk.cloudFormation().listStackResources({
+        StackName: parentStackName,
         NextToken: nextToken,
       }).promise();
       ret.push(...(stackResourcesResponse.StackResourceSummaries ?? []));

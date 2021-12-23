@@ -50,6 +50,15 @@ export class EvaluateCloudFormationTemplate {
     return stackResources.find(sr => sr.LogicalResourceId === logicalId)?.PhysicalResourceId;
   }
 
+  public async findPhysicalNameForNestedStack(logicalId: string, parentStackName: string): Promise<string | undefined> {
+    if (this.stackResources.listNestedStackResources) {
+      const stackResources = await this.stackResources.listNestedStackResources(parentStackName);
+      return stackResources.find(sr => sr.LogicalResourceId === logicalId)?.PhysicalResourceId;
+    }
+
+    return undefined;
+  }
+
   public async findLogicalIdForPhysicalName(physicalName: string): Promise<string | undefined> {
     const stackResources = await this.stackResources.listStackResources();
     return stackResources.find(sr => sr.PhysicalResourceId === physicalName)?.LogicalResourceId;
