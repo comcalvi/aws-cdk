@@ -84,51 +84,6 @@ export class CdkToolkit {
     const stacks = await this.selectStacksForDiff(options.stackNames, options.exclusively);
 
     /*eslint-disable*/
-    /*const nestedTemplatePath = stacks.assembly.directory + '/' + stacks.firstStack.assets[0].path;
-    const nestedTemplateAssetPath = stacks.firstStack.assets[0].path;
-    let NestedStackLogicalId = '';
-
-    for (const resourceName in stacks.firstStack.template.Resources) {
-      if (stacks.firstStack.template.Resources[resourceName].Metadata['aws:asset:path'] === nestedTemplateAssetPath) {
-        NestedStackLogicalId = resourceName;
-        break;
-      }
-    }
-
-    const nestedStackTemplate = JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8'));*/
-
-    /*const evaluateCfnTemplate = await this.setUpEvaluateCfnTemplate(stacks.firstStack);
-    const nestedStackData = await this.getUpdatedNestedStackData(stacks.firstStack, stacks.firstStack.assets[0].path, evaluateCfnTemplate);
-    const nestedStackTemplate = nestedStackData.nestedStackTemplate;
-    const NestedStackLogicalId = nestedStackData.nestedStackLogicalId;
-    const nestedStackNameInCfn = nestedStackData.nestedStackNameInCfn;
-
-    stacks.firstStack.template.Resources[NestedStackLogicalId] = nestedStackTemplate.Resources;
-    stacks.firstStack.template.Resources[NestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';*/
-
-    /*const sdkProvider = this.props.sdkProvider;
-    const resolvedEnv = await sdkProvider.resolveEnvironment(stacks.firstStack.environment);
-    const sdk = await sdkProvider.forEnvironment(resolvedEnv, Mode.ForWriting);
-    const listStackResources = new LazyListStackResources(sdk, stacks.firstStack.stackName);
-
-    const evaluateCfnTemplate = new EvaluateCloudFormationTemplate({
-      stackArtifact: stacks.firstStack,
-      parameters: {},
-      account: resolvedEnv.account,
-      region: resolvedEnv.region,
-      partition: (await sdk.currentAccount()).partition,
-      urlSuffix: sdk.getEndpointSuffix,
-      listStackResources,
-    });*/
-    /*const nestedStackArn = await evaluateCfnTemplate.findPhysicalNameFor(NestedStackLogicalId);
-    // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute, so we have to do it this way
-    const nestedStackNameInCfn = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
-    if (!nestedStackNameInCfn) {
-      // TODO: if no nested name, then no template diff, I think?
-      return 1;
-    }
-    */
-
     const strict = !!options.strict;
     const contextLines = options.contextLines || 3;
     const stream = options.stream || process.stderr;
@@ -156,22 +111,6 @@ export class CdkToolkit {
         if (this.stackHasNestedStacks(stack)) {
           await this.addNestedStacksToParentTemplate(stack, currentTemplate);
         }
-
-        /*
-        const evaluateCfnTemplate = await this.setUpEvaluateCfnTemplate(stack);
-        const nestedStackData = await this.getUpdatedNestedStackData(stack, stack.assets[0].path, evaluateCfnTemplate);
-        const nestedStackTemplate = nestedStackData.nestedStackTemplate;
-        const NestedStackLogicalId = nestedStackData.nestedStackLogicalId;
-        const nestedStackNameInCfn = nestedStackData.nestedStackNameInCfn;
-
-        const currentNestedTemplate = await this.props.cloudFormation.readCurrentNestedTemplate(stack, nestedStackNameInCfn);
-
-        stack.template.Resources[NestedStackLogicalId] = nestedStackTemplate.Resources;
-        stack.template.Resources[NestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
-
-        currentTemplate.Resources[NestedStackLogicalId] = currentNestedTemplate.Resources;
-        currentTemplate.Resources[NestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
-        */
 
         diffs += options.securityOnly
           ? numberFromBool(printSecurityDiff(currentTemplate, stack, RequireApproval.Broadening))
@@ -623,8 +562,8 @@ export class CdkToolkit {
     });
   }
 
-  private async getUpdatedNestedStackData(rootStack: cxapi.CloudFormationStackArtifact, nestedTemplateAssetPath: string, evaluateCfnTemplate: EvaluateCloudFormationTemplate): Promise<nestedStackData | nestedStackHeritage> {
-    let nestedStackLogicalId = '';
+  private async getUpdatedNestedStackData(rootStack: cxapi.CloudFormationStackArtifact, nestedTemplateAssetPath: string, evaluateCfnTemplate: EvaluateCloudFormationTemplate): Promise<childStackData | nestedStackHeritage> {
+    let childStackLogicalId = '';
     for (const resourceName in rootStack.template.Resources) {
       if (rootStack.template.Resources[resourceName].Resources !== undefined) {
         // this nested stack has already been filled for the diff, and should not be processed again. There may be other nested stacks, so continue
@@ -632,147 +571,86 @@ export class CdkToolkit {
       }
 
       if (rootStack.template.Resources[resourceName].Metadata['aws:asset:path'] === nestedTemplateAssetPath) {
-        nestedStackLogicalId = resourceName;
+        childStackLogicalId = resourceName;
         break;
       }
     }
 
-    if (!nestedStackLogicalId) {
+    if (!childStackLogicalId) {
       // this means that this stack is a grand child stack. The grandchild's logical ID doesn't appear in the grandparent, only in the parent.
       // it does NOT appear in the grandparent's metadata.
       return nestedStackHeritage.GRANDCHILD;
     }
 
     const nestedTemplatePath = rootStack.assembly.directory + '/' + nestedTemplateAssetPath; //TODO: use path.join() here instead?
-    const nestedStackArn = await evaluateCfnTemplate.findPhysicalNameFor(nestedStackLogicalId);
+    const nestedStackArn = await evaluateCfnTemplate.findPhysicalNameFor(childStackLogicalId);
     // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute, so we have to do it this way
-    const nestedStackNameInCfn = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
-    if (!nestedStackNameInCfn) {
+    const childStackNameInCfn = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
+    if (!childStackNameInCfn) {
       // TODO: if no nested name, then no template diff, I think?
       // TODO: add test to check this error message
       // TODO: if no nested name, has anything been deployed to cfn yet? prolly not. Seems like that shouldn't be an error, should imply that the current template = {}
       //return 1;
-      throw new Error(`stack with logicalId ${nestedStackLogicalId} was not found in CloudFormation!`);
+      throw new Error(`stack with logicalId ${childStackLogicalId} was not found in CloudFormation!`);
     }
 
-    nestedStackNameInCfn
-    const nestedStackTemplate = JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8'));
-    const children:{[key: string]: any} = {};
-    nestedStackNameInCfn
+    const childStackTemplate = JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8'));
+    const grandChildren:{[key: string]: grandChildStackData} = {};
 
-    for (const resourceName in nestedStackTemplate.Resources) {
-      nestedStackNameInCfn
+    for (const resourceName in childStackTemplate.Resources) {
       // there's no way this case happens here
       //if (nestedStackTemplate.Resources[resourceName].Resources !== undefined) {
         // this nested stack has already been filled for the diff, and should not be processed again. There may be other nested stacks, so continue
        // continue;
+
       //}
 
-      if (nestedStackTemplate.Resources[resourceName].Metadata['aws:asset:path']) {
-      nestedStackNameInCfn
-        if (nestedStackTemplate.Resources[resourceName].Metadata['aws:asset:path'].includes('.nested.template.json')) {
-          const grandChildStackArn = await evaluateCfnTemplate.findPhysicalNameForNestedStack(resourceName, nestedStackNameInCfn); // need the parent's arn, from CFN. we already got it earlier (nestedStackNameInCfn), use it here;
-                                                                                              // need to call ListStackResources() with the parent's name somehow
-          console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-          console.log(resourceName)
-          console.log(nestedStackArn)
-          console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+      const grandChildPath = childStackTemplate.Resources[resourceName].Metadata['aws:asset:path'];
+      if (grandChildPath) {
+        if (grandChildPath.includes('.nested.template.json')) {
+          const grandChildStackArn = await evaluateCfnTemplate.findPhysicalNameForNestedStack(resourceName, childStackNameInCfn);
           const grandChildNameInCfn = grandChildStackArn?.slice(grandChildStackArn.indexOf('/') + 1, grandChildStackArn.lastIndexOf('/'));
           if (!grandChildNameInCfn) {
             //idk
+            throw new Error;
           }
 
-          children[nestedStackTemplate.Resources[resourceName].Metadata['aws:asset:path']] = {};
-          children[nestedStackTemplate.Resources[resourceName].Metadata['aws:asset:path']].logicaId = resourceName;
-          children[nestedStackTemplate.Resources[resourceName].Metadata['aws:asset:path']].nameInCfn = grandChildNameInCfn;
+          grandChildren[grandChildPath] = {
+            logicaId: resourceName,
+            nameInCfn: grandChildNameInCfn,
+          };
         }
       }
     }
 
     return {
-      nestedStackLogicalId,
-      nestedStackTemplate,
-      nestedStackNameInCfn,
-      children,
+      childStackLogicalId,
+      childStackTemplate,
+      childStackNameInCfn,
+      grandChildren,
     };
   }
-
-  /*private async getUpdatedGrandChildData(rootStack: cxapi.CloudFormationStackArtifact, nestedTemplateAssetPath: string, evaluateCfnTemplate: EvaluateCloudFormationTemplate): Promise<nestedStackData | nestedStackHeritage> {
-    let nestedStackLogicalId = '';
-    for (const resourceName in rootStack.template.Resources) {
-      if (rootStack.template.Resources[resourceName].Resources !== undefined) {
-        // this nested stack has already been filled for the diff, and should not be processed again. There may be other nested stacks, so continue
-        continue;
-      }
-
-      if (rootStack.template.Resources[resourceName].Metadata['aws:asset:path'] === nestedTemplateAssetPath) {
-        nestedStackLogicalId = resourceName;
-        break;
-      }
-    }
-
-    if (!nestedStackLogicalId) {
-      // this means that this stack is a grand child stack. The grandchild's logical ID doesn't appear in the grandparent, only in the parent.
-      // it does NOT appear in the grandparent's metadata.
-      return nestedStackHeritage.GRANDCHILD;
-    }
-
-    const nestedTemplatePath = rootStack.assembly.directory + '/' + nestedTemplateAssetPath; //TODO: use path.join() here instead?
-    const nestedStackArn = await evaluateCfnTemplate.findPhysicalNameFor(nestedStackLogicalId);
-    // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute, so we have to do it this way
-    const nestedStackNameInCfn = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
-    if (!nestedStackNameInCfn) {
-      // TODO: if no nested name, then no template diff, I think?
-      // TODO: add test to check this error message
-      // TODO: if no nested name, has anything been deployed to cfn yet? prolly not. Seems like that shouldn't be an error, should imply that the current template = {}
-      //return 1;
-      throw new Error(`stack with logicalId ${nestedStackLogicalId} was not found in CloudFormation!`);
-    }
-
-    const nestedStackTemplate = JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8'));
-    const children = [];
-
-    for (const resourceName in nestedStackTemplate.Resources) {
-      // there's no way this case happens here
-      //if (nestedStackTemplate.Resources[resourceName].Resources !== undefined) {
-        // this nested stack has already been filled for the diff, and should not be processed again. There may be other nested stacks, so continue
-       // continue;
-      //}
-
-      if (nestedStackTemplate.Resources[resourceName].Metadata['aws:asset:path'].includes('.nested.template.json')) {
-        children.push(resourceName);
-      }
-    }
-
-    return {
-      nestedStackLogicalId,
-      nestedStackTemplate,
-      nestedStackNameInCfn,
-      children,
-    };
-  }
-  */
 
   // TODO: rename this to be addNestedStackTemplatesToParentTemplate()
   private async addNestedStacksToParentTemplate(stack: cxapi.CloudFormationStackArtifact, currentTemplate: any) {
     const evaluateCfnTemplate = await this.setUpEvaluateCfnTemplate(stack);
-    const grandChildList = [];
-    const grandChildParentMap:{[key: string]: any} = {};
+    const grandChildList: string[] = [];
+    const grandChildParentMap:{[key: string]: grandChildParentMapEntry} = {};
       console.log('---------------------')
       console.log(stack.assets)
       console.log('---------------------')
     for (const asset of stack.assets) {
-      const nestedStackData = await this.getUpdatedNestedStackData(stack, asset.path, evaluateCfnTemplate);
-      if (nestedStackData === nestedStackHeritage.GRANDCHILD) {
+      const childStackData = await this.getUpdatedNestedStackData(stack, asset.path, evaluateCfnTemplate);
+      if (childStackData === nestedStackHeritage.GRANDCHILD) {
         // add this grandchild to the grand child list to be processed later. We can't process them right now because their parents (the root's direct chilldren)
         // may not have had their assets processed yet
         grandChildList.push(asset.path)
       } else {
         // if any of these children are also parents, we need to store all of their immediate children somehow.
         // We need to essentially be able to call findMyParent(grandChildAssetPath) and have it return its parent's template
-        const nestedStackTemplate = nestedStackData.nestedStackTemplate;
-        const NestedStackLogicalId = nestedStackData.nestedStackLogicalId;
-        const nestedStackNameInCfn = nestedStackData.nestedStackNameInCfn;
+        const nestedStackTemplate = childStackData.childStackTemplate;
+        const NestedStackLogicalId = childStackData.childStackLogicalId;
+        const nestedStackNameInCfn = childStackData.childStackNameInCfn;
 
         const currentNestedTemplate = await this.props.cloudFormation.readCurrentNestedTemplate(stack, nestedStackNameInCfn);
 
@@ -783,36 +661,71 @@ export class CdkToolkit {
         currentTemplate.Resources[NestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
 
         // store the grandchildren for another pass
-        const nestedStackChildren = nestedStackData.children;
+        const grandChildren = childStackData.grandChildren;
         console.log('"""""""""""""""""""""""""""""""""""""')
-        console.log(nestedStackChildren)
+        console.log(grandChildren)
         console.log('"""""""""""""""""""""""""""""""""""""')
-        if (nestedStackChildren) {
-          for (const nestedStackChild in nestedStackChildren) {
-            // need interface here to fix this
-            grandChildParentMap[nestedStackChild] = {};
-            grandChildParentMap[nestedStackChild].updatedParentTemplate = stack.template.Resources[NestedStackLogicalId];
-            grandChildParentMap[nestedStackChild].currentParentTemplate = currentTemplate.Resources[NestedStackLogicalId];
-            grandChildParentMap[nestedStackChild].logicalId = nestedStackChildren[nestedStackChild].logicaId;
-            grandChildParentMap[nestedStackChild].nameInCfn = nestedStackChildren[nestedStackChild].nameInCfn;
+        if (grandChildren) {
+          for (const nestedStackChild in grandChildren) {
+            grandChildParentMap[nestedStackChild] = {
+              updatedParentTemplate: stack.template.Resources[NestedStackLogicalId],
+              currentParentTemplate: currentTemplate.Resources[NestedStackLogicalId],
+              logicalId: grandChildren[nestedStackChild].logicaId,
+              nameInCfn: grandChildren[nestedStackChild].nameInCfn,
+            };
           }
         }
       }
     }
 
-    for (const grandChild of grandChildList) {
-      console.log('====================================================================================')
-      const updatedParentTemplate = grandChildParentMap[grandChild].updatedParentTemplate;
-      const currentParentTemplate = grandChildParentMap[grandChild].currentParentTemplate;
-      const grandChildNameInCfn = grandChildParentMap[grandChild].nameInCfn;
+    // some grandchildren will be children of other grandchildren. This means that their templates will not be loaded yet.
+    // We ignore them, and remove the ones we can handle, until there are none left
+    console.log(Object.keys(grandChildParentMap));
+    console.log(grandChildList);
+    //while (grandChildList.length > 0) {
+      for (const grandChild of grandChildList) {
+        //console.log('====================================================================================')
+        if (grandChild in grandChildParentMap) {
+          const updatedParentTemplate = grandChildParentMap[grandChild].updatedParentTemplate;
+          const currentParentTemplate = grandChildParentMap[grandChild].currentParentTemplate;
+          const grandChildNameInCfn = grandChildParentMap[grandChild].nameInCfn;
 
-      const currentNestedTemplate = await this.props.cloudFormation.readCurrentNestedTemplate(stack, grandChildNameInCfn);
+          const currentNestedTemplate = await this.props.cloudFormation.readCurrentNestedTemplate(stack, grandChildNameInCfn);
+          const updatedNestedTemplate = JSON.parse(fs.readFileSync(stack.assembly.directory + '/'+ grandChild, 'utf-8'));
 
-      updatedParentTemplate.Resources[grandChildParentMap[grandChild].logicalId] = JSON.parse(fs.readFileSync(stack.assembly.directory + '/'+ grandChild, 'utf-8'));
-      currentParentTemplate.Resources[grandChildParentMap[grandChild].logicalId] = currentNestedTemplate;
-      console.log('====================================================================================')
+          updatedParentTemplate.Resources[grandChildParentMap[grandChild].logicalId] = updatedNestedTemplate;
+          currentParentTemplate.Resources[grandChildParentMap[grandChild].logicalId] = currentNestedTemplate;
 
-    }
+          // TODO: for some reason the ultra nesteed grand grand child stack isn't properly loaded here.
+          for (const resourceName in updatedNestedTemplate.Resources) {
+            if (updatedNestedTemplate.Resources[resourceName].Metadata['aws:asset:path']) {
+              if ((updatedNestedTemplate.Resources[resourceName].Metadata['aws:asset:path'] as string).includes('.nested.template.json')) {
+                const grandGrandChildNameInCfn = await evaluateCfnTemplate.findPhysicalNameForNestedStack(resourceName, grandChildNameInCfn);
+                if (!grandGrandChildNameInCfn) {
+                  // ?????
+                  break;
+                }
+
+                grandChildParentMap[updatedNestedTemplate.Resources[resourceName].Metadata['aws:asset:path']] = {
+                  updatedParentTemplate: updatedNestedTemplate,
+                  currentParentTemplate: currentNestedTemplate,
+                  logicalId: resourceName,
+                  nameInCfn: grandGrandChildNameInCfn,
+                };
+              }
+            }
+          }
+
+
+          grandChildList.splice(grandChildList.indexOf(grandChild), 1);
+          console.log('delet')
+        }
+      }
+
+    console.log('====================================================================================')
+    console.log((grandChildParentMap));
+    console.log(grandChildList);
+    //}
   }
 
   /**
@@ -1129,11 +1042,24 @@ export interface Tag {
   readonly Value: string;
 }
 
-interface nestedStackData {
-  nestedStackLogicalId: string;
-  nestedStackTemplate: any;
-  nestedStackNameInCfn: string;
-  children?: {[key: string]: any}
+interface childStackData {
+  childStackLogicalId: string;
+  childStackTemplate: any;
+  childStackNameInCfn: string;
+  grandChildren?: {[key: string]: grandChildStackData}
+}
+
+interface grandChildStackData {
+  logicaId: string,
+  nameInCfn: string,
+}
+
+
+interface grandChildParentMapEntry {
+  updatedParentTemplate: any,
+  currentParentTemplate: any,
+  logicalId: string,
+  nameInCfn: string,
 }
 
 enum nestedStackHeritage {
