@@ -1,15 +1,19 @@
 import { Writable } from 'stream';
 import { NodeStringDecoder, StringDecoder } from 'string_decoder';
-import * as cxschema from '@aws-cdk/cloud-assembly-schema';
+//import * as cxschema from '@aws-cdk/cloud-assembly-schema';
 import { CloudFormationStackArtifact } from '@aws-cdk/cx-api';
+//import { CloudFormation } from 'aws-sdk';
 import { CloudFormationDeployments } from '../lib/api/cloudformation-deployments';
 import { CdkToolkit } from '../lib/cdk-toolkit';
 import { instanceMockFrom, MockCloudExecutable } from './util';
+
+import * as setup from '../test/api/hotswap/hotswap-test-setup';
 
 let cloudExecutable: MockCloudExecutable;
 let cloudFormation: jest.Mocked<CloudFormationDeployments>;
 let toolkit: CdkToolkit;
 
+/*
 describe('non-nested stacks', () => {
   beforeEach(() => {
     cloudExecutable = new MockCloudExecutable({
@@ -133,16 +137,56 @@ describe('non-nested stacks', () => {
     })).rejects.toThrow(/Found errors/);
   });
 });
+*/
 
 describe('nested stacks', () => {
   beforeEach(() => {
     cloudExecutable = new MockCloudExecutable({
-      directory: './',
       stacks: [{
-        stackName: 'A',
+        stackName: 'Parent',
         assets: [
           {
-            path: 'diff.nested-stack-A.json',
+            path: 'diff-A.nested.template.json',
+            s3BucketParameter: 'bucket-param',
+            packaging: 'file',
+            s3KeyParameter: 'key-param',
+            artifactHashParameter: 'hash-param',
+            id: 'nested-template-A',
+            sourceHash: 'templateSourceHash',
+          },
+          {
+            path: 'diff-B.nested.template.json',
+            s3BucketParameter: 'bucket-param',
+            packaging: 'file',
+            s3KeyParameter: 'key-param',
+            artifactHashParameter: 'hash-param',
+            id: 'nested-template-B',
+            sourceHash: 'templateSourceHash',
+          },
+        ],
+        template: {
+          Resources:
+          {
+            NestedStackA: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: {
+                'aws:asset:path': 'diff-A.nested.template.json',
+              },
+            },
+            NestedStackB: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: {
+                'aws:asset:path': 'diff-B.nested.template.json',
+              },
+            },
+          },
+        },
+      },
+      {
+        stackName: 'GrandParent',
+        assets: [
+          {
+            path: 'diff-A.nested.template.json',
             s3BucketParameter: 'bucket-param',
             packaging: 'file',
             s3KeyParameter: 'key-param',
@@ -154,8 +198,11 @@ describe('nested stacks', () => {
         template: {
           Resources:
           {
-            NestedStackA: {
+            ChildStack: {
               Type: 'AWS::CloudFormation::Stack',
+              Metadata: {
+                'aws:asset:path': 'diff-child.nested.template.json',
+              },
             },
           },
         },
@@ -164,20 +211,48 @@ describe('nested stacks', () => {
 
     cloudFormation = instanceMockFrom(CloudFormationDeployments);
 
+    const mockSdkProvider = setup.setupHotswapTests('Parent');
+
     toolkit = new CdkToolkit({
       cloudExecutable,
       cloudFormation,
       configuration: cloudExecutable.configuration,
-      sdkProvider: cloudExecutable.sdkProvider,
+      sdkProvider: mockSdkProvider.mockSdkProvider,
     });
 
     cloudFormation.readCurrentTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact) => {
-      stackArtifact;
+      stackArtifact.stackName;
 
       return Promise.resolve({
         Resources: {
           NestedStackA: {
             Type: 'AWS::CloudFormation::Stack',
+          },
+        },
+      });
+    });
+    cloudFormation.readCurrentNestedTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact, nestedStackName: string) => {
+      stackArtifact;
+      if (nestedStackName === 'Parent-NestedStackA') {
+        return Promise.resolve({
+          Resources: {
+            NestedResourceA: {
+              Type: 'AWS::Something',
+              Properties: {
+                Property: 'old-value',
+              },
+            },
+          },
+        });
+      }
+
+      return Promise.resolve({
+        Resources: {
+          NestedResourceB: {
+            Type: 'AWS::Something',
+            Properties: {
+              Property: 'old-value',
+            },
           },
         },
       });
@@ -190,13 +265,15 @@ describe('nested stacks', () => {
     }));
   });
 
-  test('diff can diff a nested stack', async () => {
+  test('diff can diff multiple nested stacks', async () => {
     // GIVEN
     const buffer = new StringWritable();
+    setup.pushStackResourceSummaries(setup.stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackA/abcd'));
+    setup.pushStackResourceSummaries(setup.stackSummaryOf('NestedStackB', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB/abcd'));
 
     // WHEN
     const exitCode = await toolkit.diff({
-      stackNames: ['A'],
+      stackNames: ['Parent'],
       stream: buffer,
     });
 
@@ -204,8 +281,26 @@ describe('nested stacks', () => {
     /*eslint-disable*/
     const plainTextOutput = buffer.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '');
     console.log(plainTextOutput)
-    expect(plainTextOutput).toContain('Stack A');
-    expect(plainTextOutput).toContain('Stack B');
+    expect(plainTextOutput.trim()).toEqual(`Stack Parent
+Resources
+[~] AWS::CloudFormation::Stack NestedStackA 
+ ├─ [+] Outputs
+ │   └─ {"NestedOutput":{"Value":{"Ref":"NestedResourceA"}}}
+ ├─ [+] Parameters
+ │   └─ {"NestedParam":{"Type":"Number"}}
+ └─ [~] Resources
+     └─ [~] .NestedResourceA:
+         └─ [~] .Properties:
+             └─ [~] .Property:
+                 ├─ [-] old-value
+                 └─ [+] new-value
+[~] AWS::CloudFormation::Stack NestedStackB 
+ └─ [~] Resources
+     └─ [~] .NestedResourceB:
+         └─ [~] .Properties:
+             └─ [~] .Property:
+                 ├─ [-] old-value
+                 └─ [+] new-value`);
 
     expect(exitCode).toBe(0);
   });

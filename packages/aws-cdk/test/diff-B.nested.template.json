@@ -1,9 +1,9 @@
 {
   "Resources": {
-    "NestedResourceA": {
+    "NestedResourceB": {
       "Type": "AWS::Something",
       "Properties": {
-        "Property": "value"
+        "Property": "new-value"
       }
     }
   }

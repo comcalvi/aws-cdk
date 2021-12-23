@@ -10,17 +10,23 @@ import { testStack, TestStackArtifact } from '../../util';
 import { MockSdkProvider, SyncHandlerSubsetOf } from '../../util/mock-sdk';
 import { FakeCloudformationStack } from '../fake-cloudformation-stack';
 
-const STACK_NAME = 'withouterrors';
+let STACK_NAME = 'withouterrors';
 export const STACK_ID = 'stackId';
 
 let hotswapMockSdkProvider: HotswapMockSdkProvider;
 let currentCfnStack: FakeCloudformationStack;
 const currentCfnStackResources: CloudFormation.StackResourceSummary[] = [];
 
-export function setupHotswapTests() {
+export function setupHotswapTests(stackName?: string) {
   jest.resetAllMocks();
   // clear the array
   currentCfnStackResources.splice(0);
+
+  //TODO: this is horrible
+  if (stackName) {
+    STACK_NAME = stackName;
+  }
+
   hotswapMockSdkProvider = new HotswapMockSdkProvider();
   currentCfnStack = new FakeCloudformationStack({
     stackName: STACK_NAME,

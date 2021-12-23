@@ -1,0 +1,20 @@
+{
+  "Resources": {
+    "NestedResourceA": {
+      "Type": "AWS::Something",
+      "Properties": {
+        "Property": "new-value"
+      }
+    }
+  },
+  "Parameters": {
+    "NestedParam": {
+      "Type": "Number"
+    }
+  },
+  "Outputs" : {
+    "NestedOutput" : {
+      "Value" : { "Ref" : "NestedResourceA" }
+    }
+  }
+}

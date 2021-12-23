@@ -18,11 +18,12 @@ export interface TestStackArtifact {
   properties?: Partial<cxschema.AwsCloudFormationStackProperties>;
   terminationProtection?: boolean;
   displayName?: string;
+  assembly?: TestAssembly;
 }
 
 export interface TestAssembly {
   stacks: TestStackArtifact[];
-  directory?: string;
+  //directory?: string;
   missing?: cxschema.MissingContext[];
   nestedAssemblies?: TestAssembly[];
 }
@@ -55,6 +56,16 @@ function addAttributes(assembly: TestAssembly, builder: cxapi.CloudAssemblyBuild
     const templateFile = `${stack.stackName}.template.json`;
     const template = stack.template ?? DEFAULT_FAKE_TEMPLATE;
     fs.writeFileSync(path.join(builder.outdir, templateFile), JSON.stringify(template, undefined, 2));
+
+    if (stack.assets) {
+      for (const asset of stack.assets) {
+        if (asset.path.includes('.nested.template.json')) {
+          const nestedTemplate = JSON.parse(fs.readFileSync(asset.path).toString());
+          fs.writeFileSync(path.join(builder.outdir, asset.path), JSON.stringify(nestedTemplate, undefined, 2));
+        }
+      }
+    }
+
 
     // we call patchStackTags here to simulate the tags formatter
     // that is used when building real manifest files.
