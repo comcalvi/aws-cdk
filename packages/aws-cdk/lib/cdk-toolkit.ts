@@ -715,6 +715,8 @@ export class CdkToolkit {
         // may not have had their assets processed yet
         grandChildList.push(asset.path)
       } else {
+        // if any of these children are also parents, we need to store all of their immediate children somehow.
+        // We need to essentially be able to call findMyParent(grandChildAssetPath) and have it return its parent's template
         const nestedStackTemplate = nestedStackData.nestedStackTemplate;
         const NestedStackLogicalId = nestedStackData.nestedStackLogicalId;
         const nestedStackNameInCfn = nestedStackData.nestedStackNameInCfn;
@@ -730,6 +732,7 @@ export class CdkToolkit {
     }
 
     for (const grandChild of grandChildList) {
+      // 
 
     }
   }
