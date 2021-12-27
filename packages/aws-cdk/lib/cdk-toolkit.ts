@@ -550,7 +550,6 @@ export class CdkToolkit {
     const sdk = await sdkProvider.forEnvironment(resolvedEnv, Mode.ForWriting);
     const listStackResources = new LazyListStackResources(sdk, stack.stackName);
 
-    // TODO: wrap this in Promise()?
     return new EvaluateCloudFormationTemplate({
       stackArtifact: stack,
       parameters: {},
@@ -567,15 +566,11 @@ export class CdkToolkit {
     const nestedStackArn = await evaluateCfnTemplate.findPhysicalNameForNestedStack(nestedStackLogicalId, parentStackName);
     // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute, so we have to do it this way
     const nestedStackNameInCfn = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
-    if (!nestedStackNameInCfn) {
-      // TODO: should not throw error here. This => currentTemplate = {}
-      throw new Error(`stack with logicalId ${nestedStackLogicalId} was not found in CloudFormation! (parentStack: ${parentStackName})`);
-    }
 
     return {
       updatedNestedStackTemplate: JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8')),
-      currentNestedStackTemplate: await this.props.cloudFormation.readCurrentNestedTemplate(root, nestedStackNameInCfn),
-      nestedStackNameInCfn,
+      currentNestedStackTemplate: nestedStackNameInCfn ? await this.props.cloudFormation.readCurrentNestedTemplate(root, nestedStackNameInCfn) : { Resources: {}},
+      nestedStackNameInCfn: nestedStackNameInCfn ? nestedStackNameInCfn : '',
     };
   }
 
