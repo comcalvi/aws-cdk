@@ -170,10 +170,9 @@ export class LazyListStackResources implements ListStackResources {
     return this.stackResources;
   }
 
+  // TODO: this isn't lazy and doesn't belong here (can't be lazy because each call could be for a different stack, meaning we need to reload them each time)
   async listNestedStackResources(parentStackName: string): Promise<CloudFormation.StackResourceSummary[]> {
-    if (this.nestedStackResources === undefined) {
-      this.nestedStackResources = await this.getNestedStackResources(parentStackName);
-    }
+    this.nestedStackResources = await this.getNestedStackResources(parentStackName);
     return this.nestedStackResources;
   }
 
