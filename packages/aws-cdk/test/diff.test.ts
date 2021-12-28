@@ -1,8 +1,7 @@
 import { Writable } from 'stream';
 import { NodeStringDecoder, StringDecoder } from 'string_decoder';
-//import * as cxschema from '@aws-cdk/cloud-assembly-schema';
+import * as cxschema from '@aws-cdk/cloud-assembly-schema';
 import { CloudFormationStackArtifact } from '@aws-cdk/cx-api';
-//import { CloudFormation } from 'aws-sdk';
 import { CloudFormationDeployments } from '../lib/api/cloudformation-deployments';
 import { CdkToolkit } from '../lib/cdk-toolkit';
 import { instanceMockFrom, MockCloudExecutable } from './util';
@@ -13,7 +12,6 @@ let cloudExecutable: MockCloudExecutable;
 let cloudFormation: jest.Mocked<CloudFormationDeployments>;
 let toolkit: CdkToolkit;
 
-/*
 describe('non-nested stacks', () => {
   beforeEach(() => {
     cloudExecutable = new MockCloudExecutable({
@@ -137,33 +135,12 @@ describe('non-nested stacks', () => {
     })).rejects.toThrow(/Found errors/);
   });
 });
-*/
 
 describe('nested stacks', () => {
   beforeEach(() => {
     cloudExecutable = new MockCloudExecutable({
       stacks: [{
         stackName: 'Parent',
-        /*assets: [
-          {
-            path: 'diff-A.nested.template.json',
-            s3BucketParameter: 'bucket-param',
-            packaging: 'file',
-            s3KeyParameter: 'key-param',
-            artifactHashParameter: 'hash-param',
-            id: 'nested-template-A',
-            sourceHash: 'templateSourceHash',
-          },
-          {
-            path: 'diff-B.nested.template.json',
-            s3BucketParameter: 'bucket-param',
-            packaging: 'file',
-            s3KeyParameter: 'key-param',
-            artifactHashParameter: 'hash-param',
-            id: 'nested-template-B',
-            sourceHash: 'templateSourceHash',
-          },
-        ],*/
         template: {
           Resources:
           {
@@ -181,35 +158,10 @@ describe('nested stacks', () => {
             },
           },
         },
-      },
-      /*{
-        stackName: 'GrandParent',
-        assets: [
-          {
-            path: 'diff-A.nested.template.json',
-            s3BucketParameter: 'bucket-param',
-            packaging: 'file',
-            s3KeyParameter: 'key-param',
-            artifactHashParameter: 'hash-param',
-            id: 'nested-template-A',
-            sourceHash: 'templateSourceHash',
-          },
-        ],
-        template: {
-          Resources:
-          {
-            ChildStack: {
-              Type: 'AWS::CloudFormation::Stack',
-              Metadata: {
-                'aws:asset:path': 'diff-child.nested.template.json',
-              },
-            },
-          },
-        },
-      }*/],
+      }],
     });
 
-    const mockSdkProvider = setup.setupNestedDiffTests(/*'Parent'*/);
+    const mockSdkProvider = setup.setupNestedDiffTests();
     cloudFormation = instanceMockFrom(CloudFormationDeployments);
 
     toolkit = new CdkToolkit({
@@ -327,6 +279,7 @@ describe('nested stacks', () => {
   test('diff can diff multiple nested stacks', async () => {
     // GIVEN
     const buffer = new StringWritable();
+    // NestedStackA's descendants are absent here to ensure that nested stack creation is tested with multiple levels
     setup.pushStackResourceSummaries('Parent', setup.stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackA/abcd'));
     setup.pushStackResourceSummaries('Parent', setup.stackSummaryOf('NestedStackB', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB/abcd'));
 

@@ -1,25 +1,13 @@
 import { CloudFormation } from 'aws-sdk';
-//import { FakeCloudformationStack } from '../api/fake-cloudformation-stack';
 import { MockSdkProvider } from './mock-sdk';
 
 let nestedDiffMockSdkProvider: NestedDiffMockSdkProvider;
-//let currentCfnStacks: FakeCloudformationStack[];
 let currentCfnStackResources: { [key: string]: CloudFormation.StackResourceSummary[] };
 
-export function setupNestedDiffTests(/*stackNames?: string[]*/) {
+export function setupNestedDiffTests() {
   jest.resetAllMocks();
   currentCfnStackResources = {};
   nestedDiffMockSdkProvider = new NestedDiffMockSdkProvider();
-
-  /*
-  currentCfnStacks = [];
-  for (const stackName in stackNames) {
-    currentCfnStacks.push(new FakeCloudformationStack({
-      stackName,
-      stackId: stackName + 'magic-id',
-    }));
-  }
-  */
 
   return nestedDiffMockSdkProvider;
 }
