@@ -5,6 +5,12 @@
       "Properties": {
         "Property": "new-value"
       }
+    },
+    "NestedChildA": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Metadata": {
+        "aws:asset:path": "diff-NestedChildA.nested.template.json"
+      }
     }
   },
   "Parameters": {
@@ -12,9 +18,9 @@
       "Type": "Number"
     }
   },
-  "Outputs" : {
-    "NestedOutput" : {
-      "Value" : { "Ref" : "NestedResourceA" }
+  "Outputs": {
+    "NestedOutput": {
+      "Value": { "Ref": "NestedResourceA" }
     }
   }
 }

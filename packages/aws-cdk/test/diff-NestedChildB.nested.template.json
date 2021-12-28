@@ -1,0 +1,22 @@
+{
+  "Resources": {
+    "NestedResourceB": {
+      "Type": "AWS::Something",
+      "Properties": {
+        "Property": "new-value"
+      }
+    },
+    "NestedGrandChildB": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Metadata": {
+        "aws:asset:path": "diff-NestedGrandChildB.nested.template.json"
+      }
+    },
+    "NestedGrandChildB2": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Metadata": {
+        "aws:asset:path": "diff-NestedGrandChildB2.nested.template.json"
+      }
+    }
+  }
+}

@@ -1,15 +1,15 @@
 {
   "Resources": {
-    "NestedResourceB": {
+    "NestedResourceA": {
       "Type": "AWS::Something",
       "Properties": {
         "Property": "new-value"
       }
     },
-    "NestedChildB": {
+    "NestedGrandChildA": {
       "Type": "AWS::CloudFormation::Stack",
       "Metadata": {
-        "aws:asset:path": "diff-NestedChildB.nested.template.json"
+        "aws:asset:path": "diff-NestedGrandChildA.nested.template.json"
       }
     }
   }

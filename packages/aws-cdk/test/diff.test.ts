@@ -7,7 +7,7 @@ import { CloudFormationDeployments } from '../lib/api/cloudformation-deployments
 import { CdkToolkit } from '../lib/cdk-toolkit';
 import { instanceMockFrom, MockCloudExecutable } from './util';
 
-import * as setup from '../test/api/hotswap/hotswap-test-setup';
+import * as setup from '../test/util/nested-stack-diff-setup';
 
 let cloudExecutable: MockCloudExecutable;
 let cloudFormation: jest.Mocked<CloudFormationDeployments>;
@@ -144,7 +144,7 @@ describe('nested stacks', () => {
     cloudExecutable = new MockCloudExecutable({
       stacks: [{
         stackName: 'Parent',
-        assets: [
+        /*assets: [
           {
             path: 'diff-A.nested.template.json',
             s3BucketParameter: 'bucket-param',
@@ -163,7 +163,7 @@ describe('nested stacks', () => {
             id: 'nested-template-B',
             sourceHash: 'templateSourceHash',
           },
-        ],
+        ],*/
         template: {
           Resources:
           {
@@ -182,7 +182,7 @@ describe('nested stacks', () => {
           },
         },
       },
-      {
+      /*{
         stackName: 'GrandParent',
         assets: [
           {
@@ -206,12 +206,11 @@ describe('nested stacks', () => {
             },
           },
         },
-      }],
+      }*/],
     });
 
+    const mockSdkProvider = setup.setupNestedDiffTests(/*'Parent'*/);
     cloudFormation = instanceMockFrom(CloudFormationDeployments);
-
-    const mockSdkProvider = setup.setupHotswapTests('Parent');
 
     toolkit = new CdkToolkit({
       cloudExecutable,
@@ -231,31 +230,91 @@ describe('nested stacks', () => {
         },
       });
     });
+    // All of the nested-Stack-A descendants are not here, to test that newly created nested stacks are correctly rendered
+    // B's descendants are here, to ensure that sibling stacks and deep nesting levels are correctly rendered
     cloudFormation.readCurrentNestedTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact, nestedStackName: string) => {
       stackArtifact;
-      if (nestedStackName === 'Parent-NestedStackA') {
-        return Promise.resolve({
-          Resources: {
-            NestedResourceA: {
-              Type: 'AWS::Something',
-              Properties: {
-                Property: 'old-value',
+      switch (nestedStackName) {
+        case 'Parent-NestedStackA':
+          return Promise.resolve({
+            Resources: {
+              NestedResourceA: {
+                Type: 'AWS::Something',
+                Properties: {
+                  Property: 'old-value',
+                },
               },
             },
-          },
-        });
+          });
+
+        case 'Parent-NestedStackB':
+          return Promise.resolve({
+            Resources: {
+              NestedResourceB: {
+                Type: 'AWS::Something',
+                Properties: {
+                  Property: 'old-value',
+                },
+              },
+              NestedChildB: {
+                Type: 'AWS::CloudFormation::Stack',
+                Metadata: {
+                  'aws:asset:path': 'diff-NestedChildB.nested.template.json',
+                },
+              },
+            },
+          });
+
+        case 'Parent-NestedStackB-NestedChildB':
+          return Promise.resolve({
+            Resources: {
+              NestedResourceB: {
+                Type: 'AWS::Something',
+                Properties: {
+                  Property: 'old-value',
+                },
+              },
+              NestedGrandChildB: {
+                Type: 'AWS::CloudFormation::Stack',
+                Metadata: {
+                  'aws:asset:path': 'diff-NestedGrandChildB.nested.template.json',
+                },
+              },
+              NestedGrandChildB2: {
+                Type: 'AWS::CloudFormation::Stack',
+                Metadata: {
+                  'aws:asset:path': 'diff-NestedGrandChildB2.nested.template.json',
+                },
+              },
+            },
+          });
+
+        case 'Parent-NestedStackB-NestedGrandChildB':
+          return Promise.resolve({
+            Resources: {
+              NestedResourceB: {
+                Type: 'AWS::Something',
+                Properties: {
+                  Property: 'old-value',
+                },
+              },
+            },
+          });
+
+        case 'Parent-NestedStackB-NestedGrandChildB2':
+          return Promise.resolve({
+            Resources: {
+              NestedResourceB: {
+                Type: 'AWS::Something',
+                Properties: {
+                  Property: 'old-value',
+                },
+              },
+            },
+          });
       }
 
-      return Promise.resolve({
-        Resources: {
-          NestedResourceB: {
-            Type: 'AWS::Something',
-            Properties: {
-              Property: 'old-value',
-            },
-          },
-        },
-      });
+      return Promise.resolve({});
     });
     cloudFormation.deployStack.mockImplementation((options) => Promise.resolve({
       noOp: true,
@@ -268,8 +327,18 @@ describe('nested stacks', () => {
   test('diff can diff multiple nested stacks', async () => {
     // GIVEN
     const buffer = new StringWritable();
-    setup.pushStackResourceSummaries(setup.stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackA/abcd'));
-    setup.pushStackResourceSummaries(setup.stackSummaryOf('NestedStackB', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB/abcd'));
+    setup.pushStackResourceSummaries('Parent', setup.stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackA/abcd'));
+    setup.pushStackResourceSummaries('Parent', setup.stackSummaryOf('NestedStackB', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB/abcd'));
+
+    setup.pushStackResourceSummaries('Parent-NestedStackB', setup.stackSummaryOf('NestedChildB', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB-NestedChildB/abcd'));
+    setup.pushStackResourceSummaries('Parent-NestedStackB', setup.stackSummaryOf('NestedResourceB', 'AWS::Something', 'arn:aws:something:bermuda-triangle-1337:123456789012:property'));
+
+    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedChildB', setup.stackSummaryOf('NestedGrandChildB', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB-NestedGrandChildB/abcd'));
+    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedChildB', setup.stackSummaryOf('NestedGrandChildB2', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB-NestedGrandChildB2/abcd'));
+    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedChildB', setup.stackSummaryOf('NestedResourceB', 'AWS::Something', 'arn:aws:something:bermuda-triangle-1337:123456789012:property'));
+
+    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedGrandChildB', setup.stackSummaryOf('NestedResourceB', 'AWS::Something', 'arn:aws:something:bermuda-triangle-1337:123456789012:property'));
+    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedGrandChildB2', setup.stackSummaryOf('NestedResourceB', 'AWS::Something', 'arn:aws:something:bermuda-triangle-1337:123456789012:property'));
 
     // WHEN
     const exitCode = await toolkit.diff({
@@ -289,6 +358,12 @@ Resources
  ├─ [+] Parameters
  │   └─ {"NestedParam":{"Type":"Number"}}
  └─ [~] Resources
+     ├─ [~] .NestedChildA:
+     │   └─ [~] .Resources:
+     │       ├─ [~] .NestedGrandChildA:
+     │       │   └─ [~] .Resources:
+     │       │       └─ [+] Added: .NestedResourceA
+     │       └─ [+] Added: .NestedResourceA
      └─ [~] .NestedResourceA:
          └─ [~] .Properties:
              └─ [~] .Property:
@@ -296,6 +371,27 @@ Resources
                  └─ [+] new-value
 [~] AWS::CloudFormation::Stack NestedStackB 
  └─ [~] Resources
+     ├─ [~] .NestedChildB:
+     │   └─ [~] .Resources:
+     │       ├─ [~] .NestedGrandChildB:
+     │       │   └─ [~] .Resources:
+     │       │       └─ [~] .NestedResourceB:
+     │       │           └─ [~] .Properties:
+     │       │               └─ [~] .Property:
+     │       │                   ├─ [-] old-value
+     │       │                   └─ [+] new-value
+     │       ├─ [~] .NestedGrandChildB2:
+     │       │   └─ [~] .Resources:
+     │       │       └─ [~] .NestedResourceB:
+     │       │           └─ [~] .Properties:
+     │       │               └─ [~] .Property:
+     │       │                   ├─ [-] old-value
+     │       │                   └─ [+] new-value
+     │       └─ [~] .NestedResourceB:
+     │           └─ [~] .Properties:
+     │               └─ [~] .Property:
+     │                   ├─ [-] old-value
+     │                   └─ [+] new-value
      └─ [~] .NestedResourceB:
          └─ [~] .Properties:
              └─ [~] .Property:

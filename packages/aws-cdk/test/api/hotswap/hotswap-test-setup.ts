@@ -17,15 +17,10 @@ let hotswapMockSdkProvider: HotswapMockSdkProvider;
 let currentCfnStack: FakeCloudformationStack;
 const currentCfnStackResources: CloudFormation.StackResourceSummary[] = [];
 
-export function setupHotswapTests(stackName?: string) {
+export function setupHotswapTests() {
   jest.resetAllMocks();
   // clear the array
   currentCfnStackResources.splice(0);
-
-  //TODO: this is horrible
-  if (stackName) {
-    STACK_NAME = stackName;
-  }
 
   hotswapMockSdkProvider = new HotswapMockSdkProvider();
   currentCfnStack = new FakeCloudformationStack({

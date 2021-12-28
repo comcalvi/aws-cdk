@@ -51,18 +51,28 @@ function clone(obj: any) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+function addNestedStacks(nestedTemplatePath: string, outdir: string) {
+  const nestedTemplate = JSON.parse(fs.readFileSync(nestedTemplatePath).toString());
+  fs.writeFileSync(path.join(outdir, nestedTemplatePath), JSON.stringify(nestedTemplate, undefined, 2));
+
+  for (const logicalId in nestedTemplate.Resources) {
+    if (nestedTemplate.Resources[logicalId].Type === 'AWS::CloudFormation::Stack') {
+      const nestedChildTemplatePath = nestedTemplate.Resources[logicalId].Metadata['aws:asset:path'];
+      addNestedStacks(nestedChildTemplatePath, outdir);
+    }
+  }
+}
+
 function addAttributes(assembly: TestAssembly, builder: cxapi.CloudAssemblyBuilder) {
   for (const stack of assembly.stacks) {
     const templateFile = `${stack.stackName}.template.json`;
     const template = stack.template ?? DEFAULT_FAKE_TEMPLATE;
     fs.writeFileSync(path.join(builder.outdir, templateFile), JSON.stringify(template, undefined, 2));
 
-    if (stack.assets) {
-      for (const asset of stack.assets) {
-        if (asset.path.includes('.nested.template.json')) {
-          const nestedTemplate = JSON.parse(fs.readFileSync(asset.path).toString());
-          fs.writeFileSync(path.join(builder.outdir, asset.path), JSON.stringify(nestedTemplate, undefined, 2));
-        }
+    for (const logicalId in stack.template.Resources) {
+      if (stack.template.Resources[logicalId].Type === 'AWS::CloudFormation::Stack') {
+        const nestedTemplatePath = stack.template.Resources[logicalId].Metadata['aws:asset:path'];
+        addNestedStacks(nestedTemplatePath, builder.outdir);
       }
     }
 
