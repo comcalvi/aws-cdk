@@ -182,8 +182,8 @@ describe('nested stacks', () => {
         },
       });
     });
-    // All of the nested-Stack-A descendants are not here, to test that newly created nested stacks are correctly rendered
-    // B's descendants are here, to ensure that sibling stacks and deep nesting levels are correctly rendered
+    // All of A's descendants are not here, to test that newly created nested stacks are correctly rendered
+    // B's descendants are here, to ensure that sibling stacks and deep nesting levels with already created stacks are correctly rendered
     cloudFormation.readCurrentNestedTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact, nestedStackName: string) => {
       stackArtifact;
       switch (nestedStackName) {
@@ -280,18 +280,47 @@ describe('nested stacks', () => {
     // GIVEN
     const buffer = new StringWritable();
     // NestedStackA's descendants are absent here to ensure that nested stack creation is tested with multiple levels
-    setup.pushStackResourceSummaries('Parent', setup.stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackA/abcd'));
-    setup.pushStackResourceSummaries('Parent', setup.stackSummaryOf('NestedStackB', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB/abcd'));
+    setup.pushStackResourceSummaries('Parent',
+      setup.stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack',
+        'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackA/abcd',
+      ),
+      setup.stackSummaryOf('NestedStackB', 'AWS::CloudFormation::Stack',
+        'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB/abcd',
+      ),
+    );
 
-    setup.pushStackResourceSummaries('Parent-NestedStackB', setup.stackSummaryOf('NestedChildB', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB-NestedChildB/abcd'));
-    setup.pushStackResourceSummaries('Parent-NestedStackB', setup.stackSummaryOf('NestedResourceB', 'AWS::Something', 'arn:aws:something:bermuda-triangle-1337:123456789012:property'));
+    setup.pushStackResourceSummaries('Parent-NestedStackB',
+      setup.stackSummaryOf('NestedChildB', 'AWS::CloudFormation::Stack',
+        'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB-NestedChildB/abcd',
+      ),
+      setup.stackSummaryOf('NestedResourceB', 'AWS::Something',
+        'arn:aws:something:bermuda-triangle-1337:123456789012:property',
+      ),
+    );
 
-    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedChildB', setup.stackSummaryOf('NestedGrandChildB', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB-NestedGrandChildB/abcd'));
-    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedChildB', setup.stackSummaryOf('NestedGrandChildB2', 'AWS::CloudFormation::Stack', 'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB-NestedGrandChildB2/abcd'));
-    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedChildB', setup.stackSummaryOf('NestedResourceB', 'AWS::Something', 'arn:aws:something:bermuda-triangle-1337:123456789012:property'));
+    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedChildB',
+      setup.stackSummaryOf('NestedGrandChildB', 'AWS::CloudFormation::Stack',
+        'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB-NestedGrandChildB/abcd',
+      ),
+      setup.stackSummaryOf('NestedGrandChildB2', 'AWS::CloudFormation::Stack',
+        'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/Parent-NestedStackB-NestedGrandChildB2/abcd',
+      ),
+      setup.stackSummaryOf('NestedResourceB', 'AWS::Something',
+        'arn:aws:something:bermuda-triangle-1337:123456789012:property',
+      ),
+    );
 
-    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedGrandChildB', setup.stackSummaryOf('NestedResourceB', 'AWS::Something', 'arn:aws:something:bermuda-triangle-1337:123456789012:property'));
-    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedGrandChildB2', setup.stackSummaryOf('NestedResourceB', 'AWS::Something', 'arn:aws:something:bermuda-triangle-1337:123456789012:property'));
+    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedGrandChildB',
+      setup.stackSummaryOf('NestedResourceB', 'AWS::Something',
+        'arn:aws:something:bermuda-triangle-1337:123456789012:property',
+      ),
+    );
+
+    setup.pushStackResourceSummaries('Parent-NestedStackB-NestedGrandChildB2',
+      setup.stackSummaryOf('NestedResourceB', 'AWS::Something',
+        'arn:aws:something:bermuda-triangle-1337:123456789012:property',
+      ),
+    );
 
     // WHEN
     const exitCode = await toolkit.diff({
@@ -300,9 +329,7 @@ describe('nested stacks', () => {
     });
 
     // THEN
-    /*eslint-disable*/
     const plainTextOutput = buffer.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '');
-    console.log(plainTextOutput)
     expect(plainTextOutput.trim()).toEqual(`Stack Parent
 Resources
 [~] AWS::CloudFormation::Stack NestedStackA 
