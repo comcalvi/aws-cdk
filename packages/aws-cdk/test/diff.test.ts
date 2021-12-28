@@ -4,9 +4,9 @@ import * as cxschema from '@aws-cdk/cloud-assembly-schema';
 import { CloudFormationStackArtifact } from '@aws-cdk/cx-api';
 import { CloudFormationDeployments } from '../lib/api/cloudformation-deployments';
 import { CdkToolkit } from '../lib/cdk-toolkit';
+import * as setup from '../test/util/nested-stack-diff-setup';
 import { instanceMockFrom, MockCloudExecutable } from './util';
 
-import * as setup from '../test/util/nested-stack-diff-setup';
 
 let cloudExecutable: MockCloudExecutable;
 let cloudFormation: jest.Mocked<CloudFormationDeployments>;
