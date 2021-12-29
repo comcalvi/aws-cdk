@@ -543,7 +543,7 @@ export class CdkToolkit {
 
   private stackHasNestedStacks(rootStack: cxapi.CloudFormationStackArtifact) {
     for (const resourceName in rootStack.template.Resources) {
-      if ((rootStack.template.Resources[resourceName].Metadata['aws:asset:path'] as string).includes('.nested.template.json')) {
+      if (rootStack.template.Resources[resourceName].Type === 'AWS::CloudFormation::Stack') {
         return true;
       }
     }
