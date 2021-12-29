@@ -106,14 +106,6 @@ class Formatter {
     collection: DifferenceCollection<V, T>,
     formatter: (type: string, id: string, diff: T) => void = this.formatDifference.bind(this)) {
 
-    /*eslint-disable*/
-    //if (title === 'Resources') {
-    //  console.log('-------------format-------------')
-    //  console.log(collection)
-    //  console.log(collection.differenceCount)
-    //  console.log('-------------format-------------')
-   // }
-
     if (collection.differenceCount === 0) {
       return;
     }
