@@ -44,10 +44,6 @@ export class NestedCloudAssemblyArtifact extends CloudArtifact {
     if (!this._nestedAssembly) {
       this._nestedAssembly = new CloudAssembly(this.fullPath);
     }
-    /*eslint-disable*/
-    console.log('AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
-    console.log(this.fullPath)
-    console.log('AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
     return this._nestedAssembly;
   }
 }

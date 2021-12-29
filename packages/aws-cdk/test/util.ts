@@ -18,12 +18,10 @@ export interface TestStackArtifact {
   properties?: Partial<cxschema.AwsCloudFormationStackProperties>;
   terminationProtection?: boolean;
   displayName?: string;
-  assembly?: TestAssembly;
 }
 
 export interface TestAssembly {
   stacks: TestStackArtifact[];
-  //directory?: string;
   missing?: cxschema.MissingContext[];
   nestedAssemblies?: TestAssembly[];
 }

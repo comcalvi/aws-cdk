@@ -51,8 +51,6 @@ export async function execProgram(aws: SdkProvider, config: Configuration): Prom
     await exec(build);
   }
 
-  /*eslint-disable*/
-
   const app = config.settings.get(['app']);
   if (!app) {
     throw new Error(`--app is required either in command-line, in ${PROJECT_CONFIG} or in ${USER_DEFAULTS}`);

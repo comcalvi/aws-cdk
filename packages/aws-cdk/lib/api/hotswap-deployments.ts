@@ -156,7 +156,7 @@ async function applyHotswappableChange(sdk: ISDK, hotswapOperation: HotswapOpera
   }
 }
 
-export class LazyListStackResources implements ListStackResources {
+class LazyListStackResources implements ListStackResources {
   private stackResources: CloudFormation.StackResourceSummary[] | undefined;
 
   constructor(private readonly sdk: ISDK, private readonly stackName: string) {

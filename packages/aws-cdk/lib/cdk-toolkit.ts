@@ -504,12 +504,13 @@ export class CdkToolkit {
 
   private async selectStacksForDiff(stackNames: string[], exclusively?: boolean, autoValidate?: boolean): Promise<StackCollection> {
     const assembly = await this.assembly();
+
     const selectedForDiff = await assembly.selectStacks({ patterns: stackNames }, {
       extend: exclusively ? ExtendedStackSelection.None : ExtendedStackSelection.Upstream,
       defaultBehavior: DefaultSelection.MainAssembly,
     });
-    const allStacks = await this.selectStacksForList([]);
 
+    const allStacks = await this.selectStacksForList([]);
     const autoValidateStacks = autoValidate
       ? allStacks.filter(art => art.validateOnSynth ?? false)
       : new StackCollection(assembly, []);
@@ -569,7 +570,8 @@ export class CdkToolkit {
     parentStackName: string | undefined, sdk: ISDK,
   ): Promise<nestedStackTemplates> {
     const nestedTemplatePath = path.join(root.assembly.directory, nestedTemplateAssetPath);
-    // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute, so we get the ARN and manually extract the name.
+    // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute,
+    // so we get the ARN and manually extract the name.
     const nestedStackArn = await this.findPhysicalNameForNestedStack(nestedStackLogicalId, parentStackName, sdk);
     const nestedStackName = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
 

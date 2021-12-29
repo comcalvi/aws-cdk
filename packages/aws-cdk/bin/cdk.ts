@@ -219,6 +219,7 @@ async function initCommandLine() {
   });
 
   const cloudFormation = new CloudFormationDeployments({ sdkProvider });
+
   const cloudExecutable = new CloudExecutable({
     configuration,
     sdkProvider,

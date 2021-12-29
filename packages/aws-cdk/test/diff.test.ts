@@ -7,7 +7,6 @@ import { CdkToolkit } from '../lib/cdk-toolkit';
 import * as setup from '../test/util/nested-stack-diff-setup';
 import { instanceMockFrom, MockCloudExecutable } from './util';
 
-
 let cloudExecutable: MockCloudExecutable;
 let cloudFormation: jest.Mocked<CloudFormationDeployments>;
 let toolkit: CdkToolkit;
