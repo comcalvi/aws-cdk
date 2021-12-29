@@ -77,7 +77,6 @@ function addAttributes(assembly: TestAssembly, builder: cxapi.CloudAssemblyBuild
       }
     }
 
-
     // we call patchStackTags here to simulate the tags formatter
     // that is used when building real manifest files.
     const metadata: { [path: string]: cxschema.MetadataEntry[] } = patchStackTags({ ...stack.metadata });

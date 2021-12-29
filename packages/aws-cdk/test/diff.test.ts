@@ -275,7 +275,7 @@ describe('nested stacks', () => {
     }));
   });
 
-  test('diff can diff multiple nested stacks', async () => {
+  test('diff can diff multiple nested stacks, with both deep nested stack creation and deep sibling stack comparisons', async () => {
     // GIVEN
     const buffer = new StringWritable();
     // NestedStackA's descendants are absent here to ensure that nested stack creation is tested with multiple levels
