@@ -50,7 +50,8 @@ function clone(obj: any) {
 }
 
 function addNestedStacks(nestedTemplatePath: string, outdir: string) {
-  const nestedTemplate = JSON.parse(fs.readFileSync(path.join(__dirname, nestedTemplatePath)).toString());
+  const nestedTemplatePathWithDir = path.join('diff-nested-stacks-templates', nestedTemplatePath);
+  const nestedTemplate = JSON.parse(fs.readFileSync(path.join(__dirname, nestedTemplatePathWithDir)).toString());
   fs.writeFileSync(path.join(outdir, nestedTemplatePath), JSON.stringify(nestedTemplate, undefined, 2));
 
   for (const logicalId in nestedTemplate.Resources) {
