@@ -157,6 +157,20 @@ describe('nested stacks', () => {
             },
           },
         },
+      },
+      {
+        stackName: 'UndeployedParent',
+        template: {
+          Resources:
+          {
+            NestedStackA: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: {
+                'aws:asset:path': 'diff-NestedGrandChildA.nested.template.json',
+              },
+            },
+          },
+        },
       }],
     });
 
@@ -181,6 +195,12 @@ describe('nested stacks', () => {
         },
       });
     });
+
+    cloudFormation.prepareSDK.mockImplementation((rootStackArtifact: CloudFormationStackArtifact) => {
+      rootStackArtifact;
+      return Promise.resolve(mockSdkProvider.mockSdkProvider.sdk);
+    });
+
     // All of A's descendants are not here, to test that newly created nested stacks are correctly rendered
     // B's descendants are here, to ensure that sibling stacks and deep nesting levels with already created stacks are correctly rendered
     cloudFormation.readCurrentNestedTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact, nestedStackName: string) => {
@@ -376,6 +396,26 @@ Resources
              └─ [~] .Property:
                  ├─ [-] old-value
                  └─ [+] new-value`);
+
+    expect(exitCode).toBe(0);
+  });
+
+  test('diff against an undeployed stack correctly works', async () => {
+    const buffer = new StringWritable();
+
+    // WHEN
+    const exitCode = await toolkit.diff({
+      stackNames: ['UndeployedParent'],
+      stream: buffer,
+    });
+
+    // THEN
+    const plainTextOutput = buffer.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '');
+    expect(plainTextOutput.trim()).toEqual(`Stack UndeployedParent
+Resources
+[~] AWS::CloudFormation::Stack NestedStackA 
+ └─ [~] Resources
+     └─ [+] Added: .NestedResourceA`);
 
     expect(exitCode).toBe(0);
   });

@@ -20,6 +20,9 @@ export class NestedDiffMockSdkProvider {
 
     this.mockSdkProvider.stubCloudFormation({
       listStackResources: ({ StackName: stackName }) => {
+        if (!currentCfnStackResources[stackName]) {
+          throw new Error(`Stack with id ${stackName} does not exist`);
+        }
         return {
           StackResourceSummaries: currentCfnStackResources[stackName],
         };

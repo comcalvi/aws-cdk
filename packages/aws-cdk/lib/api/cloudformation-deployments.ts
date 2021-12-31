@@ -1,5 +1,6 @@
 import * as cxapi from '@aws-cdk/cx-api';
 import { AssetManifest } from 'cdk-assets';
+import { ISDK } from '..';
 import { Tag } from '../cdk-toolkit';
 import { debug } from '../logging';
 import { publishAssets } from '../util/asset-publishing';
@@ -184,15 +185,6 @@ export class CloudFormationDeployments {
     this.sdkProvider = props.sdkProvider;
   }
 
-  // if `stackName !== stackArtifact.stackName`, then `stackArtifact` is an ancestor to a nested stack with name `stackName`.
-  private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string) {
-    debug(`Reading existing template for stack ${stackArtifact.displayName}.`);
-    const { stackSdk } = await this.prepareSdkFor(stackArtifact, undefined, Mode.ForReading);
-    const cfn = stackSdk.cloudFormation();
-
-    const stack = await CloudFormationStack.lookup(cfn, stackName);
-    return stack.template();
-  }
 
   public async readCurrentTemplate(stackArtifact: cxapi.CloudFormationStackArtifact): Promise<Template> {
     return this.readCurrentStackTemplate(stackArtifact, stackArtifact.stackName);
@@ -258,6 +250,25 @@ export class CloudFormationDeployments {
     const { stackSdk } = await this.prepareSdkFor(options.stack, undefined, Mode.ForReading);
     const stack = await CloudFormationStack.lookup(stackSdk.cloudFormation(), options.deployName ?? options.stack.stackName);
     return stack.exists;
+  }
+
+  public async prepareSDK(rootStackArtifact: cxapi.CloudFormationStackArtifact): Promise<ISDK> {
+    //const resolvedEnv = await this.sdkProvider.resolveEnvironment(rootStackArtifact.environment);
+    //const sdk = await this.sdkProvider.forEnvironment(resolvedEnv, Mode.ForReading);
+
+    //return sdk;
+
+    return (await this.prepareSdkFor(rootStackArtifact, undefined, Mode.ForReading)).stackSdk;
+  }
+
+  private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string) : Promise<Template> {
+    // if `stackName !== stackArtifact.stackName`, then `stackArtifact` is an ancestor to a nested stack with name `stackName`.
+    debug(`Reading existing template for stack ${stackArtifact.displayName}.`);
+    const { stackSdk } = await this.prepareSdkFor(stackArtifact, undefined, Mode.ForReading);
+    const cfn = stackSdk.cloudFormation();
+
+    const stack = await CloudFormationStack.lookup(cfn, stackName);
+    return stack.template();
   }
 
   /**
