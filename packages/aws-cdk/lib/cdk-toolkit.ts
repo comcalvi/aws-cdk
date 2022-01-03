@@ -551,7 +551,8 @@ export class CdkToolkit {
   }
 
   private stackHasNestedStacks(rootStack: cxapi.CloudFormationStackArtifact): boolean {
-    return rootStack.template.Resources ? Object.values(rootStack.template.Resources).some((resource: any) => resource.Type === 'AWS::CloudFormation::Stack')
+    return rootStack.template.Resources ?
+      Object.values(rootStack.template.Resources).some((resource: any) => resource.Type === 'AWS::CloudFormation::Stack')
       :
       false;
   }
@@ -560,16 +561,21 @@ export class CdkToolkit {
     rootStackArtifact: cxapi.CloudFormationStackArtifact, parentTemplate: any, currentParentTemplate: any, parentStackName: string | undefined,
     getStackResources: GetStackResources,
   ) {
-    for (const nestedStackLogicalId in parentTemplate.Resources) {
-      const nestedTemplate = parentTemplate.Resources[nestedStackLogicalId];
+    for (const [nestedStackLogicalId, resource] of Object.entries(parentTemplate.Resources ?? {})) {
+      let nestedTemplate = resource as any;
       if (nestedTemplate.Type === 'AWS::CloudFormation::Stack') {
         const assetPath = nestedTemplate.Metadata['aws:asset:path'];
         const nestedStackTemplates = await this.getNestedStackTemplates(
           rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, getStackResources,
         );
 
+        // update the parentTemplate, to ensure the changes are made to the original object
         parentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.generatedNestedTemplate;
         parentTemplate.Resources[nestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
+
+        // update our local copy for readability
+        nestedTemplate = nestedStackTemplates.generatedNestedTemplate;
+        nestedTemplate.Type = 'AWS::CloudFormation::Stack';
 
         if (currentParentTemplate.Resources) {
           currentParentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.currentNestedStackTemplate;
@@ -577,7 +583,7 @@ export class CdkToolkit {
         }
 
         await this.replaceNestedStacksInParentTemplate(
-          rootStackArtifact, parentTemplate.Resources[nestedStackLogicalId],
+          rootStackArtifact, nestedTemplate,
           currentParentTemplate.Resources ? currentParentTemplate.Resources[nestedStackLogicalId] : {},
           nestedStackTemplates.nestedStackName, getStackResources,
         );
