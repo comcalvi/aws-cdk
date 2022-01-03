@@ -554,14 +554,6 @@ export class CdkToolkit {
     return rootStack.template.Resources ? Object.values(rootStack.template.Resources).some((resource: any) => resource.Type === 'AWS::CloudFormation::Stack')
       :
       false;
-
-    /*for (const resourceName in rootStack.template.Resources) {
-      if (rootStack.template.Resources[resourceName].Type === 'AWS::CloudFormation::Stack') {
-        return true;
-      }
-    }
-
-    return false;*/
   }
 
   private async replaceNestedStacksInParentTemplate(
@@ -569,11 +561,12 @@ export class CdkToolkit {
     sdk: ISDK,
   ) {
     for (const nestedStackLogicalId in parentTemplate.Resources) {
-      if (parentTemplate.Resources[nestedStackLogicalId].Type === 'AWS::CloudFormation::Stack') {
-        const assetPath = parentTemplate.Resources[nestedStackLogicalId].Metadata['aws:asset:path'];
+      const nestedTemplate = parentTemplate.Resources[nestedStackLogicalId];
+      if (nestedTemplate.Type === 'AWS::CloudFormation::Stack') {
+        const assetPath = nestedTemplate.Metadata['aws:asset:path'];
         const nestedStackTemplates = await this.getNestedStackTemplates(rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, sdk);
 
-        parentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.updatedNestedStackTemplate;
+        parentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.generatedNestedTemplate;
         parentTemplate.Resources[nestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
 
         if (currentParentTemplate.Resources) {
@@ -601,7 +594,7 @@ export class CdkToolkit {
     const nestedStackName = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
 
     return {
-      updatedNestedStackTemplate: JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8')),
+      generatedNestedTemplate: JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8')),
       currentNestedStackTemplate: nestedStackName
         ? await this.props.cloudFormation.readCurrentNestedTemplate(rootStackArtifact, nestedStackName) : { Resources: {} },
       nestedStackName: nestedStackName? nestedStackName: undefined,
@@ -638,8 +631,6 @@ export class CdkToolkit {
     } while (nextToken);
     return ret;
   }
-
-
 
   /**
    * Validate the stacks for errors and warnings according to the CLI's current settings
@@ -956,7 +947,7 @@ export interface Tag {
 }
 
 interface NestedStackTemplates {
-  readonly updatedNestedStackTemplate: any,
+  readonly generatedNestedTemplate: any,
   readonly currentNestedStackTemplate: any,
   readonly nestedStackName: string | undefined,
 }
