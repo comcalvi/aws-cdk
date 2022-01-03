@@ -12,6 +12,7 @@ import { EvaluateCloudFormationTemplate } from './hotswap/evaluate-cloudformatio
 import { isHotswappableLambdaFunctionChange } from './hotswap/lambda-functions';
 import { isHotswappableS3BucketDeploymentChange } from './hotswap/s3-bucket-deployments';
 import { isHotswappableStateMachineChange } from './hotswap/stepfunctions-state-machines';
+import { GetStackResources } from './list-stack-resources';
 import { CloudFormationStack } from './util/cloudformation';
 
 /**
@@ -239,29 +240,13 @@ async function applyHotswappableChange(sdk: ISDK, hotswapOperation: HotswapOpera
 }
 
 class LazyListStackResources implements ListStackResources {
-  private stackResources: CloudFormation.StackResourceSummary[] | undefined;
+  private getStackResources: GetStackResources;
 
-  constructor(private readonly sdk: ISDK, private readonly stackName: string) {
+  constructor(readonly sdk: ISDK, private readonly stackName: string) {
+    this.getStackResources = new GetStackResources(sdk);
   }
 
   async listStackResources(): Promise<CloudFormation.StackResourceSummary[]> {
-    if (this.stackResources === undefined) {
-      this.stackResources = await this.getStackResources();
-    }
-    return this.stackResources;
-  }
-
-  private async getStackResources(): Promise<CloudFormation.StackResourceSummary[]> {
-    const ret = new Array<CloudFormation.StackResourceSummary>();
-    let nextToken: string | undefined;
-    do {
-      const stackResourcesResponse = await this.sdk.cloudFormation().listStackResources({
-        StackName: this.stackName,
-        NextToken: nextToken,
-      }).promise();
-      ret.push(...(stackResourcesResponse.StackResourceSummaries ?? []));
-      nextToken = stackResourcesResponse.NextToken;
-    } while (nextToken);
-    return ret;
+    return await this.getStackResources.listStackResources(this.stackName) ?? [];
   }
 }
