@@ -252,13 +252,12 @@ export class CloudFormationDeployments {
     return stack.exists;
   }
 
+  // TODO: Remove this method once Cory adds the lookup role, and use that instead.
   public async prepareSDK(rootStackArtifact: cxapi.CloudFormationStackArtifact): Promise<ISDK> {
-    //const resolvedEnv = await this.sdkProvider.resolveEnvironment(rootStackArtifact.environment);
-    //const sdk = await this.sdkProvider.forEnvironment(resolvedEnv, Mode.ForReading);
+    const resolvedEnv = await this.sdkProvider.resolveEnvironment(rootStackArtifact.environment);
+    const sdk = await this.sdkProvider.forEnvironment(resolvedEnv, Mode.ForReading);
 
-    //return sdk;
-
-    return (await this.prepareSdkFor(rootStackArtifact, undefined, Mode.ForReading)).stackSdk;
+    return sdk;
   }
 
   private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string) : Promise<Template> {

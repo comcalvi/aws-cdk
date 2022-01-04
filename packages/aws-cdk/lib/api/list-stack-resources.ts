@@ -17,8 +17,9 @@ export class GetStackResources {
 
   public async listStackResources(stackName: string): Promise<CloudFormation.StackResourceSummary[] | undefined> {
     if (!this.stackResources[stackName]) {
-      this.stackResources[stackName] = await this.getStackResources(stackName);
+      this.stackResources[stackName] = await this.getStackResources(stackName) ?? [];
     }
+
     return this.stackResources[stackName];
   }
 

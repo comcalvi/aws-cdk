@@ -136,6 +136,7 @@ describe('non-nested stacks', () => {
 });
 
 describe('nested stacks', () => {
+  let mockSdkProvider = setup.setupNestedDiffTests();
   beforeEach(() => {
     cloudExecutable = new MockCloudExecutable({
       stacks: [{
@@ -171,10 +172,30 @@ describe('nested stacks', () => {
             },
           },
         },
+      },
+      {
+        stackName: 'CachingParent',
+        template: {
+          Resources:
+          {
+            NestedStackA: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: {
+                'aws:asset:path': 'diff-NestedGrandChildA.nested.template.json',
+              },
+            },
+            NestedStackB: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: {
+                'aws:asset:path': 'diff-NestedGrandChildB.nested.template.json',
+              },
+            },
+          },
+        },
       }],
     });
 
-    const mockSdkProvider = setup.setupNestedDiffTests();
+    mockSdkProvider = setup.setupNestedDiffTests();
     cloudFormation = instanceMockFrom(CloudFormationDeployments);
 
     toolkit = new CdkToolkit({
@@ -418,6 +439,29 @@ Resources
      └─ [+] Added: .NestedResourceA`);
 
     expect(exitCode).toBe(0);
+  });
+
+  test('diff caches listStackResources() calls correctly', async () => {
+    const buffer = new StringWritable();
+
+    setup.pushStackResourceSummaries('CachingParent',
+      setup.stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack',
+        'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/CachedParent-NestedStackA/abcd',
+      ),
+      setup.stackSummaryOf('NestedStackB', 'AWS::CloudFormation::Stack',
+        'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/CachedParent-NestedStackB/abcd',
+      ),
+    );
+
+    // WHEN
+    const exitCode = await toolkit.diff({
+      stackNames: ['CachingParent'],
+      stream: buffer,
+    });
+
+    // THEN
+    expect(exitCode).toBe(0);
+    expect(mockSdkProvider.mockSdkProvider.sdk.cloudFormation).toHaveBeenCalledTimes(1);
   });
 });
 
