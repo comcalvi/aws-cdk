@@ -2,7 +2,8 @@ import { CloudFormation } from 'aws-sdk';
 import { ISDK } from '..';
 
 export class GetStackResources {
-  private stackResources: { [key:string]: CloudFormation.StackResourceSummary[] | undefined };
+  private stackResources: { [key:string]: CloudFormation.StackResourceSummary[] };
+
   constructor(private readonly sdk: ISDK) {
     this.stackResources = {};
   }
@@ -15,15 +16,15 @@ export class GetStackResources {
     return stackResources ? stackResources.find(sr => sr.LogicalResourceId === logicalId)?.PhysicalResourceId : undefined;
   }
 
-  public async listStackResources(stackName: string): Promise<CloudFormation.StackResourceSummary[] | undefined> {
+  public async listStackResources(stackName: string): Promise<CloudFormation.StackResourceSummary[]> {
     if (!this.stackResources[stackName]) {
-      this.stackResources[stackName] = await this.getStackResources(stackName) ?? [];
+      this.stackResources[stackName] = await this.getStackResources(stackName);
     }
 
     return this.stackResources[stackName];
   }
 
-  private async getStackResources(stackName: string): Promise<CloudFormation.StackResourceSummary[] | undefined> {
+  private async getStackResources(stackName: string): Promise<CloudFormation.StackResourceSummary[]> {
     const ret = new Array<CloudFormation.StackResourceSummary>();
     let nextToken: string | undefined;
     do {
@@ -35,7 +36,7 @@ export class GetStackResources {
         }).promise();
       } catch (e) {
         if (e.message === `Stack with id ${stackName} does not exist`) {
-          return undefined;
+          return [];
         }
 
         throw e;

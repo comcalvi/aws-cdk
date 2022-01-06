@@ -49,15 +49,21 @@ function clone(obj: any) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-function addNestedStacks(nestedTemplatePath: string, outdir: string) {
-  const nestedTemplatePathWithDir = path.join('diff-nested-stacks-templates', nestedTemplatePath);
-  const nestedTemplate = JSON.parse(fs.readFileSync(path.join(__dirname, nestedTemplatePathWithDir)).toString());
-  fs.writeFileSync(path.join(outdir, nestedTemplatePath), JSON.stringify(nestedTemplate, undefined, 2));
+function addNestedStacks(templatePath: string, outdir: string, rootStackTemplate?: any) {
+  let template = rootStackTemplate;
 
-  for (const logicalId in nestedTemplate.Resources) {
-    if (nestedTemplate.Resources[logicalId].Type === 'AWS::CloudFormation::Stack') {
-      const nestedChildTemplatePath = nestedTemplate.Resources[logicalId].Metadata['aws:asset:path'];
-      addNestedStacks(nestedChildTemplatePath, outdir);
+  if (!template) {
+    const templatePathWithDir = path.join('diff-nested-stacks-templates', templatePath);
+    template = JSON.parse(fs.readFileSync(path.join(__dirname, templatePathWithDir)).toString());
+    fs.writeFileSync(path.join(outdir, templatePath), JSON.stringify(template, undefined, 2));
+  }
+
+  for (const logicalId in template.Resources) {
+    if (template.Resources[logicalId].Type === 'AWS::CloudFormation::Stack') {
+      if (template.Resources[logicalId].Metadata['aws:asset:path']) {
+        const nestedTemplatePath = template.Resources[logicalId].Metadata['aws:asset:path'];
+        addNestedStacks(nestedTemplatePath, outdir);
+      }
     }
   }
 }
@@ -67,15 +73,7 @@ function addAttributes(assembly: TestAssembly, builder: cxapi.CloudAssemblyBuild
     const templateFile = `${stack.stackName}.template.json`;
     const template = stack.template ?? DEFAULT_FAKE_TEMPLATE;
     fs.writeFileSync(path.join(builder.outdir, templateFile), JSON.stringify(template, undefined, 2));
-
-    if (stack.template) {
-      for (const logicalId in stack.template.Resources) {
-        if (stack.template.Resources[logicalId].Type === 'AWS::CloudFormation::Stack') {
-          const nestedTemplatePath = stack.template.Resources[logicalId].Metadata['aws:asset:path'];
-          addNestedStacks(nestedTemplatePath, builder.outdir);
-        }
-      }
-    }
+    addNestedStacks(templateFile, builder.outdir, stack.template);
 
     // we call patchStackTags here to simulate the tags formatter
     // that is used when building real manifest files.

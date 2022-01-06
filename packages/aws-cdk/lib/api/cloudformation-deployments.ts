@@ -190,8 +190,8 @@ export class CloudFormationDeployments {
     return this.readCurrentStackTemplate(stackArtifact, stackArtifact.stackName);
   }
 
-  public async readCurrentNestedTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, nestedStackName: string): Promise<Template> {
-    return this.readCurrentStackTemplate(stackArtifact, nestedStackName);
+  public async readCurrentNestedTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, nestedStackName: string, sdk: ISDK): Promise<Template> {
+    return this.readCurrentStackTemplate(stackArtifact, nestedStackName, sdk);
   }
 
   public async deployStack(options: DeployStackOptions): Promise<DeployStackResult> {
@@ -253,17 +253,17 @@ export class CloudFormationDeployments {
   }
 
   // TODO: Remove this method once Cory adds the lookup role, and use that instead.
-  public async prepareSDK(rootStackArtifact: cxapi.CloudFormationStackArtifact): Promise<ISDK> {
+  public async prepareSdk(rootStackArtifact: cxapi.CloudFormationStackArtifact): Promise<ISDK> {
     const resolvedEnv = await this.sdkProvider.resolveEnvironment(rootStackArtifact.environment);
     const sdk = await this.sdkProvider.forEnvironment(resolvedEnv, Mode.ForReading);
 
     return sdk;
   }
 
-  private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string) : Promise<Template> {
+  private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string, sdk?: ISDK) : Promise<Template> {
     // if `stackName !== stackArtifact.stackName`, then `stackArtifact` is an ancestor to a nested stack with name `stackName`.
     debug(`Reading existing template for stack ${stackArtifact.displayName}.`);
-    const { stackSdk } = await this.prepareSdkFor(stackArtifact, undefined, Mode.ForReading);
+    const stackSdk = sdk ?? (await this.prepareSdkFor(stackArtifact, undefined, Mode.ForReading)).stackSdk;
     const cfn = stackSdk.cloudFormation();
 
     const stack = await CloudFormationStack.lookup(cfn, stackName);

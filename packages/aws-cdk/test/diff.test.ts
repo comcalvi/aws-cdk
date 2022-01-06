@@ -136,8 +136,10 @@ describe('non-nested stacks', () => {
 });
 
 describe('nested stacks', () => {
+  let buffer: StringWritable;
   let mockSdkProvider = setup.setupNestedDiffTests();
   beforeEach(() => {
+    buffer = new StringWritable();
     cloudExecutable = new MockCloudExecutable({
       stacks: [{
         stackName: 'Parent',
@@ -167,7 +169,7 @@ describe('nested stacks', () => {
             NestedStackA: {
               Type: 'AWS::CloudFormation::Stack',
               Metadata: {
-                'aws:asset:path': 'diff-NestedGrandChildA.nested.template.json',
+                'aws:asset:path': 'diff-NestedChildA.nested.template.json',
               },
             },
           },
@@ -192,6 +194,18 @@ describe('nested stacks', () => {
             },
           },
         },
+      },
+      {
+        stackName: 'WithoutMetadata',
+        template: {
+          Resources:
+          {
+            NestedStackA: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: { },
+            },
+          },
+        },
       }],
     });
 
@@ -206,7 +220,9 @@ describe('nested stacks', () => {
     });
 
     cloudFormation.readCurrentTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact) => {
-      stackArtifact.stackName;
+      if (stackArtifact.stackName.includes('UndeployedParent')) {
+        return Promise.resolve({});
+      }
 
       return Promise.resolve({
         Resources: {
@@ -217,7 +233,7 @@ describe('nested stacks', () => {
       });
     });
 
-    cloudFormation.prepareSDK.mockImplementation((rootStackArtifact: CloudFormationStackArtifact) => {
+    cloudFormation.prepareSdk.mockImplementation((rootStackArtifact: CloudFormationStackArtifact) => {
       rootStackArtifact;
       return Promise.resolve(mockSdkProvider.mockSdkProvider.sdk);
     });
@@ -318,7 +334,6 @@ describe('nested stacks', () => {
 
   test('diff can diff multiple nested stacks, with both deep nested stack creation and deep sibling stack comparisons', async () => {
     // GIVEN
-    const buffer = new StringWritable();
     // NestedStackA's descendants are absent here to ensure that nested stack creation is tested with multiple levels
     setup.pushStackResourceSummaries('Parent',
       setup.stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack',
@@ -421,9 +436,7 @@ Resources
     expect(exitCode).toBe(0);
   });
 
-  test('diff against an undeployed stack correctly works', async () => {
-    const buffer = new StringWritable();
-
+  test('diff against an undeployed parent stack with an (also undeployed) nested stack works', async () => {
     // WHEN
     const exitCode = await toolkit.diff({
       stackNames: ['UndeployedParent'],
@@ -434,16 +447,13 @@ Resources
     const plainTextOutput = buffer.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '');
     expect(plainTextOutput.trim()).toEqual(`Stack UndeployedParent
 Resources
-[~] AWS::CloudFormation::Stack NestedStackA 
- └─ [~] Resources
-     └─ [+] Added: .NestedResourceA`);
+[+] AWS::CloudFormation::Stack NestedStackA`);
 
     expect(exitCode).toBe(0);
   });
 
   test('diff caches listStackResources() calls correctly', async () => {
-    const buffer = new StringWritable();
-
+    // GIVEN
     setup.pushStackResourceSummaries('CachingParent',
       setup.stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack',
         'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/CachedParent-NestedStackA/abcd',
@@ -463,7 +473,18 @@ Resources
     expect(exitCode).toBe(0);
     expect(mockSdkProvider.mockSdkProvider.sdk.cloudFormation).toHaveBeenCalledTimes(1);
   });
+
+  test('diff succesfully ignores stacks without CDK::Metadata', async () => {
+    // WHEN
+    const exitCode = await toolkit.diff({
+      stackNames: ['WithoutMetadata'],
+    });
+
+    // THEN
+    expect(exitCode).toBe(0);
+  });
 });
+
 
 class StringWritable extends Writable {
   public data: string;
