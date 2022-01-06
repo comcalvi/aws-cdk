@@ -568,7 +568,7 @@ export class CdkToolkit {
     parentStackName: string | undefined, getStackResources: GetStackResources, sdk: ISDK,
   ) {
     for (const [nestedStackLogicalId, resource] of Object.entries(generatedParentTemplate.Resources ?? {})
-      .filter(entry => (entry[1] as any).Type === 'AWS::CloudFormation::Stack' && (entry[1] as any).Metadata['aws:asset:path']) // TODO: is there a case where there's no Metadata at all? if so, this will crash horribly
+      .filter(entry => this.isNestedStackResource(entry[1]))
     ) {
       let nestedStackResource = resource as any;
       const assetPath = nestedStackResource.Metadata['aws:asset:path'];
@@ -608,6 +608,10 @@ export class CdkToolkit {
         ? await this.props.cloudFormation.readCurrentNestedTemplate(rootStackArtifact, nestedStackName, sdk) : { Resources: {} },
       nestedStackName,
     };
+  }
+
+  private isNestedStackResource(stackResource: any): boolean {
+    return stackResource.Type === 'AWS::CloudFormation::Stack' && stackResource.Metadata && stackResource.Metadata['aws:asset:path'];
   }
 
   /**

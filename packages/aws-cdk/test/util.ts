@@ -60,7 +60,7 @@ function addNestedStacks(templatePath: string, outdir: string, rootStackTemplate
 
   for (const logicalId in template.Resources) {
     if (template.Resources[logicalId].Type === 'AWS::CloudFormation::Stack') {
-      if (template.Resources[logicalId].Metadata['aws:asset:path']) {
+      if (template.Resources[logicalId].Metadata && template.Resources[logicalId].Metadata['aws:asset:path']) {
         const nestedTemplatePath = template.Resources[logicalId].Metadata['aws:asset:path'];
         addNestedStacks(nestedTemplatePath, outdir);
       }

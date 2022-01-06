@@ -202,7 +202,18 @@ describe('nested stacks', () => {
           {
             NestedStackA: {
               Type: 'AWS::CloudFormation::Stack',
-              Metadata: { },
+            },
+          },
+        },
+      },
+      {
+        stackName: 'WithEmptyMetadata',
+        template: {
+          Resources:
+          {
+            NestedStackA: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: {},
             },
           },
         },
@@ -477,7 +488,7 @@ Resources
   test('diff succesfully ignores stacks without CDK::Metadata', async () => {
     // WHEN
     const exitCode = await toolkit.diff({
-      stackNames: ['WithoutMetadata'],
+      stackNames: ['WithoutMetadata', 'WithEmptyMetadata'],
     });
 
     // THEN
