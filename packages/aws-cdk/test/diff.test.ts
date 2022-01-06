@@ -244,14 +244,14 @@ describe('nested stacks', () => {
       });
     });
 
-    cloudFormation.prepareSdk.mockImplementation((rootStackArtifact: CloudFormationStackArtifact) => {
+    (cloudFormation as any).prepareSdk.mockImplementation((rootStackArtifact: CloudFormationStackArtifact) => {
       rootStackArtifact;
       return Promise.resolve(mockSdkProvider.mockSdkProvider.sdk);
     });
 
     // All of A's descendants are not here, to test that newly created nested stacks are correctly rendered
     // B's descendants are here, to ensure that sibling stacks and deep nesting levels with already created stacks are correctly rendered
-    cloudFormation.readCurrentNestedTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact, nestedStackName: string) => {
+    (cloudFormation as any).readCurrentNestedTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact, nestedStackName: string) => {
       stackArtifact;
       switch (nestedStackName) {
         case 'Parent-NestedStackA':

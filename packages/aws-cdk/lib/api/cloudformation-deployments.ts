@@ -1,6 +1,9 @@
+import * as path from 'path';
 import * as cxapi from '@aws-cdk/cx-api';
 import { AssetManifest } from 'cdk-assets';
+import * as fs from 'fs-extra';
 import { ISDK } from '..';
+import { GetStackResources } from '../api/list-stack-resources';
 import { Tag } from '../cdk-toolkit';
 import { debug } from '../logging';
 import { publishAssets } from '../util/asset-publishing';
@@ -185,13 +188,15 @@ export class CloudFormationDeployments {
     this.sdkProvider = props.sdkProvider;
   }
 
-
   public async readCurrentTemplate(stackArtifact: cxapi.CloudFormationStackArtifact): Promise<Template> {
     return this.readCurrentStackTemplate(stackArtifact, stackArtifact.stackName);
   }
 
-  public async readCurrentNestedTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, nestedStackName: string, sdk: ISDK): Promise<Template> {
-    return this.readCurrentStackTemplate(stackArtifact, nestedStackName, sdk);
+  public async readCurrentTemplateWithNestedStacks(rootStackArtifact: cxapi.CloudFormationStackArtifact) {
+    const deployedTemplate = await this.readCurrentTemplate(rootStackArtifact);
+    await this.replaceNestedStacksInRootStack(rootStackArtifact, deployedTemplate);
+
+    return deployedTemplate;
   }
 
   public async deployStack(options: DeployStackOptions): Promise<DeployStackResult> {
@@ -252,12 +257,83 @@ export class CloudFormationDeployments {
     return stack.exists;
   }
 
+  private async readCurrentNestedTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, nestedStackName: string, sdk: ISDK): Promise<Template> {
+    return this.readCurrentStackTemplate(stackArtifact, nestedStackName, sdk);
+  }
+
+  private async replaceNestedStacksInRootStack(rootStackArtifact: cxapi.CloudFormationStackArtifact, deployedTemplate: any) {
+    if (!this.stackHasNestedStacks(rootStackArtifact)) {
+      return;
+    }
+
+    const sdk = await this.prepareSdk(rootStackArtifact);
+    const getStackResources = new GetStackResources(sdk);
+    await this.replaceNestedStacksInParentTemplate(
+      rootStackArtifact, rootStackArtifact.template, deployedTemplate, rootStackArtifact.stackName, getStackResources, sdk,
+    );
+  }
+
+  private stackHasNestedStacks(stackArtifact: cxapi.CloudFormationStackArtifact): boolean {
+    return Object.values(stackArtifact.template.Resources ?? {}).some((resource: any) => resource.Type === 'AWS::CloudFormation::Stack');
+  }
+
   // TODO: Remove this method once Cory adds the lookup role, and use that instead.
-  public async prepareSdk(rootStackArtifact: cxapi.CloudFormationStackArtifact): Promise<ISDK> {
+  private async prepareSdk(rootStackArtifact: cxapi.CloudFormationStackArtifact): Promise<ISDK> {
     const resolvedEnv = await this.sdkProvider.resolveEnvironment(rootStackArtifact.environment);
     const sdk = await this.sdkProvider.forEnvironment(resolvedEnv, Mode.ForReading);
 
     return sdk;
+  }
+
+  private async replaceNestedStacksInParentTemplate(
+    rootStackArtifact: cxapi.CloudFormationStackArtifact, generatedParentTemplate: any, deployedParentTemplate: any,
+    parentStackName: string | undefined, getStackResources: GetStackResources, sdk: ISDK,
+  ) {
+    for (const [nestedStackLogicalId, resource] of Object.entries(generatedParentTemplate.Resources ?? {})
+      .filter(entry => this.isNestedStackResource(entry[1]))
+    ) {
+      let nestedStackResource = resource as any;
+      const assetPath = nestedStackResource.Metadata['aws:asset:path'];
+      const nestedStackTemplates = await this.getNestedStackTemplates(
+        rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, getStackResources, sdk,
+      );
+
+      generatedParentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.generatedNestedTemplate;
+      generatedParentTemplate.Resources[nestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
+
+      if (deployedParentTemplate.Resources) {
+        deployedParentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.deployedNestedStackTemplate;
+        deployedParentTemplate.Resources[nestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
+      }
+
+      await this.replaceNestedStacksInParentTemplate(
+        rootStackArtifact, generatedParentTemplate.Resources[nestedStackLogicalId],
+        (deployedParentTemplate.Resources ?? {})[nestedStackLogicalId] ?? {},
+        nestedStackTemplates.nestedStackName, getStackResources, sdk,
+      );
+    }
+  }
+
+  private async getNestedStackTemplates(
+    rootStackArtifact: cxapi.CloudFormationStackArtifact, nestedTemplateAssetPath: string, nestedStackLogicalId: string,
+    parentStackName: string | undefined, getStackResources: GetStackResources, sdk: ISDK,
+  ): Promise<NestedStackTemplates> {
+    const nestedTemplatePath = path.join(rootStackArtifact.assembly.directory, nestedTemplateAssetPath);
+    // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute,
+    // so we get the ARN and manually extract the name.
+    const nestedStackArn = await getStackResources.findPhysicalNameFor(nestedStackLogicalId, parentStackName);
+    const nestedStackName = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
+
+    return {
+      generatedNestedTemplate: JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8')),
+      deployedNestedStackTemplate: nestedStackName
+        ? await this.readCurrentNestedTemplate(rootStackArtifact, nestedStackName, sdk) : { Resources: {} },
+      nestedStackName,
+    };
+  }
+
+  private isNestedStackResource(stackResource: any): boolean {
+    return stackResource.Type === 'AWS::CloudFormation::Stack' && stackResource.Metadata && stackResource.Metadata['aws:asset:path'];
   }
 
   private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string, sdk?: ISDK) : Promise<Template> {
@@ -346,4 +422,10 @@ export class CloudFormationDeployments {
 
 function isAssetManifestArtifact(art: cxapi.CloudArtifact): art is cxapi.AssetManifestArtifact {
   return art instanceof cxapi.AssetManifestArtifact;
+}
+
+interface NestedStackTemplates {
+  readonly generatedNestedTemplate: any,
+  readonly deployedNestedStackTemplate: any,
+  readonly nestedStackName: string | undefined,
 }
