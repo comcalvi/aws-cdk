@@ -1,18 +1,36 @@
 jest.mock('../../lib/api/deploy-stack');
 
+import { CloudFormation } from 'aws-sdk';
 import { CloudFormationDeployments } from '../../lib/api/cloudformation-deployments';
 import { deployStack } from '../../lib/api/deploy-stack';
 import { ToolkitInfo } from '../../lib/api/toolkit-info';
-import { testStack } from '../util';
+import { CloudFormationStack } from '../../lib/api/util/cloudformation';
+import { instanceMockFrom, testStack } from '../util';
 import { mockBootstrapStack, MockSdkProvider } from '../util/mock-sdk';
 
 let sdkProvider: MockSdkProvider;
 let deployments: CloudFormationDeployments;
 let mockToolkitInfoLookup: jest.Mock;
+let currentCfnStackResources: { [key: string]: CloudFormation.StackResourceSummary[] };
+//let numberOfTimesListStackResourcesWasCalled: number;
 beforeEach(() => {
   jest.resetAllMocks();
   sdkProvider = new MockSdkProvider();
   deployments = new CloudFormationDeployments({ sdkProvider });
+  //numberOfTimesListStackResourcesWasCalled = 0;
+  currentCfnStackResources = {};
+  sdkProvider.stubCloudFormation({
+    listStackResources: ({ StackName: stackName }) => {
+      //numberOfTimesListStackResourcesWasCalled++;
+      if (!currentCfnStackResources[stackName]) {
+        throw new Error(`Stack with id ${stackName} does not exist`);
+      }
+      return {
+        StackResourceSummaries: currentCfnStackResources[stackName],
+      };
+    },
+  });
+
   ToolkitInfo.lookup = mockToolkitInfoLookup = jest.fn().mockResolvedValue(ToolkitInfo.bootstrapStackNotFoundInfo(sdkProvider.sdk));
 });
 
@@ -142,3 +160,345 @@ test('if toolkit stack cannot be found but SSM parameter name is present deploym
 
   expect(requestedParameterName!).toEqual('/some/parameter');
 });
+
+// todo: testing with outputs
+test('readCurrentTemplateWithNestedStacks() with a 3-level nested + sibling structure works', async () => {
+  const cfnStack = instanceMockFrom((CloudFormationStack as any));
+  CloudFormationStack.lookup = jest.fn().mockImplementation((cfn:CloudFormation, stackName: string) => {
+    cfn; // TODO: what to do with these???
+    switch (stackName) {
+      case 'MultiLevelRoot':
+        (cfnStack as any).template = jest.fn().mockReturnValue({
+          Resources:
+          {
+            NestedStack: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: {
+                'aws:asset:path': 'one-resource-two-stacks-stack.nested.template.json',
+              },
+            },
+          },
+        });
+    }
+
+    return cfnStack;
+  });
+
+  // TODO: Stack names must match the file names somehow
+  const rootStack = testStack({
+    stackName: 'MultiLevelRoot',
+    template: {
+      Resources: {
+        NestedStack: {
+          Type: 'AWS::CloudFormation::Stack',
+          Metadata: {
+            'aws:asset:path': 'one-resource-two-stacks-stack.nested.template.json',
+          },
+        },
+      },
+    },
+  });
+
+  // TODO: see cloudformation-deployments.ts:330
+  // idk what's wrong but we need to fix both the expected current template and the expected rootStack.template
+
+  pushStackResourceSummaries('MultiLevelRoot',
+    stackSummaryOf('NestedStack', 'AWS::CloudFormation::Stack',
+      'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/NestedStackA/abcd',
+    ),
+  );
+  pushStackResourceSummaries('NestedStack',
+    stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack',
+      'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/NestedStackA/abcd',
+    ),
+    stackSummaryOf('NestedStackB', 'AWS::CloudFormation::Stack',
+      'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/NestedStackB/abcd',
+    ),
+    stackSummaryOf('SomeResource', 'AWS::Something',
+      'arn:aws:something:bermuda-triangle-1337:123456789012:property',
+    ),
+  );
+  pushStackResourceSummaries('NestedStackA',
+    stackSummaryOf('NestedStack', 'AWS::CloudFormation::Stack',
+      'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/GrandChildA/abcd',
+    ),
+  );
+  pushStackResourceSummaries('NestedStackB',
+    stackSummaryOf('NestedStack', 'AWS::CloudFormation::Stack',
+      'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/GrandChildB/abcd',
+    ),
+  );
+  pushStackResourceSummaries('GrandChildA',
+    stackSummaryOf('SomeResource', 'AWS::Something',
+      'arn:aws:something:bermuda-triangle-1337:123456789012:property',
+    ),
+  );
+  pushStackResourceSummaries('GrandChildB',
+    stackSummaryOf('SomeResource', 'AWS::Something',
+      'arn:aws:something:bermuda-triangle-1337:123456789012:property',
+    ),
+  );
+
+  // WHEN
+  const deployedTemplate = await deployments.readCurrentTemplateWithNestedStacks(rootStack);
+
+  // THEN
+  expect(deployedTemplate).toEqual({
+    Resources:
+    {
+      NestedStack: {
+        Type: 'AWS::CloudFormation::Stack',
+        Resources: {
+          NestedStackA: {
+            Resources: {
+              SomeResource: {
+                Type: 'AWS::Something',
+                Properties: {
+                  Property: 'old-value',
+                },
+              },
+            },
+          },
+          NestedStackB: {
+            Resources: {
+              Type: 'AWS::CloudFormation::Stack',
+              Resources: {
+                SomeResource: {
+                  Type: 'AWS::Something',
+                  Properties: {
+                    Property: 'old-value',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      SomeResource: {
+        Type: 'AWS::Something',
+        Properties: {
+          Property: 'old-value',
+        },
+      },
+    },
+  });
+
+  expect(rootStack.template).toEqual({});
+
+});
+
+/*
+test('readCurrentTemplateWithNestedStacks() on an undeployed parent stack with an (also undeployed) nested stack works', async () => {
+  // GIVEN
+  const cfnStack = instanceMockFrom((CloudFormationStack as any));
+  CloudFormationStack.lookup = jest.fn().mockImplementation((cfn:CloudFormation, stackName: string) => {
+    cfn; // TODO: what to do with these???
+    stackName; // TODO: what to do with these???
+    (cfnStack as any).template = jest.fn().mockReturnValue({ });
+
+    return cfnStack;
+  });
+  const rootStack = testStack({
+    stackName: 'UndeployedParent',
+    template: {
+      Resources: {
+        NestedStack: {
+          Type: 'AWS::CloudFormation::Stack',
+          Metadata: {
+            'aws:asset:path': 'one-resource-one-stack-stack.nested.template.json',
+          },
+        },
+      },
+    },
+  });
+
+  // WHEN
+  const deployedTemplate = await deployments.readCurrentTemplateWithNestedStacks(rootStack);
+
+  // THEN
+  expect(deployedTemplate).toEqual({});
+});
+
+test('readCurrentTemplateWithNestedStacks() caches calls to listStackResources()', async () => {
+  // GIVEN
+  const cfnStack = instanceMockFrom((CloudFormationStack as any));
+  CloudFormationStack.lookup = jest.fn().mockImplementation((cfn:CloudFormation, stackName: string) => {
+    cfn; // TODO: what to do with these???
+    stackName; // TODO: what to do with these???
+    (cfnStack as any).template = jest.fn().mockReturnValue({
+      Resources:
+      {
+        NestedStackA: {
+          Type: 'AWS::CloudFormation::Stack',
+          Metadata: {
+            'aws:asset:path': 'one-resource-stack.nested.template.json',
+          },
+        },
+        NestedStackB: {
+          Type: 'AWS::CloudFormation::Stack',
+          Metadata: {
+            'aws:asset:path': 'one-resource-stack.nested.template.json',
+          },
+        },
+      },
+    });
+
+    return cfnStack;
+  });
+
+  const rootStack = testStack({
+    stackName: 'CachingRoot',
+    template: {
+      Resources: {
+        NestedStackA: {
+          Type: 'AWS::CloudFormation::Stack',
+          Metadata: {
+            'aws:asset:path': 'one-resource-stack.nested.template.json',
+          },
+        },
+        NestedStackB: {
+          Type: 'AWS::CloudFormation::Stack',
+          Metadata: {
+            'aws:asset:path': 'one-resource-stack.nested.template.json',
+          },
+        },
+      },
+    },
+  });
+
+  pushStackResourceSummaries('CachingRoot',
+    stackSummaryOf('NestedStackA', 'AWS::CloudFormation::Stack',
+      'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/one-resource-stack/abcd',
+    ),
+    stackSummaryOf('NestedStackB', 'AWS::CloudFormation::Stack',
+      'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/one-resource-stack/abcd',
+    ),
+  );
+
+  // WHEN
+  await deployments.readCurrentTemplateWithNestedStacks(rootStack);
+
+  // THEN
+  expect(numberOfTimesListStackResourcesWasCalled).toEqual(1);
+});
+
+test('readCurrentTemplateWithNestedStacks() succesfully ignores stacks without metadata', async () => {
+  // GIVEN
+  const cfnStack = instanceMockFrom((CloudFormationStack as any));
+  CloudFormationStack.lookup = jest.fn().mockImplementation((cfn:CloudFormation, stackName: string) => {
+    cfn;
+    if (stackName === 'MetadataRoot') {
+      (cfnStack as any).template = jest.fn().mockReturnValue({
+        Resources: {
+          WithMetadata: {
+            Type: 'AWS::CloudFormation::Stack',
+            Metadata: {
+              'aws:asset:path': 'one-resource-stack.nested.template.json',
+            },
+          },
+        },
+      });
+
+    } else {
+      (cfnStack as any).template = jest.fn().mockReturnValue({
+        Resources: {
+          SomeResource: {
+            Type: 'AWS::Something',
+            Properties: {
+              Property: 'old-value',
+            },
+          },
+        },
+      });
+    }
+
+    return cfnStack;
+  });
+
+  const rootStack = testStack({
+    stackName: 'MetadataRoot',
+    template: {
+      Resources: {
+        WithoutMetadata: {
+          Type: 'AWS::CloudFormation::Stack',
+        },
+        WithEmptyMetadata: {
+          Type: 'AWS::CloudFormation::Stack',
+          Metadata: {},
+        },
+        WithMetadata: {
+          Type: 'AWS::CloudFormation::Stack',
+          Metadata: {
+            'aws:asset:path': 'one-resource-stack.nested.template.json',
+          },
+        },
+      },
+    },
+  });
+
+  pushStackResourceSummaries('MetadataRoot', stackSummaryOf('WithMetadata', 'AWS::CloudFormation::Stack',
+    'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/one-resource-stack/abcd',
+  ));
+
+  // WHEN
+  const deployedTemplate = await deployments.readCurrentTemplateWithNestedStacks(rootStack);
+
+  // THEN
+  expect(deployedTemplate).toEqual({
+    Resources: {
+      WithMetadata: {
+        Type: 'AWS::CloudFormation::Stack',
+        Resources: {
+          SomeResource: {
+            Type: 'AWS::Something',
+            Properties: {
+              Property: 'old-value',
+            },
+          },
+        },
+      },
+    },
+  });
+
+  expect(rootStack.template).toEqual({
+    Resources: {
+      WithoutMetadata: { // Unchanged
+        Type: 'AWS::CloudFormation::Stack',
+      },
+      WithEmptyMetadata: { // Unchanged
+        Type: 'AWS::CloudFormation::Stack',
+        Metadata: {},
+      },
+      WithMetadata: { // Changed
+        Type: 'AWS::CloudFormation::Stack',
+        Resources: {
+          SomeResource: {
+            Type: 'AWS::Something',
+            Properties: {
+              Property: 'new-value',
+            },
+          },
+        },
+      },
+    },
+  });
+});
+*/
+
+function pushStackResourceSummaries(stackName: string, ...items: CloudFormation.StackResourceSummary[]) {
+  if (!currentCfnStackResources[stackName]) {
+    currentCfnStackResources[stackName] = [];
+  }
+
+  currentCfnStackResources[stackName].push(...items);
+}
+
+function stackSummaryOf(logicalId: string, resourceType: string, physicalResourceId: string): CloudFormation.StackResourceSummary {
+  return {
+    LogicalResourceId: logicalId,
+    PhysicalResourceId: physicalResourceId,
+    ResourceType: resourceType,
+    ResourceStatus: 'CREATE_COMPLETE',
+    LastUpdatedTimestamp: new Date(),
+  };
+}

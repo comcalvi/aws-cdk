@@ -73,7 +73,7 @@ function addAttributes(assembly: TestAssembly, builder: cxapi.CloudAssemblyBuild
     const templateFile = `${stack.stackName}.template.json`;
     const template = stack.template ?? DEFAULT_FAKE_TEMPLATE;
     fs.writeFileSync(path.join(builder.outdir, templateFile), JSON.stringify(template, undefined, 2));
-    addNestedStacks(templateFile, builder.outdir, stack.template);
+    addNestedStacks(templateFile, builder.outdir, template);
 
     // we call patchStackTags here to simulate the tags formatter
     // that is used when building real manifest files.

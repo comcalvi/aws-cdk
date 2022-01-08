@@ -13,6 +13,8 @@ export class GetStackResources {
       return undefined;
     }
     const stackResources = await this.listStackResources(stackName);
+    console.log(stackResources)
+    console.log(stackName)
     return stackResources ? stackResources.find(sr => sr.LogicalResourceId === logicalId)?.PhysicalResourceId : undefined;
   }
 

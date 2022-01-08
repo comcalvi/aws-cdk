@@ -323,6 +323,11 @@ export class CloudFormationDeployments {
     // so we get the ARN and manually extract the name.
     const nestedStackArn = await getStackResources.findPhysicalNameFor(nestedStackLogicalId, parentStackName);
     const nestedStackName = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
+    console.log('-----------------------------------------------')
+    console.log(nestedStackLogicalId)
+    console.log(nestedStackArn)
+    console.log(nestedTemplatePath)
+    console.log('-----------------------------------------------')
 
     return {
       generatedNestedTemplate: JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8')),
