@@ -3,7 +3,9 @@ import * as cxapi from '@aws-cdk/cx-api';
 import { AssetManifest } from 'cdk-assets';
 import * as fs from 'fs-extra';
 import { ISDK } from '..';
-import { GetStackResources } from '../api/list-stack-resources';
+import { EvaluateCloudFormationTemplate } from './hotswap/evaluate-cloudformation-template';
+import { ListStackResources } from '../api/hotswap/common';
+import { LazyListStackResources } from '../api/hotswap-deployments';
 import { Tag } from '../cdk-toolkit';
 import { debug } from '../logging';
 import { publishAssets } from '../util/asset-publishing';
@@ -267,9 +269,10 @@ export class CloudFormationDeployments {
     }
 
     const sdk = await this.prepareSdk(rootStackArtifact);
-    const getStackResources = new GetStackResources(sdk);
+    //const getStackResources = new GetStackResources(sdk);
+    const listStackResourcesByStackName: { [key:string] : ListStackResources } = {};
     await this.replaceNestedStacksInParentTemplate(
-      rootStackArtifact, rootStackArtifact.template, deployedTemplate, rootStackArtifact.stackName, getStackResources, sdk,
+      rootStackArtifact, rootStackArtifact.template, deployedTemplate, rootStackArtifact.stackName, listStackResourcesByStackName, sdk,
     );
   }
 
@@ -287,15 +290,20 @@ export class CloudFormationDeployments {
 
   private async replaceNestedStacksInParentTemplate(
     rootStackArtifact: cxapi.CloudFormationStackArtifact, generatedParentTemplate: any, deployedParentTemplate: any,
-    parentStackName: string | undefined, getStackResources: GetStackResources, sdk: ISDK,
+    parentStackName: string | undefined, listStackResourcesByStackName: { [key: string] : ListStackResources }, sdk: ISDK,
   ) {
     for (const [nestedStackLogicalId, resource] of Object.entries(generatedParentTemplate.Resources ?? {})
-      .filter(entry => this.isNestedStackResource(entry[1]))
+      .filter(entry => this.isNestedStackResource(entry[1])) // TODO: change `entry[1]` to some better name
     ) {
       let nestedStackResource = resource as any;
+
+      if (parentStackName && !listStackResourcesByStackName[parentStackName]) {
+        listStackResourcesByStackName[parentStackName] = new LazyListStackResources(sdk, parentStackName);
+      }
+
       const assetPath = nestedStackResource.Metadata['aws:asset:path'];
       const nestedStackTemplates = await this.getNestedStackTemplates(
-        rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, getStackResources, sdk,
+        rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, listStackResourcesByStackName, sdk,
       );
 
       generatedParentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.generatedNestedTemplate;
@@ -309,25 +317,32 @@ export class CloudFormationDeployments {
       await this.replaceNestedStacksInParentTemplate(
         rootStackArtifact, generatedParentTemplate.Resources[nestedStackLogicalId],
         (deployedParentTemplate.Resources ?? {})[nestedStackLogicalId] ?? {},
-        nestedStackTemplates.nestedStackName, getStackResources, sdk,
+        nestedStackTemplates.nestedStackName, listStackResourcesByStackName, sdk,
       );
     }
   }
 
   private async getNestedStackTemplates(
     rootStackArtifact: cxapi.CloudFormationStackArtifact, nestedTemplateAssetPath: string, nestedStackLogicalId: string,
-    parentStackName: string | undefined, getStackResources: GetStackResources, sdk: ISDK,
+    parentStackName: string | undefined, listStackResourcesByStackName: { [key:string]: ListStackResources }, sdk: ISDK,
   ): Promise<NestedStackTemplates> {
     const nestedTemplatePath = path.join(rootStackArtifact.assembly.directory, nestedTemplateAssetPath);
     // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute,
     // so we get the ARN and manually extract the name.
-    const nestedStackArn = await getStackResources.findPhysicalNameFor(nestedStackLogicalId, parentStackName);
+    let evaluateCfnTemplate = undefined;
+    if (parentStackName) {
+      evaluateCfnTemplate = new EvaluateCloudFormationTemplate({
+        stackArtifact: rootStackArtifact,
+        parameters: {},
+        account: '',
+        region: '',
+        partition: '',
+        urlSuffix: () => '',
+        listStackResources: listStackResourcesByStackName[parentStackName],
+      });
+    }
+    const nestedStackArn = await evaluateCfnTemplate?.findPhysicalNameFor(nestedStackLogicalId);
     const nestedStackName = nestedStackArn?.slice(nestedStackArn.indexOf('/') + 1, nestedStackArn.lastIndexOf('/'));
-    console.log('-----------------------------------------------')
-    console.log(nestedStackLogicalId)
-    console.log(nestedStackArn)
-    console.log(nestedTemplatePath)
-    console.log('-----------------------------------------------')
 
     return {
       generatedNestedTemplate: JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8')),
