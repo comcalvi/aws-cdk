@@ -83,7 +83,7 @@ test('placeholders are substituted in CloudFormation execution role', async () =
 });
 
 test('role with placeholders is assumed if assumerole is given', async () => {
-  const mockForEnvironment = jest.fn();
+  const mockForEnvironment = jest.fn().mockImplementation(() => { return { sdk: sdkProvider.sdk }; });
   sdkProvider.forEnvironment = mockForEnvironment;
 
   await deployments.deployStack({

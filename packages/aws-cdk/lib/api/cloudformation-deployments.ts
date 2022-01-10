@@ -2,14 +2,13 @@ import * as path from 'path';
 import * as cxapi from '@aws-cdk/cx-api';
 import { AssetManifest } from 'cdk-assets';
 import * as fs from 'fs-extra';
-import { ISDK } from '..';
 import { EvaluateCloudFormationTemplate } from './hotswap/evaluate-cloudformation-template';
 import { ListStackResources } from '../api/hotswap/common';
 import { LazyListStackResources } from '../api/hotswap-deployments';
 import { Tag } from '../cdk-toolkit';
-import { debug } from '../logging';
+import { debug, warning } from '../logging';
 import { publishAssets } from '../util/asset-publishing';
-import { Mode, SdkProvider } from './aws-auth';
+import { Mode, SdkProvider, ISDK } from './aws-auth';
 import { deployStack, DeployStackResult, destroyStack } from './deploy-stack';
 import { ToolkitInfo } from './toolkit-info';
 import { CloudFormationStack, Template } from './util/cloudformation';
@@ -178,6 +177,54 @@ export interface ProvisionerProps {
 }
 
 /**
+ * SDK obtained by assuming the lookup role
+ * for a given environment
+ */
+export interface PreparedSdkWithLookupRoleForEnvironment {
+  /**
+   * The SDK for the given environment
+   */
+  readonly sdk: ISDK;
+
+  /**
+   * The resolved environment for the stack
+   * (no more 'unknown-account/unknown-region')
+   */
+  readonly resolvedEnvironment: cxapi.Environment;
+
+  /**
+   * Whether or not the assume role was successful.
+   * If the assume role was not successful (false)
+   * then that means that the 'sdk' returned contains
+   * the default credentials (not the assume role credentials)
+   */
+  readonly didAssumeRole: boolean;
+}
+
+/**
+ * SDK obtained by assuming the deploy role
+ * for a given environment
+ */
+export interface PreparedSdkForEnvironment {
+  /**
+   * The SDK for the given environment
+   */
+  readonly stackSdk: ISDK;
+
+  /**
+   * The resolved environment for the stack
+   * (no more 'unknown-account/unknown-region')
+   */
+  readonly resolvedEnvironment: cxapi.Environment;
+  /**
+   * The Execution Role that should be passed to CloudFormation.
+   *
+   * @default - no execution role is used
+   */
+  readonly cloudFormationRoleArn?: string;
+}
+
+/**
  * Helper class for CloudFormation deployments
  *
  * Looks us the right SDK and Bootstrap stack to deploy a given
@@ -259,8 +306,8 @@ export class CloudFormationDeployments {
     return stack.exists;
   }
 
-  private async readCurrentNestedTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, nestedStackName: string, sdk: ISDK): Promise<Template> {
-    return this.readCurrentStackTemplate(stackArtifact, nestedStackName, sdk);
+  private async readCurrentNestedTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, nestedStackName: string/*, sdk: ISDK*/): Promise<Template> {
+    return this.readCurrentStackTemplate(stackArtifact, nestedStackName/*, sdk*/);
   }
 
   private async replaceNestedStacksInRootStack(rootStackArtifact: cxapi.CloudFormationStackArtifact, deployedTemplate: any) {
@@ -268,24 +315,16 @@ export class CloudFormationDeployments {
       return;
     }
 
-    const sdk = await this.prepareSdk(rootStackArtifact);
+    const sdkWithRole = await this.prepareSdkWithLookupRoleFor(rootStackArtifact);
     //const getStackResources = new GetStackResources(sdk);
     const listStackResourcesByStackName: { [key:string] : ListStackResources } = {};
     await this.replaceNestedStacksInParentTemplate(
-      rootStackArtifact, rootStackArtifact.template, deployedTemplate, rootStackArtifact.stackName, listStackResourcesByStackName, sdk,
+      rootStackArtifact, rootStackArtifact.template, deployedTemplate, rootStackArtifact.stackName, listStackResourcesByStackName, sdkWithRole.sdk,
     );
   }
 
   private stackHasNestedStacks(stackArtifact: cxapi.CloudFormationStackArtifact): boolean {
     return Object.values(stackArtifact.template.Resources ?? {}).some((resource: any) => resource.Type === 'AWS::CloudFormation::Stack');
-  }
-
-  // TODO: Remove this method once Cory adds the lookup role, and use that instead.
-  private async prepareSdk(rootStackArtifact: cxapi.CloudFormationStackArtifact): Promise<ISDK> {
-    const resolvedEnv = await this.sdkProvider.resolveEnvironment(rootStackArtifact.environment);
-    const sdk = await this.sdkProvider.forEnvironment(resolvedEnv, Mode.ForReading);
-
-    return sdk;
   }
 
   private async replaceNestedStacksInParentTemplate(
@@ -303,7 +342,7 @@ export class CloudFormationDeployments {
 
       const assetPath = nestedStackResource.Metadata['aws:asset:path'];
       const nestedStackTemplates = await this.getNestedStackTemplates(
-        rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, listStackResourcesByStackName, sdk,
+        rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, listStackResourcesByStackName/*, sdk*/,
       );
 
       generatedParentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.generatedNestedTemplate;
@@ -324,7 +363,7 @@ export class CloudFormationDeployments {
 
   private async getNestedStackTemplates(
     rootStackArtifact: cxapi.CloudFormationStackArtifact, nestedTemplateAssetPath: string, nestedStackLogicalId: string,
-    parentStackName: string | undefined, listStackResourcesByStackName: { [key:string]: ListStackResources }, sdk: ISDK,
+    parentStackName: string | undefined, listStackResourcesByStackName: { [key:string]: ListStackResources }, /*sdk: ISDK,*/
   ): Promise<NestedStackTemplates> {
     const nestedTemplatePath = path.join(rootStackArtifact.assembly.directory, nestedTemplateAssetPath);
     // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute,
@@ -347,7 +386,7 @@ export class CloudFormationDeployments {
     return {
       generatedNestedTemplate: JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8')),
       deployedNestedStackTemplate: nestedStackName
-        ? await this.readCurrentNestedTemplate(rootStackArtifact, nestedStackName, sdk) : { Resources: {} },
+        ? await this.readCurrentNestedTemplate(rootStackArtifact, nestedStackName/*, sdk*/) : { Resources: {} },
       nestedStackName,
     };
   }
@@ -356,14 +395,87 @@ export class CloudFormationDeployments {
     return stackResource.Type === 'AWS::CloudFormation::Stack' && stackResource.Metadata && stackResource.Metadata['aws:asset:path'];
   }
 
-  private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string, sdk?: ISDK) : Promise<Template> {
+  private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string/*, sdk?: ISDK*/) : Promise<Template> {
     // if `stackName !== stackArtifact.stackName`, then `stackArtifact` is an ancestor to a nested stack with name `stackName`.
+    debug(`Reading existing template for stack ${stackArtifact.displayName}.`);
+    let stackSdk: ISDK | undefined = undefined;
+    // try to assume the lookup role and fallback to the deploy role
+    try {
+      const result = await this.prepareSdkWithLookupRoleFor(stackArtifact);
+      if (result.didAssumeRole) {
+        stackSdk = result.sdk;
+      }
+    } catch { }
+
+    if (!stackSdk) {
+      stackSdk = (await this.prepareSdkFor(stackArtifact, undefined, Mode.ForReading)).stackSdk;
+    }
+
+    const cfn = stackSdk.cloudFormation();
+
+    const stack = await CloudFormationStack.lookup(cfn, stackName);
+    return stack.template();
+    /*
     debug(`Reading existing template for stack ${stackArtifact.displayName}.`);
     const stackSdk = sdk ?? (await this.prepareSdkFor(stackArtifact, undefined, Mode.ForReading)).stackSdk;
     const cfn = stackSdk.cloudFormation();
 
     const stack = await CloudFormationStack.lookup(cfn, stackName);
     return stack.template();
+    */
+  }
+
+  /**
+   * Try to use the bootstrap lookupRole. There are two scenarios that are handled here
+   *  1. The lookup role may not exist (it was added in bootstrap stack version 7)
+   *  2. The lookup role may not have the correct permissions (ReadOnlyAccess was added in
+   *      bootstrap stack version 8)
+   *
+   * In the case of 1 (lookup role doesn't exist) `forEnvironment` will either:
+   *   1. Return the default credentials if the default credentials are for the stack account
+   *   2. Throw an error if the default credentials are not for the stack account.
+   *
+   * If we successfully assume the lookup role we then proceed to 2 and check whether the bootstrap
+   * stack version is valid. If it is not we throw an error which should be handled in the calling
+   * function (and fallback to use a different role, etc)
+   *
+   * If we do not successfully assume the lookup role, but do get back the default credentials
+   * then return those and note that we are returning the default credentials. The calling
+   * function can then decide to use them or fallback to another role.
+   */
+  private async prepareSdkWithLookupRoleFor(stack: cxapi.CloudFormationStackArtifact): Promise<PreparedSdkWithLookupRoleForEnvironment> {
+    const resolvedEnvironment = await this.sdkProvider.resolveEnvironment(stack.environment);
+
+    // Substitute any placeholders with information about the current environment
+    const arns = await replaceEnvPlaceholders({
+      lookupRoleArn: stack.lookupRole?.arn,
+    }, resolvedEnvironment, this.sdkProvider);
+
+    // try to assume the lookup role
+    const warningMessage = `Could not assume ${arns.lookupRoleArn}, proceeding anyway.`;
+    const upgradeMessage = `(To get rid of this warning, please upgrade to bootstrap version >= ${stack.lookupRole?.requiresBootstrapStackVersion})`;
+    try {
+      const stackSdk = await this.sdkProvider.forEnvironment(resolvedEnvironment, Mode.ForReading, {
+        assumeRoleArn: arns.lookupRoleArn,
+        assumeRoleExternalId: stack.lookupRole?.assumeRoleExternalId,
+      });
+
+      // if we succeed in assuming the lookup role, make sure we have the correct bootstrap stack version
+      if (stackSdk.didAssumeRole && stack.lookupRole?.bootstrapStackVersionSsmParameter && stack.lookupRole.requiresBootstrapStackVersion) {
+        const version = await ToolkitInfo.versionFromSsmParameter(stackSdk.sdk, stack.lookupRole.bootstrapStackVersionSsmParameter);
+        if (version < stack.lookupRole.requiresBootstrapStackVersion) {
+          throw new Error(`Bootstrap stack version '${stack.lookupRole.requiresBootstrapStackVersion}' is required, found version '${version}'.`);
+        }
+      } else if (!stackSdk.didAssumeRole) {
+        warning(upgradeMessage);
+      }
+      return { ...stackSdk, resolvedEnvironment };
+    } catch (e) {
+      debug(e);
+      warning(warningMessage);
+      warning(upgradeMessage);
+      throw (e);
+    }
   }
 
   /**
@@ -375,7 +487,11 @@ export class CloudFormationDeployments {
    * - SDK loaded with the right credentials for calling `CreateChangeSet`.
    * - The Execution Role that should be passed to CloudFormation.
    */
-  private async prepareSdkFor(stack: cxapi.CloudFormationStackArtifact, roleArn?: string, mode = Mode.ForWriting) {
+  private async prepareSdkFor(
+    stack: cxapi.CloudFormationStackArtifact,
+    roleArn?: string,
+    mode = Mode.ForWriting,
+  ): Promise<PreparedSdkForEnvironment> {
     if (!stack.environment) {
       throw new Error(`The stack ${stack.displayName} does not have an environment`);
     }
@@ -396,7 +512,7 @@ export class CloudFormationDeployments {
     });
 
     return {
-      stackSdk,
+      stackSdk: stackSdk.sdk,
       resolvedEnvironment,
       cloudFormationRoleArn: arns.cloudFormationRoleArn,
     };
