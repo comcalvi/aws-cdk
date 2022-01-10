@@ -306,8 +306,8 @@ export class CloudFormationDeployments {
     return stack.exists;
   }
 
-  private async readCurrentNestedTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, nestedStackName: string/*, sdk: ISDK*/): Promise<Template> {
-    return this.readCurrentStackTemplate(stackArtifact, nestedStackName/*, sdk*/);
+  private async readCurrentNestedTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, nestedStackName: string): Promise<Template> {
+    return this.readCurrentStackTemplate(stackArtifact, nestedStackName);
   }
 
   private async replaceNestedStacksInRootStack(rootStackArtifact: cxapi.CloudFormationStackArtifact, deployedTemplate: any) {
@@ -316,7 +316,6 @@ export class CloudFormationDeployments {
     }
 
     const sdkWithRole = await this.prepareSdkWithLookupRoleFor(rootStackArtifact);
-    //const getStackResources = new GetStackResources(sdk);
     const listStackResourcesByStackName: { [key:string] : ListStackResources } = {};
     await this.replaceNestedStacksInParentTemplate(
       rootStackArtifact, rootStackArtifact.template, deployedTemplate, rootStackArtifact.stackName, listStackResourcesByStackName, sdkWithRole.sdk,
@@ -342,7 +341,7 @@ export class CloudFormationDeployments {
 
       const assetPath = nestedStackResource.Metadata['aws:asset:path'];
       const nestedStackTemplates = await this.getNestedStackTemplates(
-        rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, listStackResourcesByStackName/*, sdk*/,
+        rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, listStackResourcesByStackName,
       );
 
       generatedParentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.generatedNestedTemplate;
@@ -363,7 +362,7 @@ export class CloudFormationDeployments {
 
   private async getNestedStackTemplates(
     rootStackArtifact: cxapi.CloudFormationStackArtifact, nestedTemplateAssetPath: string, nestedStackLogicalId: string,
-    parentStackName: string | undefined, listStackResourcesByStackName: { [key:string]: ListStackResources }, /*sdk: ISDK,*/
+    parentStackName: string | undefined, listStackResourcesByStackName: { [key:string]: ListStackResources },
   ): Promise<NestedStackTemplates> {
     const nestedTemplatePath = path.join(rootStackArtifact.assembly.directory, nestedTemplateAssetPath);
     // CFN generates the nested stack name in the form `ParentStackName-NestedStackLogicalID-SomeHashWeCan'tCompute,
@@ -386,7 +385,7 @@ export class CloudFormationDeployments {
     return {
       generatedNestedTemplate: JSON.parse(fs.readFileSync(nestedTemplatePath, 'utf-8')),
       deployedNestedStackTemplate: nestedStackName
-        ? await this.readCurrentNestedTemplate(rootStackArtifact, nestedStackName/*, sdk*/) : { Resources: {} },
+        ? await this.readCurrentNestedTemplate(rootStackArtifact, nestedStackName) : { Resources: {} },
       nestedStackName,
     };
   }
@@ -395,7 +394,7 @@ export class CloudFormationDeployments {
     return stackResource.Type === 'AWS::CloudFormation::Stack' && stackResource.Metadata && stackResource.Metadata['aws:asset:path'];
   }
 
-  private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string/*, sdk?: ISDK*/) : Promise<Template> {
+  private async readCurrentStackTemplate(stackArtifact: cxapi.CloudFormationStackArtifact, stackName: string) : Promise<Template> {
     // if `stackName !== stackArtifact.stackName`, then `stackArtifact` is an ancestor to a nested stack with name `stackName`.
     debug(`Reading existing template for stack ${stackArtifact.displayName}.`);
     let stackSdk: ISDK | undefined = undefined;
@@ -415,14 +414,6 @@ export class CloudFormationDeployments {
 
     const stack = await CloudFormationStack.lookup(cfn, stackName);
     return stack.template();
-    /*
-    debug(`Reading existing template for stack ${stackArtifact.displayName}.`);
-    const stackSdk = sdk ?? (await this.prepareSdkFor(stackArtifact, undefined, Mode.ForReading)).stackSdk;
-    const cfn = stackSdk.cloudFormation();
-
-    const stack = await CloudFormationStack.lookup(cfn, stackName);
-    return stack.template();
-    */
   }
 
   /**
