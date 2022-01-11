@@ -161,7 +161,141 @@ test('if toolkit stack cannot be found but SSM parameter name is present deploym
   expect(requestedParameterName!).toEqual('/some/parameter');
 });
 
-// todo: testing with outputs
+test('readCurrentTemplateWithNestedStacks() can handle non-Resources in the template', async () => {
+  const cfnStack = instanceMockFrom((CloudFormationStack as any));
+  CloudFormationStack.lookup = jest.fn().mockImplementation((_, stackName: string) => {
+    switch (stackName) {
+      case 'OutputParamRoot':
+        (cfnStack as any).template = jest.fn().mockReturnValue({
+          Resources: {
+            NestedStack: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: {
+                'aws:asset:path': 'one-output-one-param-stack.nested.template.json',
+              },
+            },
+          },
+        });
+        break;
+
+      case 'NestedStack':
+        (cfnStack as any).template = jest.fn().mockReturnValue({
+          Resources: {
+            NestedResource: {
+              Type: 'AWS::Something',
+              Properties: {
+                Property: 'old-value',
+              },
+            },
+          },
+          Parameters: {
+            NestedParam: {
+              Type: 'String',
+            },
+          },
+          Outputs: {
+            NestedOutput: {
+              Value: {
+                Ref: 'NestedResource',
+              },
+            },
+          },
+        });
+        break;
+
+      default:
+        throw new Error('unknown stack name ' + stackName + ' found in cloudformation-deployments.test.ts');
+    }
+
+    return cfnStack;
+  });
+
+  const rootStack = testStack({
+    stackName: 'OutputParamRoot',
+    template: {
+      Resources: {
+        NestedStack: {
+          Type: 'AWS::CloudFormation::Stack',
+          Metadata: {
+            'aws:asset:path': 'one-output-one-param-stack.nested.template.json',
+          },
+        },
+      },
+    },
+  });
+
+  pushStackResourceSummaries('OutputParamRoot',
+    stackSummaryOf('NestedStack', 'AWS::CloudFormation::Stack',
+      'arn:aws:cloudformation:bermuda-triangle-1337:123456789012:stack/NestedStack/abcd',
+    ),
+  );
+  pushStackResourceSummaries('NestedStack',
+    stackSummaryOf('NestedResource', 'AWS::Something',
+      'arn:aws:something:bermuda-triangle-1337:123456789012:property',
+    ),
+  );
+
+  // WHEN
+  const deployedTemplate = await deployments.readCurrentTemplateWithNestedStacks(rootStack);
+
+  // THEN
+  expect(deployedTemplate).toEqual({
+    Resources: {
+      NestedStack: {
+        Type: 'AWS::CloudFormation::Stack',
+        Resources: {
+          NestedResource: {
+            Type: 'AWS::Something',
+            Properties: {
+              Property: 'old-value',
+            },
+          },
+        },
+        Outputs: {
+          NestedOutput: {
+            Value: {
+              Ref: 'NestedResource',
+            },
+          },
+        },
+        Parameters: {
+          NestedParam: {
+            Type: 'String',
+          },
+        },
+      },
+    },
+  });
+
+  expect(rootStack.template).toEqual({
+    Resources: {
+      NestedStack: {
+        Type: 'AWS::CloudFormation::Stack',
+        Resources: {
+          NestedResource: {
+            Type: 'AWS::Something',
+            Properties: {
+              Property: 'new-value',
+            },
+          },
+        },
+        Outputs: {
+          NestedOutput: {
+            Value: {
+              Ref: 'NestedResource',
+            },
+          },
+        },
+        Parameters: {
+          NestedParam: {
+            Type: 'Number',
+          },
+        },
+      },
+    },
+  });
+});
+
 test('readCurrentTemplateWithNestedStacks() with a 3-level nested + sibling structure works', async () => {
   const cfnStack = instanceMockFrom((CloudFormationStack as any));
   CloudFormationStack.lookup = jest.fn().mockImplementation((_, stackName: string) => {
@@ -237,7 +371,6 @@ test('readCurrentTemplateWithNestedStacks() with a 3-level nested + sibling stru
     return cfnStack;
   });
 
-  // TODO: Stack names must match the file names somehow
   const rootStack = testStack({
     stackName: 'MultiLevelRoot',
     template: {
