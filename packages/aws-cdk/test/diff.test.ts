@@ -51,13 +51,6 @@ describe('non-nested stacks', () => {
     });
 
     // Default implementations
-    cloudFormation.readCurrentTemplate.mockImplementation((stackArtifact: CloudFormationStackArtifact) => {
-      if (stackArtifact.stackName === 'D') {
-        return Promise.resolve({ resource: 'D' });
-      }
-      return Promise.resolve({});
-    });
-    // TODO: need to reduce duplication here
     cloudFormation.readCurrentTemplateWithNestedStacks.mockImplementation((stackArtifact: CloudFormationStackArtifact) => {
       if (stackArtifact.stackName === 'D') {
         return Promise.resolve({ resource: 'D' });
@@ -138,6 +131,78 @@ describe('non-nested stacks', () => {
       stackNames: ['C'],
       stream: buffer,
     })).rejects.toThrow(/Found errors/);
+  });
+});
+
+describe('nested stacks', () => {
+  beforeEach(() => {
+    cloudExecutable = new MockCloudExecutable({
+      stacks: [{
+        stackName: 'Parent',
+        template: {
+          Resources: {
+            Child: {
+              Type: 'AWS::CloudFormation::Stack',
+              Metadata: {
+                'aws:asset:path': 'one-resource-stack.nested.template.json',
+              },
+            },
+          },
+        },
+      }],
+    });
+
+    cloudFormation = instanceMockFrom(CloudFormationDeployments);
+
+    toolkit = new CdkToolkit({
+      cloudExecutable,
+      cloudFormation,
+      configuration: cloudExecutable.configuration,
+      sdkProvider: cloudExecutable.sdkProvider,
+    });
+
+    // TODO
+    // Default implementations
+    cloudFormation.readCurrentTemplateWithNestedStacks.mockImplementation((stackArtifact: CloudFormationStackArtifact) => {
+      if (stackArtifact.stackName === 'Parent') {
+        return Promise.resolve({
+          Resources: {
+            Type: 'AWS::CloudFormation::Stack',
+          },
+        });
+      } else if (stackArtifact.stackName === 'Child') {
+        return Promise.resolve({
+          Resources: {
+            Type: 'AWS::CloudFormation::Stack',
+          },
+        });
+      }
+      return Promise.resolve({});
+    });
+    cloudFormation.deployStack.mockImplementation((options) => Promise.resolve({
+      noOp: true,
+      outputs: {},
+      stackArn: '',
+      stackArtifact: options.stack,
+    }));
+  });
+
+  test('diff can diff nested stacks', async () => {
+    // GIVEN
+    const buffer = new StringWritable();
+
+    // WHEN
+    const exitCode = await toolkit.diff({
+      stackNames: ['B'],
+      stream: buffer,
+    });
+
+    // THEN
+    const plainTextOutput = buffer.data.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, '');
+    expect(plainTextOutput).toContain('Stack A');
+    expect(plainTextOutput).toContain('Stack B');
+
+    expect(exitCode).toBe(0);
   });
 });
 

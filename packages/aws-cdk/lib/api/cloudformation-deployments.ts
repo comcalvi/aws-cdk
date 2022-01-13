@@ -344,28 +344,6 @@ export class CloudFormationDeployments {
         rootStackArtifact, assetPath, nestedStackLogicalId, parentStackName, listStackResourcesByStackName,
       );
 
-      ///////////////////////////////////////////////////////////////////
-      /*for (const rsrcId in nestedStackTemplates.generatedNestedTemplate.Resources) {
-        if (nestedStackTemplates.generatedNestedTemplate.Resources[rsrcId].Properties) {
-          for (const propId in nestedStackTemplates.generatedNestedTemplate.Resources[rsrcId].Properties) {
-            nestedStackTemplates.generatedNestedTemplate.Resources[rsrcId][propId] = nestedStackTemplates.generatedNestedTemplate.Resources[rsrcId].Properties[propId];
-          }
-        }
-        //nestedStackTemplates.generatedNestedTemplate.Resources[rsrcId].Properties = undefined;
-        delete nestedStackTemplates.generatedNestedTemplate.Resources[rsrcId].Properties;
-      }
-
-      for (const rsrcId in nestedStackTemplates.deployedNestedStackTemplate.Resources) {
-        if (nestedStackTemplates.deployedNestedStackTemplate.Resources[rsrcId].Properties) {
-          for (const propId in nestedStackTemplates.deployedNestedStackTemplate.Resources[rsrcId].Properties) {
-            nestedStackTemplates.deployedNestedStackTemplate.Resources[rsrcId][propId] = nestedStackTemplates.deployedNestedStackTemplate.Resources[rsrcId].Properties[propId];
-          }
-        }
-        //nestedStackTemplates.deployedNestedStackTemplate.Resources[rsrcId].Properties = undefined;
-        delete nestedStackTemplates.deployedNestedStackTemplate.Resources[rsrcId].Properties;
-      }*/
-      ///////////////////////////////////////////////////////////////////
-
       generatedParentTemplate.Resources[nestedStackLogicalId] = nestedStackTemplates.generatedNestedTemplate;
       generatedParentTemplate.Resources[nestedStackLogicalId].Type = 'AWS::CloudFormation::Stack';
 
