@@ -57,6 +57,13 @@ describe('non-nested stacks', () => {
       }
       return Promise.resolve({});
     });
+    // TODO: need to reduce duplication here
+    cloudFormation.readCurrentTemplateWithNestedStacks.mockImplementation((stackArtifact: CloudFormationStackArtifact) => {
+      if (stackArtifact.stackName === 'D') {
+        return Promise.resolve({ resource: 'D' });
+      }
+      return Promise.resolve({});
+    });
     cloudFormation.deployStack.mockImplementation((options) => Promise.resolve({
       noOp: true,
       outputs: {},
