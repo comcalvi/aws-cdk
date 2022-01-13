@@ -274,6 +274,9 @@ class Formatter {
         this.print('%s   %s─ %s Removed: %s', linePrefix, treePrefix, REMOVAL, colors.blue(`.${key}`));
       } else /* if (oldValue === undefined && newValue !== undefined */ {
         this.print('%s   %s─ %s Added: %s', linePrefix, treePrefix, ADDITION, colors.blue(`.${key}`));
+        ////
+        //this.formatObjectDiff(oldValue, newValue, `${linePrefix}   ${key === lastKey ? ' ' : '│'}`);
+        ////
       }
     }
   }
