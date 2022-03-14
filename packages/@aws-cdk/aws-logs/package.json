@@ -100,7 +100,11 @@
     "@aws-cdk/aws-s3-assets": "0.0.0",
     "@aws-cdk/core": "0.0.0",
     "@aws-cdk/cx-api": "0.0.0",
-    "constructs": "^3.3.69"
+    "constructs": "^3.3.69",
+    "jsii-diff": "^1.54.0",
+    "jsii-pacmak": "^1.54.0",
+    "jsii-reflect": "^1.54.0",
+    "jsii-rosetta": "^1.54.0"
   },
   "homepage": "https://github.com/aws/aws-cdk",
   "peerDependencies": {
