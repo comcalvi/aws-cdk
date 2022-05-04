@@ -1,4 +1,4 @@
-import { TemplateAssertions, Match } from '@aws-cdk/assertions';
+import { Template, Match } from '@aws-cdk/assertions';
 import { SecurityGroup, SubnetType, Vpc } from '@aws-cdk/aws-ec2';
 import * as lambda from '@aws-cdk/aws-lambda';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
@@ -24,7 +24,7 @@ describe('KafkaEventSource', () => {
         }));
 
       // THEN
-      TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
+      Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
         PolicyDocument: {
           Statement: [
             {
@@ -47,7 +47,7 @@ describe('KafkaEventSource', () => {
         ],
       });
 
-      TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+      Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
         EventSourceArn: clusterArn,
         FunctionName: {
           Ref: 'Fn9270CBC0',
@@ -79,7 +79,7 @@ describe('KafkaEventSource', () => {
         }));
 
       // THEN
-      TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
+      Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
         PolicyDocument: {
           Statement: [
             {
@@ -112,7 +112,7 @@ describe('KafkaEventSource', () => {
         ],
       });
 
-      TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+      Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
         EventSourceArn: clusterArn,
         FunctionName: {
           Ref: 'Fn9270CBC0',
@@ -155,7 +155,7 @@ describe('KafkaEventSource', () => {
         }));
 
       // THEN
-      TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
+      Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
         PolicyDocument: {
           Statement: [
             {
@@ -179,7 +179,7 @@ describe('KafkaEventSource', () => {
         ],
       });
 
-      TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+      Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
         FunctionName: {
           Ref: 'Fn9270CBC0',
         },
@@ -240,13 +240,13 @@ describe('KafkaEventSource', () => {
             topic: kafkaTopic,
             startingPosition: lambda.StartingPosition.TRIM_HORIZON,
             vpc: vpc,
-            vpcSubnets: { subnetType: SubnetType.PRIVATE },
+            vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_NAT },
             securityGroup: sg,
           }));
 
         // THEN
-        TemplateAssertions.fromStack(stack).resourceCountIs('AWS::IAM::Policy', 0);
-        TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+        Template.fromStack(stack).resourceCountIs('AWS::IAM::Policy', 0);
+        Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
           FunctionName: {
             Ref: 'Fn9270CBC0',
           },
@@ -300,12 +300,12 @@ describe('KafkaEventSource', () => {
             secret: secret,
             startingPosition: lambda.StartingPosition.TRIM_HORIZON,
             vpc: vpc,
-            vpcSubnets: { subnetType: SubnetType.PRIVATE },
+            vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_NAT },
             securityGroup: sg,
           }));
 
         // THEN
-        TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
+        Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
           PolicyDocument: {
             Statement: [
               {
@@ -329,7 +329,7 @@ describe('KafkaEventSource', () => {
           ],
         });
 
-        TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+        Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
           FunctionName: {
             Ref: 'Fn9270CBC0',
           },
@@ -411,7 +411,7 @@ describe('KafkaEventSource', () => {
               secret: secret,
               startingPosition: lambda.StartingPosition.TRIM_HORIZON,
               vpc: vpc,
-              vpcSubnets: { subnetType: SubnetType.PRIVATE },
+              vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_NAT },
             }));
         }).toThrow(/securityGroup must be set/);
 
@@ -437,12 +437,12 @@ describe('KafkaEventSource', () => {
           secret: secret,
           startingPosition: lambda.StartingPosition.TRIM_HORIZON,
           vpc: vpc,
-          vpcSubnets: { subnetType: SubnetType.PRIVATE },
+          vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_NAT },
           securityGroup: sg,
           authenticationMethod: sources.AuthenticationMethod.SASL_SCRAM_256_AUTH,
         }));
 
-      TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+      Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
         SourceAccessConfigurations: Match.arrayWith([
           {
             Type: 'SASL_SCRAM_256_AUTH',
@@ -452,9 +452,95 @@ describe('KafkaEventSource', () => {
           },
         ]),
       });
+    });
 
+    test('using BASIC_AUTH', () => {
+      // GIVEN
+      const stack = new cdk.Stack();
+      const fn = new TestFunction(stack, 'Fn');
+      const kafkaTopic = 'some-topic';
+      const secret = new Secret(stack, 'Secret', { secretName: 'AmazonMSK_KafkaSecret' });
+      const bootstrapServers = ['kafka-broker:9092'];
+      const sg = SecurityGroup.fromSecurityGroupId(stack, 'SecurityGroup', 'sg-0123456789');
+      const vpc = new Vpc(stack, 'Vpc');
 
+      // WHEN
+      fn.addEventSource(new sources.SelfManagedKafkaEventSource(
+        {
+          bootstrapServers: bootstrapServers,
+          topic: kafkaTopic,
+          secret: secret,
+          startingPosition: lambda.StartingPosition.TRIM_HORIZON,
+          vpc: vpc,
+          vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_NAT },
+          securityGroup: sg,
+          authenticationMethod: sources.AuthenticationMethod.BASIC_AUTH,
+        }));
+
+      Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+        SourceAccessConfigurations: Match.arrayWith([
+          {
+            Type: 'BASIC_AUTH',
+            URI: {
+              Ref: 'SecretA720EF05',
+            },
+          },
+        ]),
+      });
+    });
+
+    test('using CLIENT_CERTIFICATE_TLS_AUTH', () => {
+      // GIVEN
+      const stack = new cdk.Stack();
+      const fn = new TestFunction(stack, 'Fn');
+      const kafkaTopic = 'some-topic';
+      const secret = new Secret(stack, 'Secret', { secretName: 'AmazonMSK_KafkaSecret' });
+      const bootstrapServers = ['kafka-broker:9092'];
+      const sg = SecurityGroup.fromSecurityGroupId(stack, 'SecurityGroup', 'sg-0123456789');
+      const vpc = new Vpc(stack, 'Vpc');
+
+      // WHEN
+      fn.addEventSource(new sources.SelfManagedKafkaEventSource(
+        {
+          bootstrapServers: bootstrapServers,
+          topic: kafkaTopic,
+          secret: secret,
+          startingPosition: lambda.StartingPosition.TRIM_HORIZON,
+          vpc: vpc,
+          vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_NAT },
+          securityGroup: sg,
+          authenticationMethod: sources.AuthenticationMethod.CLIENT_CERTIFICATE_TLS_AUTH,
+        }));
+
+      Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+        SourceAccessConfigurations: Match.arrayWith([
+          {
+            Type: 'CLIENT_CERTIFICATE_TLS_AUTH',
+            URI: {
+              Ref: 'SecretA720EF05',
+            },
+          },
+        ]),
+      });
+    });
+
+    test('ManagedKafkaEventSource name conforms to construct id rules', () => {
+      // GIVEN
+      const stack = new cdk.Stack();
+      const fn = new TestFunction(stack, 'Fn');
+      const clusterArn = 'some-arn';
+      const kafkaTopic = 'some-topic';
+
+      const mskEventMapping = new sources.ManagedKafkaEventSource(
+        {
+          clusterArn,
+          topic: kafkaTopic,
+          startingPosition: lambda.StartingPosition.TRIM_HORIZON,
+        });
+
+      // WHEN
+      fn.addEventSource(mskEventMapping);
+      expect(mskEventMapping.eventSourceMappingId).toBeDefined();
     });
   });
-
 });

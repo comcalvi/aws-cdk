@@ -1,5 +1,6 @@
-import '@aws-cdk/assert-internal/jest';
+import { Template } from '@aws-cdk/assertions';
 import * as iam from '@aws-cdk/aws-iam';
+import { testDeprecated } from '@aws-cdk/cdk-build-tools';
 import * as cdk from '@aws-cdk/core';
 import { Alarm, Metric } from '../lib';
 
@@ -15,7 +16,7 @@ describe('Metrics', () => {
     Metric.grantPutMetricData(role);
 
     // THEN
-    expect(stack).toHaveResource('AWS::IAM::Policy', {
+    Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
       PolicyDocument: {
         Version: '2012-10-17',
         Statement: [
@@ -51,7 +52,7 @@ describe('Metrics', () => {
 
   });
 
-  test('cannot use null dimension value', () => {
+  testDeprecated('cannot use null dimension value', () => {
     expect(() => {
       new Metric({
         namespace: 'Test',
@@ -66,7 +67,7 @@ describe('Metrics', () => {
 
   });
 
-  test('cannot use undefined dimension value', () => {
+  testDeprecated('cannot use undefined dimension value', () => {
     expect(() => {
       new Metric({
         namespace: 'Test',
@@ -81,7 +82,7 @@ describe('Metrics', () => {
 
   });
 
-  test('cannot use long dimension values', () => {
+  testDeprecated('cannot use long dimension values', () => {
     const arr = new Array(256);
     const invalidDimensionValue = arr.fill('A', 0).join('');
 
@@ -117,7 +118,7 @@ describe('Metrics', () => {
 
   });
 
-  test('throws error when there are more than 10 dimensions', () => {
+  testDeprecated('throws error when there are more than 10 dimensions', () => {
     expect(() => {
       new Metric({
         namespace: 'Test',
@@ -188,7 +189,7 @@ describe('Metrics', () => {
       dimensionA: 'value1',
       dimensionB: 'value2',
     });
-    expect(stack).toHaveResourceLike('AWS::CloudWatch::Alarm', {
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
       Namespace: 'Test',
       MetricName: 'Metric',
       Dimensions: [

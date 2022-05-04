@@ -1,5 +1,4 @@
-import '@aws-cdk/assert-internal/jest';
-import { ABSENT } from '@aws-cdk/assert-internal';
+import { Match, Template, Annotations } from '@aws-cdk/assertions';
 import { Duration, Stack } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { Alarm, IAlarm, IAlarmAction, Metric, MathExpression, IMetric } from '../lib';
@@ -10,9 +9,7 @@ const testMetric = new Metric({
 });
 
 describe('Alarm', () => {
-
   test('alarm does not accept a math expression with more than 10 metrics', () => {
-
     const stack = new Stack();
 
     const usingMetrics: Record<string, IMetric> = {};
@@ -31,19 +28,15 @@ describe('Alarm', () => {
     });
 
     expect(() => {
-
       new Alarm(stack, 'Alarm', {
         metric: math,
         threshold: 1000,
         evaluationPeriods: 3,
       });
-
     }).toThrow(/Alarms on math expressions cannot contain more than 10 individual metrics/);
-
-
   });
-  test('non ec2 instance related alarm does not accept EC2 action', () => {
 
+  test('non ec2 instance related alarm does not accept EC2 action', () => {
     const stack = new Stack();
     const alarm = new Alarm(stack, 'Alarm', {
       metric: testMetric,
@@ -54,8 +47,8 @@ describe('Alarm', () => {
     expect(() => {
       alarm.addAlarmAction(new Ec2TestAlarmAction('arn:aws:automate:us-east-1:ec2:reboot'));
     }).toThrow(/EC2 alarm actions requires an EC2 Per-Instance Metric. \(.+ does not have an 'InstanceId' dimension\)/);
-
   });
+
   test('can make simple alarm', () => {
     // GIVEN
     const stack = new Stack();
@@ -68,7 +61,7 @@ describe('Alarm', () => {
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: 'GreaterThanOrEqualToThreshold',
       EvaluationPeriods: 3,
       MetricName: 'Metric',
@@ -77,8 +70,6 @@ describe('Alarm', () => {
       Statistic: 'Average',
       Threshold: 1000,
     });
-
-
   });
 
   test('override metric period in Alarm', () => {
@@ -87,14 +78,13 @@ describe('Alarm', () => {
 
     // WHEN
     new Alarm(stack, 'Alarm', {
-      metric: testMetric,
-      period: Duration.minutes(10),
+      metric: testMetric.with({ period: Duration.minutes(10) }),
       threshold: 1000,
       evaluationPeriods: 3,
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: 'GreaterThanOrEqualToThreshold',
       EvaluationPeriods: 3,
       MetricName: 'Metric',
@@ -103,8 +93,6 @@ describe('Alarm', () => {
       Statistic: 'Average',
       Threshold: 1000,
     });
-
-
   });
 
   test('override statistic Alarm', () => {
@@ -113,25 +101,22 @@ describe('Alarm', () => {
 
     // WHEN
     new Alarm(stack, 'Alarm', {
-      metric: testMetric,
-      statistic: 'max',
+      metric: testMetric.with({ statistic: 'max' }),
       threshold: 1000,
       evaluationPeriods: 3,
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: 'GreaterThanOrEqualToThreshold',
       EvaluationPeriods: 3,
       MetricName: 'Metric',
       Namespace: 'CDK/Test',
       Period: 300,
       Statistic: 'Maximum',
-      ExtendedStatistic: ABSENT,
+      ExtendedStatistic: Match.absent(),
       Threshold: 1000,
     });
-
-
   });
 
   test('can use percentile in Alarm', () => {
@@ -140,25 +125,22 @@ describe('Alarm', () => {
 
     // WHEN
     new Alarm(stack, 'Alarm', {
-      metric: testMetric,
-      statistic: 'P99',
+      metric: testMetric.with({ statistic: 'P99' }),
       threshold: 1000,
       evaluationPeriods: 3,
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: 'GreaterThanOrEqualToThreshold',
       EvaluationPeriods: 3,
       MetricName: 'Metric',
       Namespace: 'CDK/Test',
       Period: 300,
-      Statistic: ABSENT,
+      Statistic: Match.absent(),
       ExtendedStatistic: 'p99',
       Threshold: 1000,
     });
-
-
   });
 
   test('can set DatapointsToAlarm', () => {
@@ -174,7 +156,7 @@ describe('Alarm', () => {
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: 'GreaterThanOrEqualToThreshold',
       EvaluationPeriods: 3,
       DatapointsToAlarm: 2,
@@ -184,8 +166,6 @@ describe('Alarm', () => {
       Statistic: 'Average',
       Threshold: 1000,
     });
-
-
   });
 
   test('can add actions to alarms', () => {
@@ -204,13 +184,11 @@ describe('Alarm', () => {
     alarm.addOkAction(new TestAlarmAction('C'));
 
     // THEN
-    expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
       AlarmActions: ['A'],
       InsufficientDataActions: ['B'],
       OKActions: ['C'],
     });
-
-
   });
 
   test('can make alarm directly from metric', () => {
@@ -218,15 +196,16 @@ describe('Alarm', () => {
     const stack = new Stack();
 
     // WHEN
-    testMetric.createAlarm(stack, 'Alarm', {
-      threshold: 1000,
-      evaluationPeriods: 2,
+    testMetric.with({
       statistic: 'min',
       period: Duration.seconds(10),
+    }).createAlarm(stack, 'Alarm', {
+      threshold: 1000,
+      evaluationPeriods: 2,
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
       ComparisonOperator: 'GreaterThanOrEqualToThreshold',
       EvaluationPeriods: 2,
       MetricName: 'Metric',
@@ -235,8 +214,6 @@ describe('Alarm', () => {
       Statistic: 'Minimum',
       Threshold: 1000,
     });
-
-
   });
 
   test('can use percentile string to make alarm', () => {
@@ -244,18 +221,17 @@ describe('Alarm', () => {
     const stack = new Stack();
 
     // WHEN
-    testMetric.createAlarm(stack, 'Alarm', {
+    testMetric.with({
+      statistic: 'p99.9',
+    }).createAlarm(stack, 'Alarm', {
       threshold: 1000,
       evaluationPeriods: 2,
-      statistic: 'p99.9',
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
       ExtendedStatistic: 'p99.9',
     });
-
-
   });
 
   test('can use a generic string for extended statistic to make alarm', () => {
@@ -263,20 +239,35 @@ describe('Alarm', () => {
     const stack = new Stack();
 
     // WHEN
-    testMetric.createAlarm(stack, 'Alarm', {
+    testMetric.with({
+      statistic: 'tm99.9999999999',
+    }).createAlarm(stack, 'Alarm', {
       threshold: 1000,
       evaluationPeriods: 2,
-      statistic: 'tm99.9999999999',
     });
 
     // THEN
-    expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
-      Statistic: ABSENT,
+    Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
+      Statistic: Match.absent(),
       ExtendedStatistic: 'tm99.9999999999',
     });
-
   });
 
+  test('metric warnings are added to Alarm', () => {
+    const stack = new Stack(undefined, 'MyStack');
+    const m = new MathExpression({ expression: 'oops' });
+
+    // WHEN
+    new Alarm(stack, 'MyAlarm', {
+      metric: m,
+      evaluationPeriods: 1,
+      threshold: 1,
+    });
+
+    // THEN
+    const template = Annotations.fromStack(stack);
+    template.hasWarning('/MyStack/MyAlarm', Match.stringLikeRegexp("Math expression 'oops' references unknown identifiers"));
+  });
 });
 
 class TestAlarmAction implements IAlarmAction {

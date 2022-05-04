@@ -1,4 +1,5 @@
-import { Match, TemplateAssertions } from '@aws-cdk/assertions';
+import { Match, Template } from '@aws-cdk/assertions';
+import * as ec2 from '@aws-cdk/aws-ec2';
 import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
 import { Duration, Lazy, Stack } from '@aws-cdk/core';
@@ -23,7 +24,7 @@ test('Basic canary properties work', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     Name: 'mycanary',
     SuccessRetentionPeriod: 10,
     FailureRetentionPeriod: 10,
@@ -47,7 +48,7 @@ test('Canary can have generated name', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     Name: 'canary',
   });
 });
@@ -67,7 +68,7 @@ test('Name validation does not fail when using Tokens', () => {
   });
 
   // THEN: no exception
-  TemplateAssertions.fromStack(stack).resourceCountIs('AWS::Synthetics::Canary', 1);
+  Template.fromStack(stack).resourceCountIs('AWS::Synthetics::Canary', 1);
 });
 
 test('Throws when name is specified incorrectly', () => {
@@ -123,7 +124,7 @@ test('An existing role can be specified instead of auto-created', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     ExecutionRoleArn: stack.resolve(role.roleArn),
   });
 });
@@ -145,7 +146,7 @@ test('An existing bucket and prefix can be specified instead of auto-created', (
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     ArtifactS3Location: stack.resolve(bucket.s3UrlForObject(prefix)),
   });
 });
@@ -164,8 +165,27 @@ test('Runtime can be specified', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     RuntimeVersion: 'syn-1.0',
+  });
+});
+
+test('Python runtime can be specified', () => {
+  // GIVEN
+  const stack = new Stack();
+
+  // WHEN
+  new synthetics.Canary(stack, 'Canary', {
+    runtime: synthetics.Runtime.SYNTHETICS_PYTHON_SELENIUM_1_0,
+    test: synthetics.Test.custom({
+      handler: 'index.handler',
+      code: synthetics.Code.fromInline('# Synthetics handler code'),
+    }),
+  });
+
+  // THEN
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+    RuntimeVersion: 'syn-python-selenium-1.0',
   });
 });
 
@@ -188,7 +208,7 @@ test('environment variables can be specified', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     RunConfig: {
       EnvironmentVariables: environmentVariables,
     },
@@ -209,8 +229,8 @@ test('environment variables are skipped if not provided', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
-    RunConfig: Match.absentProperty(),
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+    RunConfig: Match.absent(),
   });
 });
 
@@ -220,7 +240,7 @@ test('Runtime can be customized', () => {
 
   // WHEN
   new synthetics.Canary(stack, 'Canary', {
-    runtime: new synthetics.Runtime('fancy-future-runtime-1337.42'),
+    runtime: new synthetics.Runtime('fancy-future-runtime-1337.42', synthetics.RuntimeFamily.OTHER),
     test: synthetics.Test.custom({
       handler: 'index.handler',
       code: synthetics.Code.fromInline('/* Synthetics handler code */'),
@@ -228,7 +248,7 @@ test('Runtime can be customized', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     RuntimeVersion: 'fancy-future-runtime-1337.42',
   });
 });
@@ -248,7 +268,7 @@ test('Schedule can be set with Rate', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     Schedule: Match.objectLike({ Expression: 'rate(3 minutes)' }),
   });
 });
@@ -268,10 +288,31 @@ test('Schedule can be set to 1 minute', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     Schedule: Match.objectLike({ Expression: 'rate(1 minute)' }),
   });
 });
+
+test('Schedule can be set with Cron', () => {
+  // GIVEN
+  const stack = new Stack();
+
+  // WHEN
+  new synthetics.Canary(stack, 'Canary', {
+    schedule: synthetics.Schedule.cron({ minute: '30' }),
+    test: synthetics.Test.custom({
+      handler: 'index.handler',
+      code: synthetics.Code.fromInline('/* Synthetics handler code */'),
+    }),
+    runtime: synthetics.Runtime.SYNTHETICS_NODEJS_PUPPETEER_3_3,
+  });
+
+  // THEN
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+    Schedule: Match.objectLike({ Expression: 'cron(30 * * * ? *)' }),
+  });
+});
+
 
 test('Schedule can be set with Expression', () => {
   // GIVEN
@@ -288,7 +329,7 @@ test('Schedule can be set with Expression', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     Schedule: Match.objectLike({ Expression: 'rate(1 hour)' }),
   });
 });
@@ -308,7 +349,7 @@ test('Schedule can be set to run once', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     Schedule: Match.objectLike({ Expression: 'rate(0 minutes)' }),
   });
 });
@@ -390,7 +431,7 @@ test('can specify custom test', () => {
   });
 
   // THEN
-  TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
     Code: {
       Handler: 'index.handler',
       Script: `
@@ -398,5 +439,218 @@ test('can specify custom test', () => {
           console.log(\'hello world\');
         };`,
     },
+  });
+});
+
+describe('canary in a vpc', () => {
+  test('can specify vpc', () => {
+    // GIVEN
+    const stack = new Stack();
+    const vpc = new ec2.Vpc(stack, 'VPC', { maxAzs: 2 });
+
+    // WHEN
+    new synthetics.Canary(stack, 'Canary', {
+      test: synthetics.Test.custom({
+        handler: 'index.handler',
+        code: synthetics.Code.fromInline(`
+          exports.handler = async () => {
+            console.log(\'hello world\');
+          };`),
+      }),
+      runtime: synthetics.Runtime.SYNTHETICS_NODEJS_2_0,
+      vpc,
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+      Code: {
+        Handler: 'index.handler',
+        Script: `
+          exports.handler = async () => {
+            console.log(\'hello world\');
+          };`,
+      },
+      VPCConfig: {
+        VpcId: {
+          Ref: Match.anyValue(),
+        },
+      },
+    });
+  });
+
+  test('default security group and subnets', () => {
+    // GIVEN
+    const stack = new Stack();
+    const vpc = new ec2.Vpc(stack, 'VPC', { maxAzs: 2 });
+
+    // WHEN
+    new synthetics.Canary(stack, 'Canary', {
+      test: synthetics.Test.custom({
+        handler: 'index.handler',
+        code: synthetics.Code.fromInline(`
+          exports.handler = async () => {
+            console.log(\'hello world\');
+          };`),
+      }),
+      runtime: synthetics.Runtime.SYNTHETICS_NODEJS_2_0,
+      vpc,
+    });
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::Synthetics::Canary', {
+      Code: {
+        Handler: 'index.handler',
+        Script: `
+          exports.handler = async () => {
+            console.log(\'hello world\');
+          };`,
+      },
+      VPCConfig: {
+        VpcId: {
+          Ref: Match.anyValue(),
+        },
+        SecurityGroupIds: Match.anyValue(),
+        SubnetIds: [...vpc.privateSubnets.map(subnet => ({ Ref: Match.stringLikeRegexp(subnet.node.id) }))],
+      },
+    });
+  });
+
+  test('provided security group', () => {
+    // GIVEN
+    const stack = new Stack();
+    const vpc = new ec2.Vpc(stack, 'VPC', { maxAzs: 2 });
+    const sg = new ec2.SecurityGroup(stack, 'Sg', { vpc });
+
+    // WHEN
+    new synthetics.Canary(stack, 'Canary', {
+      test: synthetics.Test.custom({
+        handler: 'index.handler',
+        code: synthetics.Code.fromInline(`
+          exports.handler = async () => {
+            console.log(\'hello world\');
+          };`),
+      }),
+      runtime: synthetics.Runtime.SYNTHETICS_NODEJS_2_0,
+      vpc,
+      securityGroups: [sg],
+    });
+
+    // THEN
+    const template = Template.fromStack(stack);
+    const sgTemplate = template.findResources('AWS::EC2::SecurityGroup');
+    const sgIds = Object.keys(sgTemplate);
+
+    expect(sgIds).toHaveLength(1);
+
+    template.hasResourceProperties('AWS::Synthetics::Canary', {
+      Code: {
+        Handler: 'index.handler',
+        Script: `
+          exports.handler = async () => {
+            console.log(\'hello world\');
+          };`,
+      },
+      VPCConfig: {
+        VpcId: {
+          Ref: Match.anyValue(),
+        },
+        SecurityGroupIds: [{ 'Fn::GetAtt': [sgIds[0], 'GroupId'] }],
+      },
+    });
+  });
+});
+
+test('Role policy generated as expected', () => {
+  // GIVEN
+  const stack = new Stack();
+
+  // WHEN
+  new synthetics.Canary(stack, 'Canary', {
+    test: synthetics.Test.custom({
+      handler: 'index.handler',
+      code: synthetics.Code.fromInline('/* Synthetics handler code */'),
+    }),
+    runtime: synthetics.Runtime.SYNTHETICS_NODEJS_PUPPETEER_3_3,
+  });
+
+  // THEN
+  Template.fromStack(stack).hasResourceProperties('AWS::IAM::Role', {
+    Policies: [{
+      PolicyDocument: {
+        Statement: [
+          {
+            Action: 's3:ListAllMyBuckets',
+            Effect: 'Allow',
+            Resource: '*',
+          },
+          {
+            Action: 's3:GetBucketLocation',
+            Effect: 'Allow',
+            Resource: {
+              'Fn::GetAtt': [
+                'CanaryArtifactsBucket4A60D32B',
+                'Arn',
+              ],
+            },
+          },
+          {
+            Action: 's3:PutObject',
+            Effect: 'Allow',
+            Resource: {
+              'Fn::Join': [
+                '',
+                [
+                  {
+                    'Fn::GetAtt': [
+                      'CanaryArtifactsBucket4A60D32B',
+                      'Arn',
+                    ],
+                  },
+                  '/*',
+                ],
+              ],
+            },
+          },
+          {
+            Action: 'cloudwatch:PutMetricData',
+            Condition: {
+              StringEquals: {
+                'cloudwatch:namespace': 'CloudWatchSynthetics',
+              },
+            },
+            Effect: 'Allow',
+            Resource: '*',
+          },
+          {
+            Action: [
+              'logs:CreateLogStream',
+              'logs:CreateLogGroup',
+              'logs:PutLogEvents',
+            ],
+            Effect: 'Allow',
+            Resource: {
+              'Fn::Join': [
+                '',
+                [
+                  'arn:',
+                  {
+                    Ref: 'AWS::Partition',
+                  },
+                  ':logs:',
+                  {
+                    Ref: 'AWS::Region',
+                  },
+                  ':',
+                  {
+                    Ref: 'AWS::AccountId',
+                  },
+                  ':log-group:/aws/lambda/cwsyn-*',
+                ],
+              ],
+            },
+          },
+        ],
+      },
+    }],
   });
 });

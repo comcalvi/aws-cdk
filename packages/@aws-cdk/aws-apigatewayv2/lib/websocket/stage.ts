@@ -1,3 +1,4 @@
+import { Grant, IGrantable } from '@aws-cdk/aws-iam';
 import { Stack } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { CfnStage } from '../apigatewayv2.generated';
@@ -90,6 +91,10 @@ export class WebSocketStage extends StageBase implements IWebSocketStage {
       apiId: props.webSocketApi.apiId,
       stageName: this.physicalName,
       autoDeploy: props.autoDeploy,
+      defaultRouteSettings: !props.throttle ? undefined : {
+        throttlingBurstLimit: props.throttle?.burstLimit,
+        throttlingRateLimit: props.throttle?.rateLimit,
+      },
     });
 
     if (props.domainMapping) {
@@ -113,5 +118,24 @@ export class WebSocketStage extends StageBase implements IWebSocketStage {
     const s = Stack.of(this);
     const urlPath = this.stageName;
     return `https://${this.api.apiId}.execute-api.${s.region}.${s.urlSuffix}/${urlPath}`;
+  }
+
+  /**
+   * Grant access to the API Gateway management API for this WebSocket API Stage to an IAM
+   * principal (Role/Group/User).
+   *
+   * @param identity The principal
+   */
+  public grantManagementApiAccess(identity: IGrantable): Grant {
+    const arn = Stack.of(this.api).formatArn({
+      service: 'execute-api',
+      resource: this.api.apiId,
+    });
+
+    return Grant.addToPrincipal({
+      grantee: identity,
+      actions: ['execute-api:ManageConnections'],
+      resourceArns: [`${arn}/${this.stageName}/*/@connections/*`],
+    });
   }
 }

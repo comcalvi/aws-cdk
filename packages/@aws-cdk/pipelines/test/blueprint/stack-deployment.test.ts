@@ -4,7 +4,7 @@ import { Stack, Stage } from '@aws-cdk/core';
 import { StageDeployment } from '../../lib';
 import { TestApp } from '../testhelpers/test-app';
 
-test('"templateAsset"  represents the CFN template of the stack', () => {
+test('"templateAsset" represents the CFN template of the stack', () => {
   // GIVEN
   const stage = new Stage(new TestApp(), 'MyStage');
   new Stack(stage, 'MyStack');
@@ -31,7 +31,7 @@ describe('templateUrl', () => {
     const sd = StageDeployment.fromStage(stage);
 
     // THEN
-    expect(sd.stacks[0].templateUrl).toBe('https://cdk-hnb659fds-assets-111-us-east-1.s3.us-east-1.amazonaws.com/4ef627170a212f66f5d1d9240d967ef306f4820ff9cb05b3a7ec703df6af6c3e.json');
+    expect(sd.stacks[0].templateUrl).toBe('https://cdk-hnb659fds-assets-111-us-east-1.s3.us-east-1.amazonaws.com/21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22.json');
   });
 
   test('without region', () => {
@@ -43,7 +43,7 @@ describe('templateUrl', () => {
     const sd = StageDeployment.fromStage(stage);
 
     // THEN
-    expect(sd.stacks[0].templateUrl).toBe('https://cdk-hnb659fds-assets-111-.s3.amazonaws.com/$%7BAWS::Region%7D/4ef627170a212f66f5d1d9240d967ef306f4820ff9cb05b3a7ec703df6af6c3e.json');
+    expect(sd.stacks[0].templateUrl).toBe('https://cdk-hnb659fds-assets-111-.s3.amazonaws.com/$%7BAWS::Region%7D/21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22.json');
   });
 
 });

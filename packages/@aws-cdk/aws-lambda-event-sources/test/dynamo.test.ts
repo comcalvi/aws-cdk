@@ -1,4 +1,4 @@
-import { TemplateAssertions } from '@aws-cdk/assertions';
+import { Template } from '@aws-cdk/assertions';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as sqs from '@aws-cdk/aws-sqs';
@@ -27,7 +27,7 @@ describe('DynamoEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
+    Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
       'PolicyDocument': {
         'Statement': [
           {
@@ -58,7 +58,7 @@ describe('DynamoEventSource', () => {
       }],
     });
 
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'TD925BC7E',
@@ -95,7 +95,7 @@ describe('DynamoEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       TumblingWindowInSeconds: 60,
     });
 
@@ -116,12 +116,12 @@ describe('DynamoEventSource', () => {
 
     // WHEN
     fn.addEventSource(new sources.DynamoEventSource(table, {
-      batchSize: 50,
+      batchSize: 5000,
       startingPosition: lambda.StartingPosition.LATEST,
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'TD925BC7E',
@@ -131,7 +131,50 @@ describe('DynamoEventSource', () => {
       'FunctionName': {
         'Ref': 'Fn9270CBC0',
       },
-      'BatchSize': 50,
+      'BatchSize': 5000,
+      'StartingPosition': 'LATEST',
+    });
+
+
+  });
+
+  test('pass validation if batchsize is token', () => {
+    // GIVEN
+    const stack = new cdk.Stack();
+    const fn = new TestFunction(stack, 'Fn');
+    const table = new dynamodb.Table(stack, 'T', {
+      partitionKey: {
+        name: 'id',
+        type: dynamodb.AttributeType.STRING,
+      },
+      stream: dynamodb.StreamViewType.NEW_IMAGE,
+    });
+    const batchSize = new cdk.CfnParameter(stack, 'BatchSize', {
+      type: 'Number',
+      default: 100,
+      minValue: 1,
+      maxValue: 10000,
+    });
+    // WHEN
+    fn.addEventSource(new sources.DynamoEventSource(table, {
+      batchSize: batchSize.valueAsNumber,
+      startingPosition: lambda.StartingPosition.LATEST,
+    }));
+
+    // THEN
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+      'EventSourceArn': {
+        'Fn::GetAtt': [
+          'TD925BC7E',
+          'StreamArn',
+        ],
+      },
+      'FunctionName': {
+        'Ref': 'Fn9270CBC0',
+      },
+      'BatchSize': {
+        'Ref': 'BatchSize',
+      },
       'StartingPosition': 'LATEST',
     });
 
@@ -174,12 +217,12 @@ describe('DynamoEventSource', () => {
     expect(() => fn.addEventSource(new sources.DynamoEventSource(table, {
       batchSize: 0,
       startingPosition: lambda.StartingPosition.LATEST,
-    }))).toThrow(/Maximum batch size must be between 1 and 1000 inclusive \(given 0\)/);
+    }))).toThrow(/Maximum batch size must be between 1 and 10000 inclusive \(given 0\)/);
 
 
   });
 
-  test('fails if batch size > 1000', () => {
+  test('fails if batch size > 10000', () => {
     // GIVEN
     const stack = new cdk.Stack();
     const fn = new TestFunction(stack, 'Fn');
@@ -193,9 +236,9 @@ describe('DynamoEventSource', () => {
 
     // WHEN
     expect(() => fn.addEventSource(new sources.DynamoEventSource(table, {
-      batchSize: 1001,
+      batchSize: 10001,
       startingPosition: lambda.StartingPosition.LATEST,
-    }))).toThrow(/Maximum batch size must be between 1 and 1000 inclusive \(given 1001\)/);
+    }))).toThrow(/Maximum batch size must be between 1 and 10000 inclusive \(given 10001\)/);
 
 
   });
@@ -219,7 +262,7 @@ describe('DynamoEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'TD925BC7E',
@@ -319,7 +362,7 @@ describe('DynamoEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'TD925BC7E',
@@ -399,7 +442,7 @@ describe('DynamoEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'TD925BC7E',
@@ -435,7 +478,7 @@ describe('DynamoEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'TD925BC7E',
@@ -515,7 +558,7 @@ describe('DynamoEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'TD925BC7E',
@@ -596,7 +639,7 @@ describe('DynamoEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'TD925BC7E',
@@ -642,7 +685,7 @@ describe('DynamoEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'TD925BC7E',
@@ -678,7 +721,7 @@ describe('DynamoEventSource', () => {
     }));
 
     //THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'Enabled': false,
     });
 

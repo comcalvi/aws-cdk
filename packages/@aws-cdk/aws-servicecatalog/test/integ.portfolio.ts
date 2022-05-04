@@ -1,10 +1,10 @@
 import * as iam from '@aws-cdk/aws-iam';
 import * as sns from '@aws-cdk/aws-sns';
-import { App, Stack } from '@aws-cdk/core';
+import * as cdk from '@aws-cdk/core';
 import * as servicecatalog from '../lib';
 
-const app = new App();
-const stack = new Stack(app, 'integ-servicecatalog-portfolio');
+const app = new cdk.App();
+const stack = new cdk.Stack(app, 'integ-servicecatalog-portfolio');
 
 const role = new iam.Role(stack, 'TestRole', {
   assumedBy: new iam.AccountRootPrincipal(),
@@ -22,9 +22,11 @@ const portfolio = new servicecatalog.Portfolio(stack, 'TestPortfolio', {
 portfolio.giveAccessToRole(role);
 portfolio.giveAccessToGroup(group);
 
-const tagOptions = new servicecatalog.TagOptions({
-  key1: ['value1', 'value2'],
-  key2: ['value1'],
+const tagOptions = new servicecatalog.TagOptions(stack, 'TagOptions', {
+  allowedValuesForTags: {
+    key1: ['value1', 'value2'],
+    key2: ['value1'],
+  },
 });
 portfolio.associateTagOptions(tagOptions);
 
@@ -40,6 +42,7 @@ const product = new servicecatalog.CloudFormationProduct(stack, 'TestProduct', {
         'https://awsdocs.s3.amazonaws.com/servicecatalog/development-environment.template'),
     },
   ],
+  tagOptions: tagOptions,
 });
 
 portfolio.addProduct(product);
@@ -77,6 +80,18 @@ secondPortfolio.deployWithStackSets(product, {
   adminRole: adminRole,
   executionRoleName: 'StackSetExecutionRole',
   allowStackSetInstanceOperations: true,
+});
+
+portfolio.constrainCloudFormationParameters(product, {
+  rule: {
+    ruleName: 'SubnetsinVPC',
+    assertions: [{
+      assert: cdk.Fn.conditionEachMemberIn(
+        cdk.Fn.valueOfAll('AWs::EC2::Subnet::Id', 'VpcId'),
+        cdk.Fn.refAll('AWS::EC2::VPC::Id')),
+      description: 'test description',
+    }],
+  },
 });
 
 app.synth();

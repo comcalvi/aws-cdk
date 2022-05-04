@@ -1,3 +1,4 @@
+import { SSMPARAM_NO_INVALIDATE } from '@aws-cdk/cx-api';
 import { CloudFormation } from 'aws-sdk';
 import { debug } from '../../logging';
 import { deserializeStructure } from '../../serialize';
@@ -11,8 +12,13 @@ export type Template = {
 interface TemplateParameter {
   Type: string;
   Default?: any;
+  Description?: string;
   [key: string]: any;
 }
+
+export type ResourceIdentifierProperties = CloudFormation.ResourceIdentifierProperties;
+export type ResourceIdentifierSummaries = CloudFormation.ResourceIdentifierSummaries;
+export type ResourcesToImport = CloudFormation.ResourcesToImport;
 
 /**
  * Represents an (existing) Stack in CloudFormation
@@ -164,14 +170,40 @@ export class CloudFormationStack {
 /**
  * Describe a changeset in CloudFormation, regardless of its current state.
  *
- * @param cfn       a CloudFormation client
- * @param stackName   the name of the Stack the ChangeSet belongs to
+ * @param cfn           a CloudFormation client
+ * @param stackName     the name of the Stack the ChangeSet belongs to
  * @param changeSetName the name of the ChangeSet
+ * @param fetchAll      if true, fetches all pages of the change set description.
  *
  * @returns       CloudFormation information about the ChangeSet
  */
-async function describeChangeSet(cfn: CloudFormation, stackName: string, changeSetName: string): Promise<CloudFormation.DescribeChangeSetOutput> {
+async function describeChangeSet(
+  cfn: CloudFormation,
+  stackName: string,
+  changeSetName: string,
+  { fetchAll }: { fetchAll: boolean },
+): Promise<CloudFormation.DescribeChangeSetOutput> {
   const response = await cfn.describeChangeSet({ StackName: stackName, ChangeSetName: changeSetName }).promise();
+
+  // If fetchAll is true, traverse all pages from the change set description.
+  while (fetchAll && response.NextToken != null) {
+    const nextPage = await cfn.describeChangeSet({
+      StackName: stackName,
+      ChangeSetName: response.ChangeSetId ?? changeSetName,
+      NextToken: response.NextToken,
+    }).promise();
+
+    // Consolidate the changes
+    if (nextPage.Changes != null) {
+      response.Changes = response.Changes != null
+        ? response.Changes.concat(nextPage.Changes)
+        : nextPage.Changes;
+    }
+
+    // Forward the new NextToken
+    response.NextToken = nextPage.NextToken;
+  }
+
   return response;
 }
 
@@ -201,17 +233,23 @@ async function waitFor<T>(valueProvider: () => Promise<T | null | undefined>, ti
  * Will return a changeset that is either ready to be executed or has no changes.
  * Will throw in other cases.
  *
- * @param cfn       a CloudFormation client
- * @param stackName   the name of the Stack that the ChangeSet belongs to
+ * @param cfn           a CloudFormation client
+ * @param stackName     the name of the Stack that the ChangeSet belongs to
  * @param changeSetName the name of the ChangeSet
+ * @param fetchAll      if true, fetches all pages of the ChangeSet before returning.
  *
  * @returns       the CloudFormation description of the ChangeSet
  */
 // eslint-disable-next-line max-len
-export async function waitForChangeSet(cfn: CloudFormation, stackName: string, changeSetName: string): Promise<CloudFormation.DescribeChangeSetOutput> {
+export async function waitForChangeSet(
+  cfn: CloudFormation,
+  stackName: string,
+  changeSetName: string,
+  { fetchAll }: { fetchAll: boolean },
+): Promise<CloudFormation.DescribeChangeSetOutput> {
   debug('Waiting for changeset %s on stack %s to finish creating...', changeSetName, stackName);
   const ret = await waitFor(async () => {
-    const description = await describeChangeSet(cfn, stackName, changeSetName);
+    const description = await describeChangeSet(cfn, stackName, changeSetName, { fetchAll });
     // The following doesn't use a switch because tsc will not allow fall-through, UNLESS it is allows
     // EVERYWHERE that uses this library directly or indirectly, which is undesirable.
     if (description.Status === 'CREATE_PENDING' || description.Status === 'CREATE_IN_PROGRESS') {
@@ -424,11 +462,12 @@ export class ParameterValues {
   /**
    * Whether this set of parameter updates will change the actual stack values
    */
-  public hasChanges(currentValues: Record<string, string>): boolean {
+  public hasChanges(currentValues: Record<string, string>): ParameterChanges {
     // If any of the parameters are SSM parameters, deploying must always happen
-    // because we can't predict what the values will be.
-    if (Object.values(this.formalParams).some(p => p.Type.startsWith('AWS::SSM::Parameter::'))) {
-      return true;
+    // because we can't predict what the values will be. We will allow some
+    // parameters to opt out of this check by having a magic string in their description.
+    if (Object.values(this.formalParams).some(p => p.Type.startsWith('AWS::SSM::Parameter::') && !p.Description?.includes(SSMPARAM_NO_INVALIDATE))) {
+      return 'ssm';
     }
 
     // Otherwise we're dirty if:
@@ -445,3 +484,5 @@ export class ParameterValues {
     return false;
   }
 }
+
+export type ParameterChanges = boolean | 'ssm';

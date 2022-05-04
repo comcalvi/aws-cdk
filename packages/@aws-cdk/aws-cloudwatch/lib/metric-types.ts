@@ -5,6 +5,15 @@ import { Duration } from '@aws-cdk/core';
  */
 export interface IMetric {
   /**
+   * Any warnings related to this metric
+   *
+   * Should be attached to the consuming construct.
+   *
+   * @default - None
+   */
+  readonly warnings?: string[];
+
+  /**
    * Inspect the details of the metric object
    */
   toMetricConfig(): MetricConfig;
@@ -322,6 +331,20 @@ export interface MetricExpressionConfig {
    * How many seconds to aggregate over
    */
   readonly period: number;
+
+  /**
+   * Account to evaluate search expressions within.
+   *
+   * @default - Deployment account.
+   */
+  readonly searchAccount?: string;
+
+  /**
+   * Region to evaluate search expressions within.
+   *
+   * @default - Deployment region.
+   */
+  readonly searchRegion?: string;
 }
 
 /**

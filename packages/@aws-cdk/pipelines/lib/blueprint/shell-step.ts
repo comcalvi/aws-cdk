@@ -65,11 +65,11 @@ export interface ShellStepProps {
    * following configuration:
    *
    * ```ts
-   * const script = new ShellStep('MainScript', {
-   *   // ...
-   *   input: MyEngineSource.gitHub('org/source1'),
+   * const script = new pipelines.ShellStep('MainScript', {
+   *   commands: ['npm ci','npm run build','npx cdk synth'],
+   *   input: pipelines.CodePipelineSource.gitHub('org/source1', 'main'),
    *   additionalInputs: {
-   *     '../siblingdir': MyEngineSource.gitHub('org/source2'),
+   *     '../siblingdir': pipelines.CodePipelineSource.gitHub('org/source2', 'main'),
    *   }
    * });
    * ```
@@ -87,11 +87,11 @@ export interface ShellStepProps {
    * @default - No primary output
    */
   readonly primaryOutputDirectory?: string;
-
 }
 
 /**
- * Run shell script commands in the pipeline
+ * Run shell script commands in the pipeline. This is a generic step designed
+ * to be deployment engine agnostic.
  */
 export class ShellStep extends Step {
   /**
@@ -151,11 +151,16 @@ export class ShellStep extends Step {
     this.env = props.env ?? {};
     this.envFromCfnOutputs = mapValues(props.envFromCfnOutputs ?? {}, StackOutputReference.fromCfnOutput);
 
+    // 'env' is the only thing that can contain outputs
+    this.discoverReferencedOutputs({
+      env: this.env,
+    });
+
     // Inputs
     if (props.input) {
       const fileSet = props.input.primaryOutput;
       if (!fileSet) {
-        throw new Error(`'${id}': primary input should be a step that produces a file set, got ${props.input}`);
+        throw new Error(`'${id}': primary input should be a step that has produced a file set, got ${props.input}`);
       }
       this.addDependencyFileSet(fileSet);
       this.inputs.push({ directory: '.', fileSet });
@@ -168,7 +173,7 @@ export class ShellStep extends Step {
 
       const fileSet = step.primaryOutput;
       if (!fileSet) {
-        throw new Error(`'${id}': additionalInput for directory '${directory}' should be a step that produces a file set, got ${step}`);
+        throw new Error(`'${id}': additionalInput for directory '${directory}' should be a step that has produced a file set, got ${step}`);
       }
       this.addDependencyFileSet(fileSet);
       this.inputs.push({ directory, fileSet });

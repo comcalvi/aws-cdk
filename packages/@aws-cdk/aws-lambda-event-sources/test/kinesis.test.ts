@@ -1,4 +1,4 @@
-import { TemplateAssertions } from '@aws-cdk/assertions';
+import { Template } from '@aws-cdk/assertions';
 import * as kinesis from '@aws-cdk/aws-kinesis';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as cdk from '@aws-cdk/core';
@@ -20,7 +20,7 @@ describe('KinesisEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
+    Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
       'PolicyDocument': {
         'Statement': [
           {
@@ -30,6 +30,8 @@ describe('KinesisEventSource', () => {
               'kinesis:GetShardIterator',
               'kinesis:ListShards',
               'kinesis:SubscribeToShard',
+              'kinesis:DescribeStream',
+              'kinesis:ListStreams',
             ],
             'Effect': 'Allow',
             'Resource': {
@@ -58,7 +60,7 @@ describe('KinesisEventSource', () => {
       }],
     });
 
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'S509448A1',
@@ -89,7 +91,7 @@ describe('KinesisEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'S509448A1',
@@ -120,7 +122,7 @@ describe('KinesisEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'S509448A1',
@@ -195,7 +197,7 @@ describe('KinesisEventSource', () => {
     }));
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'EventSourceArn': {
         'Fn::GetAtt': [
           'S509448A1',
@@ -256,7 +258,7 @@ describe('KinesisEventSource', () => {
     fn.addEventSource(eventSource);
 
     // THEN
-    TemplateAssertions.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
+    Template.fromStack(stack).hasResourceProperties('AWS::Lambda::EventSourceMapping', {
       'Enabled': false,
     });
 

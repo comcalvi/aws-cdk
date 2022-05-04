@@ -1,4 +1,4 @@
-import '@aws-cdk/assert-internal/jest';
+import { Template } from '@aws-cdk/assertions';
 import * as iam from '@aws-cdk/aws-iam';
 import * as sns from '@aws-cdk/aws-sns';
 import * as cdk from '@aws-cdk/core';
@@ -8,7 +8,12 @@ describe('Portfolio', () => {
   let stack: cdk.Stack;
 
   beforeEach(() => {
-    stack = new cdk.Stack();
+    const app = new cdk.App({
+      context: {
+        '@aws-cdk/core:newStyleStackSynthesis': false,
+      },
+    });
+    stack = new cdk.Stack(app);
   });
 
   describe('portfolio creation and importing', () => {
@@ -18,7 +23,7 @@ describe('Portfolio', () => {
         providerName: 'testProvider',
       });
 
-      expect(stack).toMatchTemplate({
+      Template.fromStack(stack).templateMatches({
         Resources: {
           MyPortfolio59CCA9C9: {
             Type: 'AWS::ServiceCatalog::Portfolio',
@@ -39,7 +44,7 @@ describe('Portfolio', () => {
         messageLanguage: servicecatalog.MessageLanguage.ZH,
       });
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::Portfolio', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::Portfolio', {
         Description: 'test portfolio description',
         AcceptLanguage: servicecatalog.MessageLanguage.ZH,
       });
@@ -105,7 +110,7 @@ describe('Portfolio', () => {
         description: tokenDescription.valueAsString,
       });
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::Portfolio', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::Portfolio', {
         Description: {
           Ref: 'Description',
         },
@@ -120,7 +125,7 @@ describe('Portfolio', () => {
         providerName: 'testProvider',
       });
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::Portfolio', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::Portfolio', {
         DisplayName: {
           Ref: 'DisplayName',
         },
@@ -135,7 +140,7 @@ describe('Portfolio', () => {
         providerName: tokenProviderName.valueAsString,
       });
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::Portfolio', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::Portfolio', {
         ProviderName: {
           Ref: 'ProviderName',
         },
@@ -157,7 +162,7 @@ describe('Portfolio', () => {
       cdk.Tags.of(portfolio).add('myTestKey1', 'myTestKeyValue1');
       cdk.Tags.of(portfolio).add('myTestKey2', 'myTestKeyValue2');
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::Portfolio', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::Portfolio', {
         Tags: [
           {
             Key: 'myTestKey1',
@@ -176,7 +181,7 @@ describe('Portfolio', () => {
 
       portfolio.shareWithAccount(shareAccountId);
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::PortfolioShare', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::PortfolioShare', {
         AccountId: shareAccountId,
       });
     }),
@@ -189,7 +194,7 @@ describe('Portfolio', () => {
         messageLanguage: servicecatalog.MessageLanguage.EN,
       });
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::PortfolioShare', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::PortfolioShare', {
         AccountId: shareAccountId,
         ShareTagOptions: true,
         AcceptLanguage: 'en',
@@ -201,7 +206,7 @@ describe('Portfolio', () => {
 
       portfolio.shareWithAccount(shareAccountId, { shareTagOptions: false });
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::PortfolioShare', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::PortfolioShare', {
         AccountId: shareAccountId,
         ShareTagOptions: false,
       });
@@ -212,7 +217,7 @@ describe('Portfolio', () => {
 
       portfolio.shareWithAccount(shareAccountId);
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::PortfolioShare', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::PortfolioShare', {
         AccountId: shareAccountId,
       });
     }),
@@ -224,7 +229,7 @@ describe('Portfolio', () => {
 
       portfolio.giveAccessToRole(role);
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::PortfolioPrincipalAssociation', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::PortfolioPrincipalAssociation', {
         PrincipalARN: { 'Fn::GetAtt': ['TestRole6C9272DF', 'Arn'] },
       });
     }),
@@ -234,7 +239,7 @@ describe('Portfolio', () => {
 
       portfolio.giveAccessToUser(user);
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::PortfolioPrincipalAssociation', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::PortfolioPrincipalAssociation', {
         PrincipalARN: { 'Fn::GetAtt': ['TestUser6A619381', 'Arn'] },
       });
     }),
@@ -244,7 +249,7 @@ describe('Portfolio', () => {
 
       portfolio.giveAccessToGroup(group);
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::PortfolioPrincipalAssociation', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::PortfolioPrincipalAssociation', {
         PrincipalARN: { 'Fn::GetAtt': ['TestGroupAF88660E', 'Arn'] },
       });
     }),
@@ -288,32 +293,36 @@ describe('portfolio associations and product constraints', () => {
   test('basic portfolio product association', () => {
     portfolio.addProduct(product);
 
-    expect(stack).toHaveResource('AWS::ServiceCatalog::PortfolioProductAssociation');
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::PortfolioProductAssociation', 1);
   });
 
   test('portfolio product associations are idempotent', () => {
     portfolio.addProduct(product);
     portfolio.addProduct(product); // If not idempotent these calls should fail
 
-    expect(stack).toCountResources('AWS::ServiceCatalog::PortfolioProductAssociation', 1); //check anyway
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::PortfolioProductAssociation', 1); //check anyway
   }),
 
   test('add tag options to portfolio', () => {
-    const tagOptions = new servicecatalog.TagOptions({
-      key1: ['value1', 'value2'],
-      key2: ['value1'],
+    const tagOptions = new servicecatalog.TagOptions(stack, 'TagOptions', {
+      allowedValuesForTags: {
+        key1: ['value1', 'value2'],
+        key2: ['value1'],
+      },
     });
 
     portfolio.associateTagOptions(tagOptions);
 
-    expect(stack).toCountResources('AWS::ServiceCatalog::TagOption', 3); //Generates a resource for each unique key-value pair
-    expect(stack).toHaveResource('AWS::ServiceCatalog::TagOptionAssociation');
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::TagOption', 3); //Generates a resource for each unique key-value pair
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::TagOptionAssociation', 3);
   }),
 
   test('add tag options to portfolio as prop', () => {
-    const tagOptions = new servicecatalog.TagOptions({
-      key1: ['value1', 'value2'],
-      key2: ['value1'],
+    const tagOptions = new servicecatalog.TagOptions(stack, 'TagOptions', {
+      allowedValuesForTags: {
+        key1: ['value1', 'value2'],
+        key2: ['value1'],
+      },
     });
 
     portfolio = new servicecatalog.Portfolio(stack, 'MyPortfolioWithTag', {
@@ -322,55 +331,23 @@ describe('portfolio associations and product constraints', () => {
       tagOptions: tagOptions,
     });
 
-    expect(stack).toCountResources('AWS::ServiceCatalog::TagOption', 3); //Generates a resource for each unique key-value pair
-    expect(stack).toHaveResource('AWS::ServiceCatalog::TagOptionAssociation');
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::TagOption', 3); //Generates a resource for each unique key-value pair
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::TagOptionAssociation', 3);
   }),
 
-  test('adding identical tag options to portfolio is idempotent', () => {
-    const tagOptions1 = new servicecatalog.TagOptions({
-      key1: ['value1', 'value2'],
-      key2: ['value1'],
+  test('adding tag options to portfolio multiple times is idempotent', () => {
+    const tagOptions = new servicecatalog.TagOptions(stack, 'TagOptions', {
+      allowedValuesForTags: {
+        key1: ['value1', 'value2'],
+        key2: ['value1'],
+      },
     });
 
-    const tagOptions2 = new servicecatalog.TagOptions({
-      key1: ['value1', 'value2'],
-    });
+    portfolio.associateTagOptions(tagOptions);
+    portfolio.associateTagOptions(tagOptions); // If not idempotent this would fail
 
-    portfolio.associateTagOptions(tagOptions1);
-    portfolio.associateTagOptions(tagOptions2); // If not idempotent this would fail
-
-    expect(stack).toCountResources('AWS::ServiceCatalog::TagOption', 3); //Generates a resource for each unique key-value pair
-    expect(stack).toHaveResource('AWS::ServiceCatalog::TagOptionAssociation');
-  }),
-
-  test('fails to add tag options with invalid minimum key length', () => {
-    const tagOptions = new servicecatalog.TagOptions({
-      '': ['value1', 'value2'],
-      'key2': ['value1'],
-    });
-    expect(() => {
-      portfolio.associateTagOptions(tagOptions);
-    }).toThrowError(/Invalid TagOption key for resource/);
-  });
-
-  test('fails to add tag options with invalid maxium key length', () => {
-    const tagOptions = new servicecatalog.TagOptions({
-      ['key1'.repeat(1000)]: ['value1', 'value2'],
-      key2: ['value1'],
-    });
-    expect(() => {
-      portfolio.associateTagOptions(tagOptions);
-    }).toThrowError(/Invalid TagOption key for resource/);
-  }),
-
-  test('fails to add tag options with invalid value length', () => {
-    const tagOptions = new servicecatalog.TagOptions({
-      key1: ['value1'.repeat(1000), 'value2'],
-      key2: ['value1'],
-    });
-    expect(() => {
-      portfolio.associateTagOptions(tagOptions);
-    }).toThrowError(/Invalid TagOption value for resource/);
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::TagOption', 3); //Generates a resource for each unique key-value pair
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::TagOptionAssociation', 3);
   }),
 
   test('add tag update constraint', () => {
@@ -379,7 +356,7 @@ describe('portfolio associations and product constraints', () => {
       allow: true,
     });
 
-    expect(stack).toHaveResourceLike('AWS::ServiceCatalog::ResourceUpdateConstraint', {
+    Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::ResourceUpdateConstraint', {
       TagUpdateOnProvisionedProduct: 'ALLOWED',
     });
   });
@@ -391,7 +368,7 @@ describe('portfolio associations and product constraints', () => {
       allow: false,
     });
 
-    expect(stack).toHaveResourceLike('AWS::ServiceCatalog::ResourceUpdateConstraint', {
+    Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::ResourceUpdateConstraint', {
       AcceptLanguage: servicecatalog.MessageLanguage.EN,
       Description: 'test constraint description',
       TagUpdateOnProvisionedProduct: 'NOT_ALLOWED',
@@ -421,7 +398,7 @@ describe('portfolio associations and product constraints', () => {
       description: description,
     });
 
-    expect(stack).toHaveResource('AWS::ServiceCatalog::LaunchNotificationConstraint', {
+    Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::LaunchNotificationConstraint', {
       NotificationArns: [{ Ref: 'TopicBFC7AF6E' }],
       Description: description,
       PortfolioId: { Ref: 'MyPortfolio59CCA9C9' },
@@ -434,7 +411,7 @@ describe('portfolio associations and product constraints', () => {
 
     portfolio.notifyOnStackEvents(product, topic);
 
-    expect(stack).toCountResources('AWS::ServiceCatalog::LaunchNotificationConstraint', 1);
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::LaunchNotificationConstraint', 1);
   }),
 
   test('can add multiple notifications', () => {
@@ -446,7 +423,7 @@ describe('portfolio associations and product constraints', () => {
     portfolio.notifyOnStackEvents(product, topic2);
     portfolio.notifyOnStackEvents(product, topic3);
 
-    expect(stack).toCountResources('AWS::ServiceCatalog::LaunchNotificationConstraint', 3);
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::LaunchNotificationConstraint', 3);
   }),
 
   test('fails to add same topic multiple times in event notification constraint', () => {
@@ -457,7 +434,104 @@ describe('portfolio associations and product constraints', () => {
     expect(() => {
       portfolio.notifyOnStackEvents(product, topic);
     }).toThrowError(`Topic ${topic} is already subscribed to association`);
-  });
+  }),
+
+  test('creates a CloudFormation parameters constraint', () => {
+    portfolio.addProduct(product);
+    portfolio.constrainCloudFormationParameters(product, {
+      rule: {
+        ruleName: 'Rule',
+        assertions: [
+          {
+            assert: cdk.Fn.conditionContains(['t2.micro', 't2.small'], cdk.Fn.ref('InstanceType')),
+            description: 'assert description',
+          },
+        ],
+      },
+    });
+
+    Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::LaunchTemplateConstraint', {
+      PortfolioId: { Ref: 'MyPortfolio59CCA9C9' },
+      ProductId: { Ref: 'MyProduct49A3C587' },
+      Rules: JSON.stringify( {
+        Rule: {
+          Assertions: [
+            {
+              Assert: { 'Fn::Contains': [['t2.micro', 't2.small'], { Ref: 'InstanceType' }] },
+              AssertDescription: 'assert description',
+            },
+          ],
+        },
+      }),
+    });
+  }),
+
+  test('CloudFormation parameters constraint still creates without explicit association', () => {
+    portfolio.constrainCloudFormationParameters(product, {
+      rule: {
+        ruleName: 'Rule',
+        condition: cdk.Fn.conditionContains(['a', 'b'], 'text'),
+        assertions: [
+          {
+            assert: cdk.Fn.conditionContains(['t2.micro', 't2.small'], cdk.Fn.ref('InstanceType')),
+            description: 'assert description',
+          },
+        ],
+      },
+      description: 'test description',
+      messageLanguage: servicecatalog.MessageLanguage.EN,
+    });
+
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::LaunchTemplateConstraint', 1);
+  }),
+
+  test('set multiple CloudFormation parameters constraints', () => {
+    portfolio.constrainCloudFormationParameters(product, {
+      rule: {
+        ruleName: 'Rule01',
+        assertions: [{
+          assert: cdk.Fn.conditionContains(['BucketOwnerRead'], cdk.Fn.ref('AccessControl')),
+          description: 'assert description',
+        }],
+      },
+    });
+
+    portfolio.constrainCloudFormationParameters(product, {
+      rule: {
+        ruleName: 'Rule02',
+        assertions: [{
+          assert: cdk.Fn.conditionContains(['BucketOwnerWrite'], cdk.Fn.ref('AccessControl')),
+          description: 'assert description',
+        }],
+      },
+    });
+
+    Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::LaunchTemplateConstraint', 2);
+  }),
+
+  test('fails to set a duplicate CloudFormation parameters constraint', () => {
+    portfolio.constrainCloudFormationParameters(product, {
+      rule: {
+        ruleName: 'Rule01',
+        assertions: [{
+          assert: cdk.Fn.conditionContains(['BucketOwnerRead'], cdk.Fn.ref('AccessControl')),
+          description: 'assert description',
+        }],
+      },
+    });
+
+    expect(() => {
+      portfolio.constrainCloudFormationParameters(product, {
+        rule: {
+          ruleName: 'Rule01',
+          assertions: [{
+            assert: cdk.Fn.conditionContains(['BucketOwnerWrite'], cdk.Fn.ref('AccessControl')),
+            description: 'assert description',
+          }],
+        },
+      });
+    }).toThrowError(/Provisioning rule Rule01 already configured on association/);
+  }),
 
   describe('portfolio constraints that have roles', () => {
     let launchRole: iam.IRole, adminRole: iam.IRole;
@@ -466,6 +540,7 @@ describe('portfolio associations and product constraints', () => {
         assumedBy: new iam.AccountRootPrincipal(),
       });
       launchRole = new iam.Role(stack, 'LaunchRole', {
+        roleName: 'LaunchRole',
         assumedBy: new iam.ServicePrincipal('servicecatalog.amazonaws.com'),
       });
     }),
@@ -478,7 +553,7 @@ describe('portfolio associations and product constraints', () => {
         messageLanguage: servicecatalog.MessageLanguage.EN,
       });
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::LaunchRoleConstraint', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::LaunchRoleConstraint', {
         PortfolioId: { Ref: 'MyPortfolio59CCA9C9' },
         ProductId: { Ref: 'MyProduct49A3C587' },
         Description: 'set launch role description',
@@ -489,10 +564,63 @@ describe('portfolio associations and product constraints', () => {
       });
     }),
 
+    test('set a launch role constraint using local role name', () => {
+      portfolio.addProduct(product);
+
+      portfolio.setLocalLaunchRoleName(product, 'LocalLaunchRole', {
+        description: 'set launch role description',
+        messageLanguage: servicecatalog.MessageLanguage.EN,
+      });
+
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::LaunchRoleConstraint', {
+        PortfolioId: { Ref: 'MyPortfolio59CCA9C9' },
+        ProductId: { Ref: 'MyProduct49A3C587' },
+        Description: 'set launch role description',
+        AcceptLanguage: 'en',
+        LocalRoleName: { Ref: 'MyPortfolioLaunchRoleLocalLaunchRoleB2E6E22A' },
+      });
+    }),
+
+    test('set a launch role constraint using local role', () => {
+      portfolio.addProduct(product);
+
+      portfolio.setLocalLaunchRole(product, launchRole, {
+        description: 'set launch role description',
+        messageLanguage: servicecatalog.MessageLanguage.EN,
+      });
+
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::LaunchRoleConstraint', {
+        PortfolioId: { Ref: 'MyPortfolio59CCA9C9' },
+        ProductId: { Ref: 'MyProduct49A3C587' },
+        Description: 'set launch role description',
+        AcceptLanguage: 'en',
+        LocalRoleName: { Ref: 'LaunchRole2CFB2E44' },
+      });
+    }),
+
+    test('set a launch role constraint using imported local role', () => {
+      portfolio.addProduct(product);
+
+      const importedLaunchRole = iam.Role.fromRoleArn(portfolio.stack, 'ImportedLaunchRole', 'arn:aws:iam::123456789012:role/ImportedLaunchRole');
+
+      portfolio.setLocalLaunchRole(product, importedLaunchRole, {
+        description: 'set launch role description',
+        messageLanguage: servicecatalog.MessageLanguage.EN,
+      });
+
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::LaunchRoleConstraint', {
+        PortfolioId: { Ref: 'MyPortfolio59CCA9C9' },
+        ProductId: { Ref: 'MyProduct49A3C587' },
+        Description: 'set launch role description',
+        AcceptLanguage: 'en',
+        LocalRoleName: 'ImportedLaunchRole',
+      });
+    }),
+
     test('set launch role constraint still adds without explicit association', () => {
       portfolio.setLaunchRole(product, launchRole);
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::LaunchRoleConstraint');
+      Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::LaunchRoleConstraint', 1);
     }),
 
     test('fails to add multiple set launch roles', () => {
@@ -504,7 +632,57 @@ describe('portfolio associations and product constraints', () => {
 
       expect(() => {
         portfolio.setLaunchRole(product, otherLaunchRole);
-      }).toThrowError(/Cannot set multiple launch roles for association/);
+      }).toThrow(/Cannot set multiple launch roles for association/);
+    }),
+
+    test('local launch role must have roleName explicitly set', () => {
+      const otherLaunchRole = new iam.Role(stack, 'otherLaunchRole', {
+        assumedBy: new iam.ServicePrincipal('servicecatalog.amazonaws.com'),
+      });
+
+      expect(() => {
+        portfolio.setLocalLaunchRole(product, otherLaunchRole);
+      }).toThrow(/Role otherLaunchRole used for Local Launch Role must have roleName explicitly set/);
+    }),
+
+    test('fails to add multiple set launch roles - local launch role first', () => {
+      portfolio.setLocalLaunchRoleName(product, 'LaunchRole');
+
+      expect(() => {
+        portfolio.setLaunchRole(product, launchRole);
+      }).toThrow(/Cannot set multiple launch roles for association/);
+    }),
+
+    test('fails to add multiple set local launch roles - local launch role first', () => {
+      portfolio.setLocalLaunchRoleName(product, 'LaunchRole');
+
+      expect(() => {
+        portfolio.setLocalLaunchRole(product, launchRole);
+      }).toThrow(/Cannot set multiple launch roles for association/);
+    }),
+
+    test('fails to add multiple set local launch roles - local launch role name first', () => {
+      portfolio.setLocalLaunchRole(product, launchRole);
+
+      expect(() => {
+        portfolio.setLocalLaunchRoleName(product, 'LaunchRole');
+      }).toThrow(/Cannot set multiple launch roles for association/);
+    }),
+
+    test('fails to add multiple set launch roles - local launch role second', () => {
+      portfolio.setLaunchRole(product, launchRole);
+
+      expect(() => {
+        portfolio.setLocalLaunchRole(product, launchRole);
+      }).toThrow(/Cannot set multiple launch roles for association/);
+    }),
+
+    test('fails to add multiple set launch roles - local launch role second', () => {
+      portfolio.setLaunchRole(product, launchRole);
+
+      expect(() => {
+        portfolio.setLocalLaunchRoleName(product, 'LaunchRole');
+      }).toThrow(/Cannot set multiple launch roles for association/);
     }),
 
     test('fails to set launch role if stackset rule is already defined', () => {
@@ -534,7 +712,7 @@ describe('portfolio associations and product constraints', () => {
         messageLanguage: servicecatalog.MessageLanguage.JP,
       });
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::StackSetConstraint', {
+      Template.fromStack(stack).hasResourceProperties('AWS::ServiceCatalog::StackSetConstraint', {
         PortfolioId: { Ref: 'MyPortfolio59CCA9C9' },
         ProductId: { Ref: 'MyProduct49A3C587' },
         AdminRole: {
@@ -561,7 +739,7 @@ describe('portfolio associations and product constraints', () => {
         allowStackSetInstanceOperations: true,
       });
 
-      expect(stack).toHaveResourceLike('AWS::ServiceCatalog::StackSetConstraint');
+      Template.fromStack(stack).resourceCountIs('AWS::ServiceCatalog::StackSetConstraint', 1);
     }),
 
     test('fails to add multiple deploy with stackset constraints', () => {
