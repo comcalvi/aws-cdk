@@ -171,13 +171,43 @@ export class Manifest {
     }
   }
 
+  private static writeManifestFileHelper(manifest: any, stream: any, indentSize: number) {
+    const indent = ' '.repeat(indentSize);
+    const keys = Object.keys(manifest);
+    for (let i=0; i < keys.length; i++) {
+      const key = keys[i];
+      if (typeof manifest[key] !== 'object') {
+        if (i === keys.length - 1) {
+          stream.write(indent + JSON.stringify(key) + ': ' + JSON.stringify(manifest[key]) + '\n');
+        } else {
+          stream.write(indent + JSON.stringify(key) + ': ' + JSON.stringify(manifest[key]) + ',\n');
+        }
+      } else {
+        stream.write(indent + JSON.stringify(key) + ': {\n');
+        Manifest.writeManifestFileHelper(stream, manifest[key], indentSize + 2);
+        stream.write(indent + '}\n');
+      }
+    }
+  }
+
+  private static writeManifestFile(manifest: any, filePath: string, indentSize: number) {
+    const stream = fs.createWriteStream(filePath, { flags: 'a' });
+    stream.write('{\n');
+    Manifest.writeManifestFileHelper(manifest, stream, indentSize);
+    stream.write('}\n');
+  }
+
   private static saveManifest(manifest: any, filePath: string, schema: jsonschema.Schema, preprocess?: (obj: any) => any) {
     let withVersion = { ...manifest, version: Manifest.version() };
     Manifest.validate(withVersion, schema);
+    console.log('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-');
+    console.log('saveManifest() called')
+    console.log('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-');
     if (preprocess) {
       withVersion = preprocess(withVersion);
     }
-    fs.writeFileSync(filePath, JSON.stringify(withVersion, undefined, 2));
+    //fs.writeFileSync(filePath, JSON.stringify(withVersion, undefined, 2));
+    Manifest.writeManifestFile(manifest, filePath, 2);
   }
 
   private static loadManifest(filePath: string, schema: jsonschema.Schema, preprocess?: (obj: any) => any, options?: LoadManifestOptions) {
