@@ -61,3 +61,53 @@ describe('automatic cross-stack references', () => {
     expect(() => cdk.App.of(stack1)!.synth()).toThrow(/Cannot reference across apps/);
   });
 });
+
+test('policy names include the name of the stack in which they are created', () => {
+  // GIVEN
+  const stack1 = new cdk.Stack();
+  const stack2 = new cdk.Stack();
+  const resource1 = new cdk.CfnResource(stack1, 'SomeResource', {
+    type: 'CDK::Test::SomeResource',
+  });
+  const resource2 = new cdk.CfnResource(stack2, 'SomeResource', {
+    type: 'CDK::Test::SomeResource',
+  });
+  const role = new iam.Role(stack2, 'MyRole', {
+    assumedBy: new iam.AnyPrincipal(),
+  });
+
+  iam.Role.fromRoleArn(stack1, 'MyRole', role.roleArn);
+  applyGrantWithDependencyTo(resource1, role);
+  applyGrantWithDependencyTo(resource2, role);
+
+  // THEN
+  Template.fromStack(stack1).templateMatches({
+    Resources: {
+      MyRoleDefaultPolicyA36BE1DD: {
+        Type: 'AWS::IAM::Policy',
+        Properties: {
+          PolicyName: 'SomeResource',
+        },
+      },
+    },
+  });
+
+  Template.fromStack(stack2).templateMatches({
+    Resources: {
+      MyRoleDefaultPolicyA36BE1DD: {
+        Type: 'AWS::IAM::Policy',
+        Properties: {
+          PolicyName: 'MyRoleDefaultPolicyA36BE1DD',
+        },
+      },
+    },
+  });
+});
+
+function applyGrantWithDependencyTo(resource: any, principal: iam.IPrincipal) {
+  iam.Grant.addToPrincipal({
+    actions: ['service:DoAThing'],
+    grantee: principal,
+    resourceArns: ['*'],
+  }).applyBefore(resource);
+}
