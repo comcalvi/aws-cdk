@@ -64,50 +64,56 @@ describe('automatic cross-stack references', () => {
 
 test('policy names include the name of the stack in which they are created', () => {
   // GIVEN
-  const stack1 = new cdk.Stack();
-  const stack2 = new cdk.Stack();
-  const resource1 = new cdk.CfnResource(stack1, 'SomeResource', {
+  const app = new cdk.App();
+  const producerStack = new cdk.Stack(app, 'ProducerStack');
+  const consumerStackA = new cdk.Stack(app, 'ConsumerStackA');
+  const consumerStackB = new cdk.Stack(app, 'ConsumerStackB');
+
+  const consumerStackResourceA = new cdk.CfnResource(consumerStackA, 'SomeResource', {
     type: 'CDK::Test::SomeResource',
   });
-  const resource2 = new cdk.CfnResource(stack2, 'SomeResource', {
+  const consumerStackResourceB = new cdk.CfnResource(consumerStackB, 'SomeResource', {
     type: 'CDK::Test::SomeResource',
   });
-  const role = new iam.Role(stack2, 'MyRole', {
+
+  const role = new iam.Role(producerStack, 'MyRole', {
     assumedBy: new iam.AnyPrincipal(),
   });
 
-  iam.Role.fromRoleArn(stack1, 'MyRole', role.roleArn);
-  applyGrantWithDependencyTo(resource1, role);
-  applyGrantWithDependencyTo(resource2, role);
+  const importedRoleA = iam.Role.fromRoleArn(consumerStackA, 'MyRole', role.roleArn);
+  const importedRoleB = iam.Role.fromRoleArn(consumerStackB, 'MyRole', role.roleArn);
+  applyGrantWithDependencyTo(consumerStackResourceA, importedRoleA);
+  applyGrantWithDependencyTo(consumerStackResourceB, importedRoleB);
 
   // THEN
-  Template.fromStack(stack1).templateMatches({
+  Template.fromStack(consumerStackA).templateMatches({
     Resources: {
-      MyRoleDefaultPolicyA36BE1DD: {
+      MyRolePolicy64AB00A5: {
         Type: 'AWS::IAM::Policy',
         Properties: {
-          PolicyName: 'SomeResource',
+          PolicyName: 'MyRolePolicy64AB00A5',
         },
       },
     },
   });
 
-  Template.fromStack(stack2).templateMatches({
+  // THEN
+  Template.fromStack(consumerStackB).templateMatches({
     Resources: {
-      MyRoleDefaultPolicyA36BE1DD: {
+      MyRolePolicy64AB00A5: {
         Type: 'AWS::IAM::Policy',
         Properties: {
-          PolicyName: 'MyRoleDefaultPolicyA36BE1DD',
+          PolicyName: 'MyRolePolicy64AB00A5',
         },
       },
     },
   });
 });
 
-function applyGrantWithDependencyTo(resource: any, principal: iam.IPrincipal) {
+function applyGrantWithDependencyTo(_resource: any, principal: iam.IPrincipal) {
   iam.Grant.addToPrincipal({
     actions: ['service:DoAThing'],
     grantee: principal,
     resourceArns: ['*'],
-  }).applyBefore(resource);
+  })/*.applyBefore(resource)*/;
 }
