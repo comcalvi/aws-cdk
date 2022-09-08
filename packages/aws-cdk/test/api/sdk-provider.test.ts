@@ -611,6 +611,55 @@ test('even when using a profile to assume another profile, STS calls goes throug
   expect(called).toEqual(true);
 });
 
+test('even when sso, STS calls goes through the proxy', async () => {
+  prepareCreds({
+    config: {
+      'default': { region: 'eu-bla-2' },
+      'profile sso': {
+        region: 'eu-bla-5',
+        sso_start_url: 'https://d-123456abc.awsapps.com/start',
+        sso_region: 'eu-bla-5',
+        sso_account_id: '123456789012',
+        sso_role_name: 'MagicSsoRole',
+      },
+    },
+  });
+
+  // Messy mocking
+  let called = false;
+  jest.mock('proxy-agent', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    class FakeAgent extends require('https').Agent {
+      public addRequest(_: any, __: any) {
+        // FIXME: this error takes 6 seconds to be completely handled. It
+        // might be retries in the SDK somewhere, or something about the Node
+        // event loop. I've spent an hour trying to figure it out and I can't,
+        // and I gave up. We'll just have to live with this until someone gets
+        // inspired.
+        const error = new Error('ABORTED BY TEST');
+        (error as any).code = 'RequestAbortedError';
+        (error as any).retryable = false;
+        called = true;
+        throw error;
+      }
+    }
+    return FakeAgent;
+  });
+
+  // WHEN
+  const provider = await SdkProvider.withAwsCliCompatibleDefaults({
+    profile: 'sso',
+    httpOptions: {
+      proxyAddress: 'http://DOESNTMATTER/',
+    },
+  });
+
+  await provider.defaultAccount();
+
+  // THEN -- the fake proxy agent got called, we don't care about the result
+  expect(called).toEqual(true);
+});
+
 /**
  * Use object hackery to get the credentials out of the SDK object
  */
@@ -625,8 +674,8 @@ function sdkConfig(sdk: ISDK): ConfigurationOptions {
  * register users and roles in FakeSts at the same time.
  */
 function prepareCreds(options: PrepareCredsOptions) {
-  function convertSections(sections?: Record<string, ProfileUser | ProfileRole>) {
-    const ret = [];
+  function convertSections(sections?: Record<string, ProfileUser | ProfileRole | ProfileSso>) {
+    const ret: string[] = [];
     for (const [profile, user] of Object.entries(sections ?? {})) {
       ret.push(`[${profile}]`);
 
@@ -645,6 +694,14 @@ function prepareCreds(options: PrepareCredsOptions) {
           ...user.$fakeStsOptions,
           allowedAccounts: user.$fakeStsOptions?.allowedAccounts?.map(uniq),
         });
+      } else if (isProfileSso(user)) {
+        ret.push(`sso_start_url=${user.sso_start_url}`);
+        ret.push(`sso_region=${user.sso_region}`);
+        ret.push(`sso_account_id=${user.sso_account_id}`);
+        ret.push(`sso_role_name=${user.sso_role_name}`);
+        if ('region' in user) {
+          ret.push(`region=${user.region}`);
+        }
       } else {
         if (user.aws_access_key_id) {
           ret.push(`aws_access_key_id=${uniq(user.aws_access_key_id)}`);
@@ -674,12 +731,12 @@ interface PrepareCredsOptions {
   /**
    * Write the aws/credentials file
    */
-  readonly credentials?: Record<string, ProfileUser | ProfileRole>;
+  readonly credentials?: Record<string, ProfileUser | ProfileRole | ProfileSso>;
 
   /**
    * Write the aws/config file
    */
-  readonly config?: Record<string, ProfileUser | ProfileRole>;
+  readonly config?: Record<string, ProfileUser | ProfileRole | ProfileSso>;
 
   /**
    * If given, add users to FakeSTS
@@ -702,8 +759,20 @@ type ProfileRole = {
   readonly $fakeStsOptions?: RegisterRoleOptions;
 } & ({ readonly source_profile: string } | { readonly credential_source: string });
 
-function isProfileRole(x: ProfileUser | ProfileRole): x is ProfileRole {
+interface ProfileSso {
+  readonly sso_start_url: string;
+  readonly sso_region: string;
+  readonly sso_account_id: string,
+  readonly sso_role_name: string,
+  readonly region?: string,
+}
+
+function isProfileRole(x: ProfileUser | ProfileRole | ProfileSso): x is ProfileRole {
   return 'role_arn' in x;
+}
+
+function isProfileSso(x: ProfileUser | ProfileRole | ProfileSso): x is ProfileSso {
+  return 'sso_start_url' in x;
 }
 
 function providerFromProfile(profile: string | undefined) {
