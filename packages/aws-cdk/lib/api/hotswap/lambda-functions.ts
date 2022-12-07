@@ -161,7 +161,15 @@ async function isLambdaFunctionCodeOnlyChange(
         /*
          * Tag updates are a bit odd; they manifest as two lists, are flagged only as
          * `isDifferent`, and we have to reconcile them.
+         *
+         * If the tag is created or destroyed, and not just added or removed,
+         * then do a full deployment. This is because the tag update will also
+         * be applied to the function's execution role and it's preferable to avoid
+         * hotswapping IAM roles.
          */
+        if (!updatedProp.oldValue || !updatedProp.newValue) {
+          return ChangeHotswapImpact.REQUIRES_FULL_DEPLOYMENT;
+        }
         const tagUpdates: { [tag: string]: string | TagDeletion } = {};
         if (updatedProp?.isDifferent) {
           const tasks = updatedProp.newValue.map(async (tag: CfnDiffTagValue) => {
