@@ -302,7 +302,7 @@ export class Table extends Resource implements ITable {
     this.encryption = encryption;
     this.encryptionKey = encryptionKey;
 
-    const tableResource = new CfnTable(this, 'Table', {
+    const tableResource = new CfnTable(this, 'Resource', {
       catalogId: props.database.catalogId,
 
       databaseName: props.database.databaseName,

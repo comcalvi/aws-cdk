@@ -210,7 +210,7 @@ export class EndpointConfig extends cdk.Resource implements IEndpointConfig {
     (props.instanceProductionVariants || []).map(p => this.addInstanceProductionVariant(p));
 
     // create the endpoint configuration resource
-    const endpointConfig = new CfnEndpointConfig(this, 'EndpointConfig', {
+    const endpointConfig = new CfnEndpointConfig(this, 'Resource', {
       kmsKeyId: (props.encryptionKey) ? props.encryptionKey.keyArn : undefined,
       endpointConfigName: this.physicalName,
       productionVariants: cdk.Lazy.any({ produce: () => this.renderInstanceProductionVariants() }),

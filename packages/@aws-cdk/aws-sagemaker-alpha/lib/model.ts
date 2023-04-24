@@ -306,7 +306,7 @@ export class Model extends ModelBase {
 
     (props.containers || []).map(c => this.addContainer(c));
 
-    const model = new CfnModel(this, 'Model', {
+    const model = new CfnModel(this, 'Resource', {
       executionRoleArn: this.role.roleArn,
       modelName: this.physicalName,
       primaryContainer: cdk.Lazy.any({ produce: () => this.renderPrimaryContainer() }),

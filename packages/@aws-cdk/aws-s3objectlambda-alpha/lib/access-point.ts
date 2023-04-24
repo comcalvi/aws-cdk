@@ -222,7 +222,7 @@ export class AccessPoint extends AccessPointBase {
       allowedFeatures.push('GetObject-Range');
     }
 
-    const accessPoint = new CfnAccessPoint(this, id, {
+    const accessPoint = new CfnAccessPoint(this, 'Resource', {
       name: this.physicalName,
       objectLambdaConfiguration: {
         allowedFeatures,

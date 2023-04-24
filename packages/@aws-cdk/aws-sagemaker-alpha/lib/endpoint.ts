@@ -430,7 +430,7 @@ export class Endpoint extends EndpointBase {
     this.endpointConfig = props.endpointConfig;
 
     // create the endpoint resource
-    const endpoint = new CfnEndpoint(this, 'Endpoint', {
+    const endpoint = new CfnEndpoint(this, 'Resource', {
       endpointConfigName: props.endpointConfig.endpointConfigName,
       endpointName: this.physicalName,
     });
