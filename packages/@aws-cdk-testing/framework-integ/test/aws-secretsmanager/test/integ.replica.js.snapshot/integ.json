@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.replica": {
-      "stacks": [
-        "cdk-integ-secrets-replica"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:dbe33e8f5a8a6fc40d285380df19ccf2ce8a0ec3749ba3fb4c1eeace893a94ee
+size 248

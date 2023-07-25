@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.docker-asset.lit": {
-      "stacks": [
-        "test-codebuild-docker-asset"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:691c1b119cff5e40e34697ded36da7612d5f178a01c7b230f4d5f0fdf3dcc7e2
+size 259

@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.serverless-cluster-no-vpc": {
-      "stacks": [
-        "aws-cdk-sls-cluster-no-vpc-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:43a3787abbac22f5bf1af10043993b57a50417ec71270e516aefc2b47d7d9bc8
+size 273

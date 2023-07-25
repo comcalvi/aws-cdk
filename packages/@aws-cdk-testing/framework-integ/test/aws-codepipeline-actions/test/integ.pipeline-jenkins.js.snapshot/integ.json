@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.pipeline-jenkins": {
-      "stacks": [
-        "aws-cdk-codepipeline-jenkins"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6c7a8df489768f5a8b7b99892158673072c6742c3d47d3d0031019533cc2eb67
+size 260

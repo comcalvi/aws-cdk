@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "aws-cdk-eks-handlers-in-vpc/DefaultTest": {
-      "stacks": [
-        "aws-cdk-eks-handlers-in-vpc-test"
-      ],
-      "diffAssets": true,
-      "assertionStack": "aws-cdk-eks-handlers-in-vpc/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkekshandlersinvpcDefaultTestDeployAssert40766711"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:25d05ccc6b9ee2eefd76008470582ca46b937a52490afe5d4aefa122625ca4a7
+size 362

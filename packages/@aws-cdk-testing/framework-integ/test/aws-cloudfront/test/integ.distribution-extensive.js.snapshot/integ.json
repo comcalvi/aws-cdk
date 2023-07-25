@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.distribution-extensive": {
-      "stacks": [
-        "integ-distribution-extensive"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f9a18d01f2e61f9cf659cc85c41a888811e06db5c9344440afb511d1d43825dc
+size 266

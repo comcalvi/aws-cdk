@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.cloudfront-empty-root": {
-      "stacks": [
-        "aws-cdk-cloudfront-custom"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:adb17a0162b9d9f4d33b18a7fb00b054869fe0a95b743d9b3f9793945f515e1d
+size 262

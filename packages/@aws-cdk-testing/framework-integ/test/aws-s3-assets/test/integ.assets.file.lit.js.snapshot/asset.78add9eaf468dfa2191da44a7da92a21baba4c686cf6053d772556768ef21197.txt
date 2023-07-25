@@ -1,1 +1,3 @@
-Hello, this is a just a file!
+version https://git-lfs.github.com/spec/v1
+oid sha256:d8cbb70879aedf88f25f14a905cf0e37cf3424257d957e762b1df1678109bc5f
+size 29

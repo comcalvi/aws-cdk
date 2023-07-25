@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.user-pool-idp.amazon": {
-      "stacks": [
-        "integ-user-pool-idp-amazon"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:de2680a49fe08a8a59dddeadacf3ecb5bfd75d16fe6fdd2a80a6a3391016be51
+size 262

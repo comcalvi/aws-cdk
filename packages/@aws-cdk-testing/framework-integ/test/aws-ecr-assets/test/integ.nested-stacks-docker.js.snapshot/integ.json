@@ -1,14 +1,3 @@
-{
-  "version": "29.0.0",
-  "testCases": {
-    "integ.nested-stacks-docker": {
-      "stacks": [
-        "nested-stacks-docker"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5abcda2c524479229b992a6b89d07765d8757f47bc03bda6564eeda74e7a3a21
+size 256

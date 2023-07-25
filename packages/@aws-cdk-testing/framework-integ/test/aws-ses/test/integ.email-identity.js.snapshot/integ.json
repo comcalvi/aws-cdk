@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "EmailIdentityInteg/DefaultTest": {
-      "stacks": [
-        "cdk-ses-email-identity-integ"
-      ],
-      "assertionStack": "EmailIdentityInteg/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ea98cb42fa5f594cc6f5ae31e00c4e8134b75d4403baf450af4d9ff15bc59fdd
+size 229

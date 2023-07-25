@@ -1,13 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "PnpmTest/DefaultTest": {
-      "stacks": [
-        "TestStack"
-      ],
-      "stackUpdateWorkflow": false,
-      "assertionStack": "PnpmTest/DefaultTest/DeployAssert",
-      "assertionStackName": "PnpmTestDefaultTestDeployAssert397EDF83"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2c934bdc14005dcd8804dca75d35f951255c815c5c6d330088fd738e7efb4020
+size 297

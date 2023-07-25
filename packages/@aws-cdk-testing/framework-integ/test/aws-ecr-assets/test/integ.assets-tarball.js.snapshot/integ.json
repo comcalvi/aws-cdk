@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "LoadFromTarball/DefaultTest": {
-      "stacks": [
-        "integ-assets-tarball"
-      ],
-      "assertionStack": "LoadFromTarball/DefaultTest/DeployAssert",
-      "assertionStackName": "LoadFromTarballDefaultTestDeployAssert46673615"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8003ae8e948818e19ed9764d7cb91ff5de83e9cc912ca4fbafc5f83d610bf7a5
+size 293

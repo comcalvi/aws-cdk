@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.project-secondary-sources-artifacts": {
-      "stacks": [
-        "aws-cdk-codebuild-secondary-sources-artifacts"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0c0a6b0a31d6a2ee2ad1ef631c9d311a901f33a21ab1a942ce3331c6526aa58b
+size 296

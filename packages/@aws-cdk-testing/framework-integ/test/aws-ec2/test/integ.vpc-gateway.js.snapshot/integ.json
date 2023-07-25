@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.vpc-gateway": {
-      "stacks": [
-        "aws-cdk-ec2-vpc-gateway"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3dde8a5485bc9c263ede06c2bece24a03dafa56e17e38426e57b56df7e7a29ee
+size 250

@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.cloudfront-failover": {
-      "stacks": [
-        "integ-cloudfront-failover"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:22c39b2615d95576dcee90537e7f97393f72e12928b89b1e738ff997d9e57d24
+size 260

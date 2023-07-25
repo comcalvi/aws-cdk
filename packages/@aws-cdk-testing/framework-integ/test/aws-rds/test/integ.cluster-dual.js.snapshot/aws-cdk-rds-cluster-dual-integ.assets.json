@@ -1,19 +1,3 @@
-{
-  "version": "21.0.0",
-  "files": {
-    "b5ff1147ce210b6a8be6120310d71e1a1bcb6c64b802b268e0b994bb80eb9ced": {
-      "source": {
-        "path": "aws-cdk-rds-cluster-dual-integ.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "current_account-current_region": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "b5ff1147ce210b6a8be6120310d71e1a1bcb6c64b802b268e0b994bb80eb9ced.json",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a3f89ac5dd38980d8f6b8c33f637d6428495a9ff4be4278b34a63eec898680ac
+size 674

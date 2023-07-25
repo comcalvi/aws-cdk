@@ -9,4 +9,4 @@
 *.jpg binary
 *.tgz binary
 *.tar.gz binary
-packages/@aws-cdk-testing/framework-integ/test/**/test/*.snapshot filter=lfs diff=lfs merge=lfs -text
+packages/@aws-cdk-testing/framework-integ/test/**/test/*.snapshot/* filter=lfs diff=lfs merge=lfs -text

@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "aws-cdk-eks-fargate-cluster/DefaultTest": {
-      "stacks": [
-        "aws-cdk-eks-fargate-cluster-test"
-      ],
-      "diffAssets": true,
-      "assertionStack": "aws-cdk-eks-fargate-cluster/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkeksfargateclusterDefaultTestDeployAssert7DCC5E4C"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e539001b21578c501ccda4c17f18c5fe3d32a3f4307391e8b205b43982e0b248
+size 363

@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "cdk-integ-bucket-sharing/DefaultTest": {
-      "stacks": [
-        "ConsumerStack"
-      ],
-      "assertionStack": "cdk-integ-bucket-sharing/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegbucketsharingDefaultTestDeployAssertD8250F42"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a2fe98ff2f1fc125817ab8604a856e25dcfee70130b6edb1f600bd6caae9607a
+size 310

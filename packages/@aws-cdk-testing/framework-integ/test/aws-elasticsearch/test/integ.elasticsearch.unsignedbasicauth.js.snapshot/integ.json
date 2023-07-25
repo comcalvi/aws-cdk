@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "ElasticSearchUnsignedBasicAuthInteg/DefaultTest": {
-      "stacks": [
-        "cdk-integ-elasticsearch-unsignedbasicauth"
-      ],
-      "diffAssets": true,
-      "assertionStack": "ElasticSearchUnsignedBasicAuthInteg/DefaultTest/DeployAssert",
-      "assertionStackName": "ElasticSearchUnsignedBasicAuthIntegDefaultTestDeployAssertB125FC47"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:bb09befa7755b03a562f310875628fdf8ebe5abdc8b383c462f91ba7452913ff
+size 400

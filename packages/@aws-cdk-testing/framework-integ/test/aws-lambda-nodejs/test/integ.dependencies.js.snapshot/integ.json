@@ -1,13 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "LambdaDependencies/DefaultTest": {
-      "stacks": [
-        "cdk-integ-lambda-nodejs-dependencies",
-        "cdk-integ-lambda-nodejs-dependencies-for-sdk-v3"
-      ],
-      "assertionStack": "LambdaDependencies/DefaultTest/DeployAssert",
-      "assertionStackName": "LambdaDependenciesDefaultTestDeployAssert259C940B"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:31032dce522e6c724de7b8da81b5e78542f6245262200413565ef1b2667cd002
+size 377

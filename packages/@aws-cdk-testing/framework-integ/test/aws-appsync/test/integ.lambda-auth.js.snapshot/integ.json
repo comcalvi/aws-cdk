@@ -1,12 +1,3 @@
-{
-  "version": "29.0.0",
-  "testCases": {
-    "GraphQlApiLambdaAuth/DefaultTest": {
-      "stacks": [
-        "appsync-lambda-auth"
-      ],
-      "assertionStack": "GraphQlApiLambdaAuth/DefaultTest/DeployAssert",
-      "assertionStackName": "GraphQlApiLambdaAuthDefaultTestDeployAssert3A9D82EA"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5365f60c86590e64e7509c5599985c0094c58e38ff9b4558effcfdb7a29b56c6
+size 307

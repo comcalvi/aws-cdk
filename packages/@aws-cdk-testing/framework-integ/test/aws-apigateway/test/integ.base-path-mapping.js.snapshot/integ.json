@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "base-path-mapping/DefaultTest": {
-      "stacks": [
-        "test-stack"
-      ],
-      "assertionStack": "base-path-mapping/DefaultTest/DeployAssert",
-      "assertionStackName": "basepathmappingDefaultTestDeployAssertDA82B6F0"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9c949b6e036e669f2b81e80fdc80b35d434406c8caed1420ccaddb923b948a1e
+size 287

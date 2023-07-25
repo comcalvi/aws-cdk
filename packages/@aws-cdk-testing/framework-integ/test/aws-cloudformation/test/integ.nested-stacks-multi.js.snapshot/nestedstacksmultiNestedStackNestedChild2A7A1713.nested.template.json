@@ -1,7 +1,3 @@
-{
- "Resources": {
-  "YourResource3CE78317": {
-   "Type": "AWS::SNS::Topic"
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d4c600688ccc1aedf59867bc4d87146985182956760c437de72078d42f5215fc
+size 83

@@ -1,32 +1,3 @@
-{
- "Resources": {
-  "IntegNestedParameter04B9B8A01": {
-   "Type": "AWS::SSM::Parameter",
-   "Properties": {
-    "Name": "integ-nested-parameter0",
-    "Type": "String",
-    "Value": {
-     "Ref": "referencetocrossregionconsumer2ExportsReader29C6F905cdkexportscrossregionconsumer2crossregionproduceruseast1FnGetAttIntegQueue3A18718AQueueName8D8D3C9B"
-    }
-   }
-  },
-  "IntegNestedParameter1DE6274D4": {
-   "Type": "AWS::SSM::Parameter",
-   "Properties": {
-    "Name": "integ-nested-parameter1",
-    "Type": "String",
-    "Value": {
-     "Ref": "referencetocrossregionconsumer2ExportsReader29C6F905cdkexportscrossregionconsumer2crossregionproduceruseast1FnGetAttIntegNestedNestedStackIntegNestedNestedStackResource168C5881OutputscrossregionproducerIntegNestedNestedIntegQueueD686DB69QueueNameC1C9C99E"
-    }
-   }
-  }
- },
- "Parameters": {
-  "referencetocrossregionconsumer2ExportsReader29C6F905cdkexportscrossregionconsumer2crossregionproduceruseast1FnGetAttIntegQueue3A18718AQueueName8D8D3C9B": {
-   "Type": "String"
-  },
-  "referencetocrossregionconsumer2ExportsReader29C6F905cdkexportscrossregionconsumer2crossregionproduceruseast1FnGetAttIntegNestedNestedStackIntegNestedNestedStackResource168C5881OutputscrossregionproducerIntegNestedNestedIntegQueueD686DB69QueueNameC1C9C99E": {
-   "Type": "String"
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e42ee0250767da1fef220bb294f13ed24d30a4bc20d86da843b51f5f0fe77251
+size 1311

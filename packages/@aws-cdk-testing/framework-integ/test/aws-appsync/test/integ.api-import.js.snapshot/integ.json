@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.api-import": {
-      "stacks": [
-        "*"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d5210dc3a1266613db2c26e5e48542cfd141eb5a9861adeebb3677e4aab31efc
+size 227

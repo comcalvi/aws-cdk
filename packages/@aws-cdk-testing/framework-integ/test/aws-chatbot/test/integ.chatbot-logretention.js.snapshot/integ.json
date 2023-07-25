@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.chatbot-logretention": {
-      "stacks": [
-        "ChatbotLogRetentionInteg"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1c07584bef2037526ec4bcd7f7b7f3d615ae81b0c9c31c1defe97836dbe394a4
+size 260

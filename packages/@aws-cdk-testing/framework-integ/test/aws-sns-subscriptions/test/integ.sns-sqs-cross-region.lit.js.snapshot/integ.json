@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.sns-sqs-cross-region.lit": {
-      "stacks": [
-        "*"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": true
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f30af4530ba78340cd9d73b6bc01359ac66a3dea1aa12c8184caef2f96d547af
+size 240

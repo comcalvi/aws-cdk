@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "GrantExecuteTest/DefaultTest": {
-      "stacks": [
-        "GrantExecute"
-      ],
-      "assertionStack": "GrantExecuteTest/DefaultTest/DeployAssert",
-      "assertionStackName": "GrantExecuteTestDefaultTestDeployAssertA66B6F20"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c5b1bf0c24fb47e747d0e2583ad2b351c09c3e18cd04f84c1aa7904125216284
+size 288

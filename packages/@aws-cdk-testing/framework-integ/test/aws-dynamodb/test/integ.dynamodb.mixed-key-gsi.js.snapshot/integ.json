@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.dynamodb.mixed-key-gsi": {
-      "stacks": [
-        "aws-cdk-dynamodb-gsi"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6d483f649728857f5fe4d1dd261e0bca68bff5119d52d5ff73f656bbe535a057
+size 258

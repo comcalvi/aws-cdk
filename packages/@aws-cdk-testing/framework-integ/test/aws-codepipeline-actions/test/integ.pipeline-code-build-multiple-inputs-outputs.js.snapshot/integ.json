@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.pipeline-code-build-multiple-inputs-outputs": {
-      "stacks": [
-        "aws-cdk-codepipeline-codebuild-multiple-inputs-outputs"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a090c245c275d48bbb12a128238f5fd74e12b0da03886652a60ac92cdd31af67
+size 313

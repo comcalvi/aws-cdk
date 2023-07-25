@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "JsResolverIntegTest/DefaultTest": {
-      "stacks": [
-        "AppSyncJsResolverTestStack"
-      ],
-      "assertionStack": "JsResolverIntegTest/DefaultTest/DeployAssert",
-      "assertionStackName": "JsResolverIntegTestDefaultTestDeployAssert57AD8D20"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:64f6f4959abcf1f6456601de20d745190335a5244e2e45ec5cd242fbfcd1c7b8
+size 311

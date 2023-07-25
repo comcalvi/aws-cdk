@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "ecr-source-action/DefaultTest": {
-      "stacks": [
-        "aws-cdk-codepipeline-ecr-source"
-      ],
-      "assertionStack": "ecr-source-action/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:21af11321d63ff52ed33ce2b8ef89da9ee47e7547d3296d2d7177ada3b04acb6
+size 230

@@ -1,12 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "CapacityRebalanceTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-autoscaling-integ"
-      ],
-      "assertionStack": "CapacityRebalanceTest/DefaultTest/DeployAssert",
-      "assertionStackName": "CapacityRebalanceTestDefaultTestDeployAssert759ED6BE"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d7e6c5990c87c5030cca310d5daa21c31174b4295ff367ddbafdfedf7739707e
+size 316

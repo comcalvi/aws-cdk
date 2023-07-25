@@ -1,19 +1,3 @@
-{
-  "version": "31.0.0",
-  "files": {
-    "6eac218b58c1ca04d58735030b88ff7568d614ea22c5ff54fd2e46e5df583983": {
-      "source": {
-        "path": "aws-cdk-rds-instance-s3-postgres-integ.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "current_account-current_region": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "6eac218b58c1ca04d58735030b88ff7568d614ea22c5ff54fd2e46e5df583983.json",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:55d9725a47bd7b21376fde8822af19d0fc33d8185ae887f4e413f141c29c5af8
+size 682

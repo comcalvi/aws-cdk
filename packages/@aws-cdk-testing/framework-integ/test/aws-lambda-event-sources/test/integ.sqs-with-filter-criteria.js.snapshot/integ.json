@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "SQSFilterCriteria/DefaultTest": {
-      "stacks": [
-        "lambda-event-source-filter-criteria-sqs"
-      ],
-      "assertionStack": "SQSFilterCriteria/DefaultTest/DeployAssert",
-      "assertionStackName": "SQSFilterCriteriaDefaultTestDeployAssert70A9A808"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5277876c7931d240443a41e94ca555407a0dd14385bead162d45addcb3e60cd2
+size 318

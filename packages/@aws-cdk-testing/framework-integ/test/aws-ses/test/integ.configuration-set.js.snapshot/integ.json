@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "ConfigurationSetInteg/DefaultTest": {
-      "stacks": [
-        "cdk-ses-configuration-set-integ"
-      ],
-      "assertionStack": "ConfigurationSetInteg/DefaultTest/DeployAssert",
-      "assertionStackName": "ConfigurationSetIntegDefaultTestDeployAssert9B6AD46A"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ee732ee9a9621dc7078fb0685247760628c505cd727f467275ee499ebe1542d8
+size 322

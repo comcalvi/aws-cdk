@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.actions": {
-      "stacks": [
-        "aws-cdk-ses-receipt"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f78a8f39a29259aa54992623d4eb39f62e6ea954794d2b30f55bd8ef0e69f413
+size 242

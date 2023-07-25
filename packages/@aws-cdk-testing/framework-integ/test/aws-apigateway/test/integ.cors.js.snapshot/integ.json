@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "cors/DefaultTest": {
-      "stacks": [
-        "cors-twitch-test"
-      ],
-      "assertionStack": "cors/DefaultTest/DeployAssert",
-      "assertionStackName": "corsDefaultTestDeployAssert5CF8F851"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7e73864e6ce7bc7cf437782f1fd9107c14c285472d6670f3442175688c8ec53c
+size 256

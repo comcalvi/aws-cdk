@@ -1,14 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "integ.notifications": {
-      "stacks": [
-        "test-3"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2c53d6731804bb8ca614fe0a08003fd1c4bb3abe2961b3def06e4e31aa6feaed
+size 235

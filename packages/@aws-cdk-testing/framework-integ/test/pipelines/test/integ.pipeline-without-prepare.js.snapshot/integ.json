@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "PreparelessPipelineTest/DefaultTest": {
-      "stacks": [
-        "PreparelessPipelineStack"
-      ],
-      "diffAssets": true,
-      "assertionStack": "PreparelessPipelineTest/DefaultTest/DeployAssert",
-      "assertionStackName": "PreparelessPipelineTestDefaultTestDeployAssert7B7DD2C6"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ecd12155a6219e6b68252042752ce2c738490008e28641226002d485c35166a1
+size 347

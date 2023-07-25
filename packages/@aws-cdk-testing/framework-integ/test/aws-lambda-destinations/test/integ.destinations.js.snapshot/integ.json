@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "Destinations/DefaultTest": {
-      "stacks": [
-        "aws-cdk-lambda-destinations"
-      ],
-      "assertionStack": "Destinations/DefaultTest/DeployAssert",
-      "assertionStackName": "DestinationsDefaultTestDeployAssertCC49E667"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a8959b84d12bb2ddb2d8d70b46706ae6a92b94947f0d565d4e88d020fc6824df
+size 291

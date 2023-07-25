@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "ImportedRoleTest/DefaultTest": {
-      "stacks": [
-        "integ-iam-imported-role-role-stack"
-      ],
-      "assertionStack": "ImportedRoleTestAssertions",
-      "assertionStackName": "ImportedRoleTestAssertions"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9f176d075f63241fe7b3962991f8077145cd7f883f2a965a96d62964eb622a9a
+size 274

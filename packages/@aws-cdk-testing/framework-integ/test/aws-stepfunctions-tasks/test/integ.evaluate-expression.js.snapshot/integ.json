@@ -1,12 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "EvaluateExpressionInteg/DefaultTest": {
-      "stacks": [
-        "cdk-sfn-evaluate-expression-integ"
-      ],
-      "assertionStack": "EvaluateExpressionInteg/DefaultTest/DeployAssert",
-      "assertionStackName": "EvaluateExpressionIntegDefaultTestDeployAssert03097648"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:727d3059ca924be81ca8fd5c62f168271b81e339e42e61f72fe1869146901a08
+size 330

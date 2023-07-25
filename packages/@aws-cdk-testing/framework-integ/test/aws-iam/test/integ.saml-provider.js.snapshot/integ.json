@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "saml-provider-test/DefaultTest": {
-      "stacks": [
-        "cdk-saml-provider"
-      ],
-      "assertionStack": "saml-provider-test/DefaultTest/DeployAssert",
-      "assertionStackName": "samlprovidertestDefaultTestDeployAssert29A1AF64"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3904ab3d43bf1a0097b6542ece512c414d811a96dadc530d7ced5f1fd05fd19e
+size 297

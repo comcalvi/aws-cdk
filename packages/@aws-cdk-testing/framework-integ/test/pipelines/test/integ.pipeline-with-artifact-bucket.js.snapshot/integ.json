@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "ClusterTest/DefaultTest": {
-      "stacks": [
-        "PipelineStack"
-      ],
-      "assertionStack": "ClusterTest/DefaultTest/DeployAssert",
-      "assertionStackName": "ClusterTestDefaultTestDeployAssert6A1BBA9D"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3dd180b591b683344ac7b8e4b1d7cfed044170fb020daebdbfe65e71d5e4227e
+size 274

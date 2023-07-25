@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.share-vpcs.lit": {
-      "stacks": [
-        "*"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:dc30ea3cf784b7b1194ee46f945a2c5a26ee223cda3fb4eac24fdb52ef658d5b
+size 231

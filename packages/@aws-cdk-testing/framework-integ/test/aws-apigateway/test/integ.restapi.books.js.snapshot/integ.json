@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "restapi-books/DefaultTest": {
-      "stacks": [
-        "restapi-books-example"
-      ],
-      "assertionStack": "restapi-books/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:491f8bfef62cd4153dfac300965b7f7787e016564e59842f91e4b4c8ec71ec31
+size 212

@@ -1,14 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "integ.cluster-rotation.lit": {
-      "stacks": [
-        "aws-cdk-docdb-cluster-rotation"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:99b8fe9abe938ffddc52fd938ff52acbf41d6c7e9dab534c4d89be48b7903adf
+size 266

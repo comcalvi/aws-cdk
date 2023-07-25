@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.autoscaling.lit": {
-      "stacks": [
-        "aws-cdk-dynamodb"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d0f74ab2810303c6511c85da9ed43c080ee93a9eddfeb71fffeaa672ad02d15c
+size 247

@@ -1,13 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "DependsOnTest/DefaultTest": {
-      "stacks": [
-        "replace-depends-on-test",
-        "nested-stack-depends-test"
-      ],
-      "assertionStack": "DependsOnTest/DefaultTest/DeployAssert",
-      "assertionStackName": "DependsOnTestDefaultTestDeployAssert3B3B50E2"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d0c754c5884a67955297ea38513b0dc48e25d28e2025007718574d256cd5c3ed
+size 327

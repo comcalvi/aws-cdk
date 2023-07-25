@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "Ports/DefaultTest": {
-      "stacks": [
-        "PortsTestStack"
-      ],
-      "assertionStack": "Ports/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ce30dae98b79111ffc99cbaa26a27d874e2224df10d9fae745d667a444d2a05d
+size 189

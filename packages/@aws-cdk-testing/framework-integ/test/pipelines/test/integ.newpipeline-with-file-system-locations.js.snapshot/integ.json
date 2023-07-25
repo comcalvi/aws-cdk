@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "cdk-integ-codepipeline-with-file-system-locations/DefaultTest": {
-      "stacks": [
-        "PipelinesFileSystemLocations"
-      ],
-      "diffAssets": true,
-      "assertionStack": "cdk-integ-codepipeline-with-file-system-locations/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegcodepipelinewithfilesystemlocationsDefaultTestDeployAssert3E26E748"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0e3720150695dfa86af23f7980bdfdf817b69f0ed2b649b14109f96302e81151
+size 423

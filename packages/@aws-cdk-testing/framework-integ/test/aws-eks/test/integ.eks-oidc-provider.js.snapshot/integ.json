@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "aws-cdk-eks-oidc-provider/DefaultTest": {
-      "stacks": [
-        "aws-eks-oidc-provider-test"
-      ],
-      "assertionStack": "aws-cdk-eks-oidc-provider/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkeksoidcproviderDefaultTestDeployAssert0BFFC9B9"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:bd0ebaabab7c7f69065be8465f13538777f5b2e197c886e3529a11d554117301
+size 325

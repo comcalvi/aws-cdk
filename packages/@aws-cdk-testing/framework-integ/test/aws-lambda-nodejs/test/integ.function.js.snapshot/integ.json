@@ -1,14 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "integ.function": {
-      "stacks": [
-        "cdk-integ-lambda-nodejs"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f35a562042fb6b2a5ce851fbc4ea71670be380d498f82ce1e538e2682ef1c844
+size 247

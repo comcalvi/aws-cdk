@@ -1,20 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "aws-cdk-eks-cluster-ipv6/DefaultTest": {
-      "stacks": [
-        "aws-cdk-eks-cluster-ipv6-test"
-      ],
-      "diffAssets": true,
-      "cdkCommandOptions": {
-        "deploy": {
-          "args": {
-            "rollback": true
-          }
-        }
-      },
-      "assertionStack": "aws-cdk-eks-cluster-ipv6/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkeksclusteripv6DefaultTestDeployAssert2C014107"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a9e51cfe72f012649b1000772ae8ad6827dc2b3294e172e6ca1f3be955c140fd
+size 480

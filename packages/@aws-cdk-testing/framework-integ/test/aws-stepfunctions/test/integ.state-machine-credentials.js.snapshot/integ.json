@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "StateMachineCredentials/DefaultTest": {
-      "stacks": [
-        "aws-stepfunctions-state-machine-credentials-integ"
-      ],
-      "assertionStack": "StateMachineCredentials/DefaultTest/DeployAssert",
-      "assertionStackName": "StateMachineCredentialsDefaultTestDeployAssert3F5E6D8D"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a6aa48a8015facf03b8ac24044eac21c99abd598601e43365b975e348f637d7f
+size 346

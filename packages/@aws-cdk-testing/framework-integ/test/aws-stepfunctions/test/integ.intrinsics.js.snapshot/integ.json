@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "StateMachineIntrinsicsTest/DefaultTest": {
-      "stacks": [
-        "aws-stepfunctions-intrinsics-integ"
-      ],
-      "assertionStack": "StateMachineIntrinsicsTest/DefaultTest/DeployAssert",
-      "assertionStackName": "StateMachineIntrinsicsTestDefaultTestDeployAssert1C1E1D7E"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:89158f241247e394a31098f0ab34854ab8adf06efbc2fc639637d2e616bf798e
+size 340

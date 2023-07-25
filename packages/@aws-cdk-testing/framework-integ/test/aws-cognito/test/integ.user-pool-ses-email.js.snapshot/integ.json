@@ -1,12 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "IntegTest/DefaultTest": {
-      "stacks": [
-        "integ-user-ses-email"
-      ],
-      "assertionStack": "IntegTest/DefaultTest/DeployAssert",
-      "assertionStackName": "IntegTestDefaultTestDeployAssertE3E7D2A4"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d34d8271650c37c88dc0cb9e25c56228a2449ea978c2979163d374e3a93ce173
+size 275

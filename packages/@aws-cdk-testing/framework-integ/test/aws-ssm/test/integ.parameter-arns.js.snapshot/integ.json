@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "cdk-integ-ssm-parameter-arns/DefaultTest": {
-      "stacks": [
-        "integ-parameter-arns"
-      ],
-      "assertionStack": "cdk-integ-ssm-parameter-arns/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegssmparameterarnsDefaultTestDeployAssertE4B86A49"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:576f66ed46aafff10664680bb12c267e6382b33d1ba7fa5f2a8f08c5462356c9
+size 328

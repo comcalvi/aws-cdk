@@ -1,10 +1,3 @@
-{
- "Resources": {
-  "MyTopic86869434": {
-   "Type": "AWS::SNS::Topic",
-   "Properties": {
-    "TopicName": "topicstackopicstackmytopicc43e67afb24f28bb94f9"
-   }
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ec49613531536848643226130e02f997983d9bbd9d050bc7e8eb155d61dcb226
+size 169

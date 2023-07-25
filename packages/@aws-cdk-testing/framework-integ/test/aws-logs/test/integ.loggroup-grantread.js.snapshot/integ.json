@@ -1,12 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "loggroup-grantreads/DefaultTest": {
-      "stacks": [
-        "aws-cdk-loggroup-grantreads-integ"
-      ],
-      "assertionStack": "loggroup-grantreads/DefaultTest/DeployAssert",
-      "assertionStackName": "loggroupgrantreadsDefaultTestDeployAssert7C1C7FAA"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8682365a7a072dffd40098030bb6b78c668b6b61e98d4ddecee131c4815a3e29
+size 317

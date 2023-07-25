@@ -1,6 +1,3 @@
-version: 0.2
-
-phases:
-  build:
-    commands:
-      - echo running stuff
+version https://git-lfs.github.com/spec/v1
+oid sha256:ecc6b6f56d845e96ceca314204625f8dfd82ea4aa12f7b37aabda7eeaead5879
+size 72

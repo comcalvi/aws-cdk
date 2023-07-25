@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ.warm-pool": {
-      "stacks": [
-        "aws-cdk-autoscaling-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2c762754f06fd4acc0f7133e01b94cf643e7607ffff87b0752994445c7a96ae6
+size 250

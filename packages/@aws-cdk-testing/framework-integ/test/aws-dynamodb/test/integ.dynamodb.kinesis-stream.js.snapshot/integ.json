@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.dynamodb.kinesis-stream": {
-      "stacks": [
-        "aws-cdk-dynamodb-kinesis-stream"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b76b648879802b7a031ee37c7d1b3a09d3089c3f5166b5eb13367c10130a3ea8
+size 270

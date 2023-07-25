@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "LambdaModules/DefaultTest": {
-      "stacks": [
-        "cdk-integ-lambda-nodejs-modules-mts",
-        "cdk-integ-lambda-nodejs-modules-cts",
-        "cdk-integ-lambda-nodejs-modules-cjs"
-      ],
-      "assertionStack": "LambdaModules/DefaultTest/DeployAssert",
-      "assertionStackName": "LambdaModulesDefaultTestDeployAssert7E536B97"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:fe236516e7857559f7b93fc43a929e08f49bcfa99dba8ee4c18410b303edcd64
+size 396

@@ -1,13 +1,3 @@
-{
- "Resources": {
-  "Alias325C5727": {
-   "Type": "AWS::KMS::Alias",
-   "Properties": {
-    "AliasName": "alias/foo",
-    "TargetKeyId": {
-     "Fn::ImportValue": "KeyStack:ExportsOutputFnGetAttMyKey6AB29FA6Arn4FA82736"
-    }
-   }
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:934b372b29b93c64814c512be4235fd33e29814c4d03ba1a7aa925bc1c499544
+size 239

@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "cdk-integ-auto-delete-images/DefaultTest": {
-      "stacks": [
-        "aws-ecr-integ-stack"
-      ],
-      "diffAssets": true,
-      "assertionStack": "cdk-integ-auto-delete-images/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegautodeleteimagesDefaultTestDeployAssert6B08011C"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2d7ca70a993efed5c918e5f95017d501c4214c1fd402360cba4abf030bef9fdd
+size 353

@@ -1,19 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "proxy-sql-server-integ-test/DefaultTest": {
-      "stacks": [
-        "aws-cdk-rds-proxy-sql-server"
-      ],
-      "cdkCommandOptions": {
-        "deploy": {
-          "args": {
-            "rollback": true
-          }
-        }
-      },
-      "assertionStack": "proxy-sql-server-integ-test/DefaultTest/DeployAssert",
-      "assertionStackName": "proxysqlserverintegtestDefaultTestDeployAssert14B31776"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:822e5f0515d0c384787e9f4ddd6fb7f71acb38d5210b79027f638ef15d3d1a43
+size 462

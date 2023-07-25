@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "aws-cdk-eks-service-account-sdk-call/DefaultTest": {
-      "stacks": [
-        "aws-eks-service-account-sdk-calls-test"
-      ],
-      "diffAssets": true,
-      "assertionStack": "aws-cdk-eks-service-account-sdk-call/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkeksserviceaccountsdkcallDefaultTestDeployAssertC5196707"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1e8abb680032464d67b8036994cfda555c2ca88daf3df30ddf5c1cf527dffbd6
+size 394

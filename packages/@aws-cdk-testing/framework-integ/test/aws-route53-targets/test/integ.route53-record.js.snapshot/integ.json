@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.route53-record": {
-      "stacks": [
-        "aws-cdk-r53-record-alias-target-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:41cf22e81fa062f84dca0491bdaa22eedcaa6dda63faca1be4d15a8732d0e777
+size 267

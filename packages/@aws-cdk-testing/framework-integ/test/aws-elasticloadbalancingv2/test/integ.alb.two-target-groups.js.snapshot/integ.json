@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "issue-24805/DefaultTest": {
-      "stacks": [
-        "Basic"
-      ],
-      "assertionStack": "issue-24805/DefaultTest/DeployAssert",
-      "assertionStackName": "issue24805DefaultTestDeployAssert4F284C49"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:947981950f063f79e900cd4299875fa215013b684c7553fc8689edfbf0fc4c30
+size 265

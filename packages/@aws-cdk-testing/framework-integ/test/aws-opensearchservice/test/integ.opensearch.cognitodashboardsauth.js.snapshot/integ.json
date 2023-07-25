@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "CognitoAuthForOpenSearchDashboards/DefaultTest": {
-      "stacks": [
-        "cdk-integ-opensearch-cognitodashboardsauth"
-      ],
-      "assertionStack": "CognitoAuthForOpenSearchDashboards/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f3171518b423bbac19fa01cbc3f7acf1a59f113ca56a46d90b1afa4f2b4c549f
+size 275

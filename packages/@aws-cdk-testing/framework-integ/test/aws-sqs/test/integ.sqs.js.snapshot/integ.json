@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "SqsTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-sqs"
-      ],
-      "assertionStack": "SqsTest/DefaultTest/DeployAssert",
-      "assertionStackName": "SqsTestDefaultTestDeployAssert659366A6"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ab509e6f09d3856ba069f3d997039f890f449b926830cb009e35bb23b3bdc281
+size 260

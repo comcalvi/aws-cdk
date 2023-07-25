@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "step-functions-restapi/DefaultTest": {
-      "stacks": [
-        "StepFunctionsRestApiDeploymentStack"
-      ],
-      "assertionStack": "step-functions-restapi/DefaultTest/DeployAssert",
-      "assertionStackName": "stepfunctionsrestapiDefaultTestDeployAssert53C3797F"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ee3bf03d900b1ffb3d311bf06dc0a97836b8821e08e3c4c4dada1f522e4344b9
+size 327

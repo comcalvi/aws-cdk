@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "restapi-fromdefinition/DefaultTest": {
-      "stacks": [
-        "integtest-restapi-fromdefinition-asset"
-      ],
-      "assertionStack": "restapi-fromdefinition/DefaultTest/DeployAssert",
-      "assertionStackName": "restapifromdefinitionDefaultTestDeployAssertDF3B0845"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1fa8a6a1425c6d921362efe454076f51f711ba9ce24fcb0254dd31410c5bda8e
+size 331

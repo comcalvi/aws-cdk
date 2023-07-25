@@ -1,12 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "InstanceUpdateBehaviorTests/DefaultTest": {
-      "stacks": [
-        "BulkUpdate",
-        "RollingUpdate"
-      ],
-      "assertionStack": "InstanceUpdateBehaviorTests/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f2c858a0c6f6d3342fa4596dd47cce7da8af3761cf8742693125f5d08dcc567d
+size 254

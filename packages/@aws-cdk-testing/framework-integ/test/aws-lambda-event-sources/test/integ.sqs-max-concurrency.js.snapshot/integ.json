@@ -1,14 +1,3 @@
-{
-  "version": "29.0.0",
-  "testCases": {
-    "integ.sqs-max-concurrency": {
-      "stacks": [
-        "sqs-event-source-max-concurrency"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b49cc38804d784d944f4c4b8a6d5c84912904eedc6207f030ca2955312d37fd6
+size 267

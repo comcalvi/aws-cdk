@@ -1,14 +1,3 @@
-{
-  "enableLookups": true,
-  "version": "32.0.0",
-  "testCases": {
-    "integ-test/DefaultTest": {
-      "stacks": [
-        "integ-dns-validated-certificate"
-      ],
-      "diffAssets": true,
-      "assertionStack": "integ-test/DefaultTest/DeployAssert",
-      "assertionStackName": "integtestDefaultTestDeployAssert24D5C536"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7c7f56529431dec5ddc45145d23a9d912246933b05ea3ae0244262f576e65e85
+size 339

@@ -1,26 +1,3 @@
-{
- "Parameters": {
-  "MyBucketParameter": {
-   "Type": "String",
-   "Default": "default-bucket-param-name"
-  }
- },
- "Resources": {
-  "BucketImport": {
-   "Type": "AWS::S3::Bucket",
-   "Properties": {
-    "BucketName": {
-     "Fn::Join": [
-      "-",
-      [
-       "bucket-name-prefix",
-       {
-        "Ref": "MyBucketParameter"
-       }
-      ]
-     ]
-    }
-   }
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:72f571ff4fdf67913bf4e9249385a2863c129a1d31b65fff0702d07888e05f7e
+size 374

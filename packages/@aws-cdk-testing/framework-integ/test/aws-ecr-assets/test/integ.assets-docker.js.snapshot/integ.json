@@ -1,14 +1,3 @@
-{
-  "version": "29.0.0",
-  "testCases": {
-    "integ.assets-docker": {
-      "stacks": [
-        "integ-assets-docker"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:deded47fa150fc7f4227ad64f401115f487125e16ac6142315e2c6449702437f
+size 248

@@ -1,12 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "cdk-integ-import-ssm-parameter/DefaultTest": {
-      "stacks": [
-        "Import-SSM-Parameter"
-      ],
-      "assertionStack": "cdk-integ-import-ssm-parameter/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegimportssmparameterDefaultTestDeployAssert2A3D6843"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0dc81e2d87258d119c5a46f151df20039fda12d8a4e95f6955c4b4b9754cc9c9
+size 334

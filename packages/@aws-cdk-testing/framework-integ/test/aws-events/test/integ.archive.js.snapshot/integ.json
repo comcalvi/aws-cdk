@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "ArchiveTest/DefaultTest": {
-      "stacks": [
-        "IntegStack"
-      ],
-      "assertionStack": "ArchiveTest/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:90bde58c87d7f084d17e3087df75fbf4b3c30c50b548fb70bc3b3e08f358e772
+size 197

@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.sqs": {
-      "stacks": [
-        "lambda-event-source-sqs"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7bbca9ce44300fc95bb2035cb897a6d0c788f987e26b2c190074f6cfbbf7b956
+size 242

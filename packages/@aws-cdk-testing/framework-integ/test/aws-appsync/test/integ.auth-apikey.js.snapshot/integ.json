@@ -1,14 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "integ.auth-apikey": {
-      "stacks": [
-        "aws-appsync-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5fe7647e62a859ba7e4323f8a26a46538eee6a7eabe256ef6f094382b37401ac
+size 244

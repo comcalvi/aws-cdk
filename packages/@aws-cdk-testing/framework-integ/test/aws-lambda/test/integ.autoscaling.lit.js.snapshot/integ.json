@@ -1,14 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ.autoscaling.lit": {
-      "stacks": [
-        "aws-lambda-autoscaling"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d9afdd67b09ead63a4317aa18e0a9ab5fe91430106a72eda453b1ad1e7cbdecf
+size 253

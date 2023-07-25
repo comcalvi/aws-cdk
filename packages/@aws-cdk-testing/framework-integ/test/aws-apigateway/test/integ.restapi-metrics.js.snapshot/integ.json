@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "MetricsTest/DefaultTest": {
-      "stacks": [
-        "restapi-metrics"
-      ],
-      "assertionStack": "MetricsTest/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:54cd43d755acff9f8be679d72056f867c1a7b292d36fd26a2a77de798f1b768e
+size 202

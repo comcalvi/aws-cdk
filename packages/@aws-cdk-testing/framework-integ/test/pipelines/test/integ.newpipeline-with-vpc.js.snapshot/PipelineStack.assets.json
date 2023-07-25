@@ -1,19 +1,3 @@
-{
-  "version": "31.0.0",
-  "files": {
-    "0a38575278954c57dc2282c4e3007815cca46595cdd0204557102de34dbcc818": {
-      "source": {
-        "path": "PipelineStack.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "current_account-current_region": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "0a38575278954c57dc2282c4e3007815cca46595cdd0204557102de34dbcc818.json",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9930b02c90b5e10d37ee89285f57ae4057b744e3e21270c17940e5a937825008
+size 657

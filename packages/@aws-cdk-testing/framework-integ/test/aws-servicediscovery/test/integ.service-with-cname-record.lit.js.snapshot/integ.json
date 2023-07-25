@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.service-with-cname-record.lit": {
-      "stacks": [
-        "aws-servicediscovery-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:cdc8975be9b080c01f97da81b848472f1377776d2ee0a6c6a2f1dc19ae649600
+size 271

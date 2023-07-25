@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "lambda-api-latebound-deploymentstage/DefaultTest": {
-      "stacks": [
-        "LateBoundDeploymentStageStack"
-      ],
-      "assertionStack": "lambda-api-latebound-deploymentstage/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:65b6b06abd2aa20611e073f8894e99b951e175f184d55bb3b6836579fbfa972d
+size 266

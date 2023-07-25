@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "ListAtAfterParallel/DefaultTest": {
-      "stacks": [
-        "listAt-after-parallel"
-      ],
-      "assertionStack": "ListAtAfterParallel/DefaultTest/DeployAssert",
-      "assertionStackName": "ListAtAfterParallelDefaultTestDeployAssert1589F6AD"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:759d849cdd371e272e33eb223571789e11e1431eb12b438d4f21623f504301bf
+size 306

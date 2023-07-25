@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.log-retention": {
-      "stacks": [
-        "aws-cdk-lambda-log-retention"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4d541ede765db4288d541444baf18a0315dab2e374a956d741545d2a0b061cd9
+size 257

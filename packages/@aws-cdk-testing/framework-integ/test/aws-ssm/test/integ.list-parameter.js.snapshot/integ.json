@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "ssm-string-param/DefaultTest": {
-      "stacks": [
-        "list-param"
-      ],
-      "assertionStack": "ssm-string-param/DefaultTest/DeployAssert",
-      "assertionStackName": "ssmstringparamDefaultTestDeployAssert9C612E37"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2d65afd4d617869e02287b7978c5a6f4dc85eeaffe87c6965de00bffaafaee4c
+size 284

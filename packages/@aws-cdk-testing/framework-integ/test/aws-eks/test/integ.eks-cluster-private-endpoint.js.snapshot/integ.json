@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "aws-cdk-eks-cluster-private-endpoint/DefaultTest": {
-      "stacks": [
-        "aws-cdk-eks-cluster-private-endpoint-test"
-      ],
-      "diffAssets": true,
-      "assertionStack": "aws-cdk-eks-cluster-private-endpoint/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkeksclusterprivateendpointDefaultTestDeployAssert3C16DBEA"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:73f11a293d194e3c7d990ec8796661fee1e601d90914a9e1378a83a7dd2b8217
+size 398

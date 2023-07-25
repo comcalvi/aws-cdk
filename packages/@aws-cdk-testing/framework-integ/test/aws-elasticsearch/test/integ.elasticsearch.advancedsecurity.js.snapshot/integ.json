@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.elasticsearch.advancedsecurity": {
-      "stacks": [
-        "cdk-integ-elasticsearch-advancedsecurity"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5810a1dceea2add8dd0197f8e51233e55bc405e6fd7f5762a8f5dff7639f718b
+size 286

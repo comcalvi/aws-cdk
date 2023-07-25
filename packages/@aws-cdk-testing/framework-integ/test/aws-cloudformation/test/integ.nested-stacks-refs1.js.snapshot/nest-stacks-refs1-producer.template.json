@@ -1,20 +1,3 @@
-{
- "Resources": {
-  "MyTopic86869434": {
-   "Type": "AWS::SNS::Topic"
-  }
- },
- "Outputs": {
-  "ExportsOutputFnGetAttMyTopic86869434TopicNameFCC96FA2": {
-   "Value": {
-    "Fn::GetAtt": [
-     "MyTopic86869434",
-     "TopicName"
-    ]
-   },
-   "Export": {
-    "Name": "nest-stacks-refs1-producer:ExportsOutputFnGetAttMyTopic86869434TopicNameFCC96FA2"
-   }
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b10b5a528a49a4cba1aaf27ec771e9219b53c53e37adefab27e05b499dc0370a
+size 363

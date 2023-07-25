@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.cloudfront-geo-restrictions": {
-      "stacks": [
-        "cloudfront-geo-restrictions"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6b6508031d2cc8ddae64f5541b537b13328324a37204d38fed85c3eefe6fcebd
+size 270

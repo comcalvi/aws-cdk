@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "Integ/DefaultTest": {
-      "stacks": [
-        "aws-cdk-lambda-runtime-fromasset"
-      ],
-      "assertionStack": "Integ/DefaultTest/DeployAssert",
-      "assertionStackName": "IntegDefaultTestDeployAssert4E6713E1"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d21e09e0e6cf11ad1d3225da15790ddeb9b3214407e1944542161ebe438f7971
+size 275

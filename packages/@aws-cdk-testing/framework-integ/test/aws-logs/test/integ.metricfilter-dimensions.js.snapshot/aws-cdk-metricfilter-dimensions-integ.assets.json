@@ -1,19 +1,3 @@
-{
-  "version": "22.0.0",
-  "files": {
-    "3d99811cf4d8b2d453d889e936569b925ead97bdb93a86d122b34d68818be01d": {
-      "source": {
-        "path": "aws-cdk-metricfilter-dimensions-integ.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "current_account-current_region": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "3d99811cf4d8b2d453d889e936569b925ead97bdb93a86d122b34d68818be01d.json",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d29d4619df5b77b44c4462e4093ae1a97c753b591bbb9cc51e0da25aa3a9d503
+size 681

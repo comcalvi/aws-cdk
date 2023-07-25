@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "AssetBuildSpecTest/DefaultTest": {
-      "stacks": [
-        "CodeBuildAssetBuildSpecStack"
-      ],
-      "assertionStack": "AssetBuildSpecTest/DefaultTest/DeployAssert",
-      "assertionStackName": "AssetBuildSpecTestDefaultTestDeployAssertC826AACC"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:885cef9c7ecffdd7f92ab28f2ad735986dc93e9b309d101695a4ea43e51decb1
+size 310

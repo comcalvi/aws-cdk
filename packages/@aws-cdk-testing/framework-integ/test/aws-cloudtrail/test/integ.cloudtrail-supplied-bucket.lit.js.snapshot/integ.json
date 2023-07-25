@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ.cloudtrail-supplied-bucket.lit": {
-      "stacks": [
-        "integ-cloudtrail"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:be740aa7dd1c93df2b97cadea65f7104e6eef338b28f0c9c4f0ac00c94fe4b45
+size 262

@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "lambda-non-proxy-integration/DefaultTest": {
-      "stacks": [
-        "LambdaApiIntegrationOptionsNonProxyIntegrationStack"
-      ],
-      "assertionStack": "lambda-non-proxy-integration/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4b2cea066ca46ffb9240cdee601c8c593575d248210e1a2794d38c83da83db32
+size 272

@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.instance-s3": {
-      "stacks": [
-        "aws-cdk-rds-instance-s3-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3c1dc7b17467da1fff2141511d25c943239f20287a37d03159f4fc3311b68d12
+size 256

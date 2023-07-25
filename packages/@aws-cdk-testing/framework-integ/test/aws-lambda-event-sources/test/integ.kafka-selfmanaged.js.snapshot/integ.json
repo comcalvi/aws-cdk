@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "LambdaEventSourceKafkaSelfManagedTest/DefaultTest": {
-      "stacks": [
-        "lambda-event-source-kafka-self-managed"
-      ],
-      "assertionStack": "LambdaEventSourceKafkaSelfManagedTest/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a094b8cc074953a86e40dc9d358afc9934bfd0d1559d5bdd3a08a9312429ac22
+size 277

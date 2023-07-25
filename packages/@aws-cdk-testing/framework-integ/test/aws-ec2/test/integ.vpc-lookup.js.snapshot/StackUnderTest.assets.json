@@ -1,20 +1,3 @@
-{
-  "version": "21.0.0",
-  "files": {
-    "cfac1423efb7c99cadc3f40367c753fe5b1527d9a6950c096ba326fabac4c89f": {
-      "source": {
-        "path": "StackUnderTest.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "123456-us-east-2": {
-          "bucketName": "cdk-hnb659fds-assets-123456-us-east-2",
-          "objectKey": "cfac1423efb7c99cadc3f40367c753fe5b1527d9a6950c096ba326fabac4c89f.json",
-          "region": "us-east-2",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::123456:role/cdk-hnb659fds-file-publishing-role-123456-us-east-2"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:48b20801137f05d698f1dce2372c7ecf417224138d45de5bc913a46b66e42960
+size 634

@@ -1,15 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "FlowLogs/DefaultTest": {
-      "stacks": [
-        "FlowLogsTestStack",
-        "FlowLogsFeatureFlag",
-        "DependencyTestStack"
-      ],
-      "diffAssets": true,
-      "assertionStack": "FlowLogs/DefaultTest/DeployAssert",
-      "assertionStackName": "FlowLogsDefaultTestDeployAssert6AFD1854"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:cc69d8af68661ade1bb448c60e2b0d2eadb5094aa92ed3bf13b1b20d012fe1ec
+size 357

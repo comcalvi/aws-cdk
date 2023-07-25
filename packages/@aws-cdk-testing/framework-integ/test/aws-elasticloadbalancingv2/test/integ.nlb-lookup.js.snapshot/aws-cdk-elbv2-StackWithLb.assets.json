@@ -1,20 +1,3 @@
-{
-  "version": "29.0.0",
-  "files": {
-    "6ad4c46c9b2688341a64b901149113b860270b54a02e718637959ebf672835b5": {
-      "source": {
-        "path": "aws-cdk-elbv2-StackWithLb.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "12345678-test-region": {
-          "bucketName": "cdk-hnb659fds-assets-12345678-test-region",
-          "objectKey": "6ad4c46c9b2688341a64b901149113b860270b54a02e718637959ebf672835b5.json",
-          "region": "test-region",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::12345678:role/cdk-hnb659fds-file-publishing-role-12345678-test-region"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4cc7b21f38d5da374044bb76dbc0dd796191807d3690a9774059f2986b342f14
+size 661

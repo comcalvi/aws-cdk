@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "ServerAccessLogsImportTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-s3-access-logs-delivery"
-      ],
-      "diffAssets": true,
-      "assertionStack": "ServerAccessLogsImportTest/DefaultTest/DeployAssert",
-      "assertionStackName": "ServerAccessLogsImportTestDefaultTestDeployAssert076DA7F5"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d2d58cdd6b772e525088623e9aacaa107b189c1f1f964202af107d6bbd59430d
+size 363

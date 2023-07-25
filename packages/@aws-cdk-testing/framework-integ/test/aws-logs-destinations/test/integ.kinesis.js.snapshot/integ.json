@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "KinesisInteg/DefaultTest": {
-      "stacks": [
-        "kinesis-logsubscription-integ"
-      ],
-      "assertionStack": "KinesisInteg/DefaultTest/DeployAssert",
-      "assertionStackName": "KinesisIntegDefaultTestDeployAssertE6E3ADDB"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:689b12677a609eeaf20dae6d4ec478590f439e59d3b67927fbc480369992f2f7
+size 293

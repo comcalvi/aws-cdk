@@ -1,12 +1,3 @@
-{
-  "version": "29.0.0",
-  "testCases": {
-    "HmacIntegTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-kms-hmac"
-      ],
-      "assertionStack": "HmacIntegTest/DefaultTest/DeployAssert",
-      "assertionStackName": "HmacIntegTestDefaultTestDeployAssert10C19CC4"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:cb41f700108652baa5b0d41d7b13861fd2ad515f9fdf43bf12ad615483ab217d
+size 283

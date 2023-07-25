@@ -1,14 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "integ.graphql": {
-      "stacks": [
-        "aws-appsync-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:36e0461dcd35e5479a4eb24948acb35100570530458442eab3c01a93ed0b25c9
+size 240

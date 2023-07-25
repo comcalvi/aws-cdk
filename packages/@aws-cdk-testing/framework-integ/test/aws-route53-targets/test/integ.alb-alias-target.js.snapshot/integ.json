@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.alb-alias-target": {
-      "stacks": [
-        "aws-cdk-elbv2-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b1a91573b814a365997e7ef86f418af000ad0e20f18262f0e53ed126590ca659
+size 251

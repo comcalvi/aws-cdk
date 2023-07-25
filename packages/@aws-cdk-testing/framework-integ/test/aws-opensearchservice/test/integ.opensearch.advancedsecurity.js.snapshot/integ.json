@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.opensearch.advancedsecurity": {
-      "stacks": [
-        "cdk-integ-opensearch-advancedsecurity"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7f37d3728342a5f7e98283a22873f72a2bd15f52a135de9ef524a32568694ad6
+size 280

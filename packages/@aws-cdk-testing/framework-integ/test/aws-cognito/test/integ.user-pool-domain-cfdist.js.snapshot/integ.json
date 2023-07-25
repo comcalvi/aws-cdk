@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ.user-pool-domain-cfdist": {
-      "stacks": [
-        "integ-user-pool-domain-cfdist"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:65902bb4f2443ef7043ba048ee57ce0d9cc6ec4516c600f2893e3648b3cfa3a6
+size 268

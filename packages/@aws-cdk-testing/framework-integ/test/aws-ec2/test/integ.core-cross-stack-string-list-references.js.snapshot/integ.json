@@ -1,14 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "cross-region-references/DefaultTest": {
-      "stacks": [
-        "producer",
-        "consumer"
-      ],
-      "stackUpdateWorkflow": false,
-      "assertionStack": "cross-region-references/DefaultTest/DeployAssert",
-      "assertionStackName": "crossregionreferencesDefaultTestDeployAssertAB7415FD"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e15647cbb51a172cd322414f34fa6ad9964e633ef44dac34fa51c42829202b5f
+size 359

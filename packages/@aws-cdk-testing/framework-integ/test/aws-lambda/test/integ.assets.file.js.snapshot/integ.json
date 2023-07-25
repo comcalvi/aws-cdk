@@ -1,14 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ.assets.file": {
-      "stacks": [
-        "lambda-test-assets-file"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e1619044cefa5bf1303095e3337966a03bf45db8dc61e89570a7180b9b32e6e8
+size 250

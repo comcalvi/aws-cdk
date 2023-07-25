@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "LambdaTest/DefaultTest": {
-      "stacks": [
-        "integ-distribution-logbucket"
-      ],
-      "assertionStack": "LambdaTest/DefaultTest/DeployAssert",
-      "assertionStackName": "LambdaTestDefaultTestDeployAssert1AF2B360"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:15a1b6f9bfa3ab7561001e8504d6ccc965633b7a8f5cb94baef4e413da85a602
+size 286

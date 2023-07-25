@@ -1,14 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "integ.sns-lambda": {
-      "stacks": [
-        "aws-cdk-sns-lambda"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:09494640cde24840f39bd1ec8b79638e7176a433a34a60626b3417f58e4d2fa1
+size 244

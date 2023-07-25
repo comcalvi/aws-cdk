@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.http-origin": {
-      "stacks": [
-        "cloudfront-http-origin"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:bd64cbc4d698dcc4363ce03504f386669df31c1ce3345ec2e7f689ee31304696
+size 249

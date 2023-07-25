@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ.route53": {
-      "stacks": [
-        "aws-cdk-route53-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:28c4a57b1ecfa1064686e77c58df30ed6ee72e28ce74f95f2ffa68def087aaf9
+size 244

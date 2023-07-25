@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "DistributionOriginId/DefaultTest": {
-      "stacks": [
-        "integ-distribution-origin-id"
-      ],
-      "assertionStack": "DistributionOriginId/DefaultTest/DeployAssert",
-      "assertionStackName": "DistributionOriginIdDefaultTestDeployAssert16FC3109"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:149d7c3de5cb9073236514182f1e86948eee667fbb2eee5ffd1cfbe8e7741c3b
+size 316

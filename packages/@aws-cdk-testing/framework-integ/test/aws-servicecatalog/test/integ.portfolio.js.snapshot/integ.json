@@ -1,14 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ.portfolio": {
-      "stacks": [
-        "integ-servicecatalog-portfolio"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:930a38bda87a008fa7b938e49d6a6b6451d807350ae4cf8494ce846f1cb7384d
+size 255

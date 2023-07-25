@@ -1,14 +1,3 @@
-{
-  "enableLookups": true,
-  "version": "32.0.0",
-  "testCases": {
-    "integ-cloudfront-cross-region-acm/DefaultTest": {
-      "stacks": [
-        "integ-cloudfront-stack"
-      ],
-      "diffAssets": true,
-      "assertionStack": "integ-cloudfront-cross-region-acm/DefaultTest/DeployAssert",
-      "assertionStackName": "integcloudfrontcrossregionacmDefaultTestDeployAssertD48673AA"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:58c018f45ea2bfc7b2381b5c57656f4b1206a97256de78a11e1e68c9e4082587
+size 396

@@ -1,15 +1,3 @@
-{
-  "enableLookups": true,
-  "version": "32.0.0",
-  "testCases": {
-    "integ-product/DefaultTest": {
-      "stacks": [
-        "integ-servicecatalog-product"
-      ],
-      "diffAssets": true,
-      "stackUpdateWorkflow": false,
-      "assertionStack": "integ-product/DefaultTest/DeployAssert",
-      "assertionStackName": "integproductDefaultTestDeployAssertEB23E2A9"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:26ad7b4fcbeeba2e73800d94f1cf1e0f2c023b3e483f6c48876e962febbba630
+size 381

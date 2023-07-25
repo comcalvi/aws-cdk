@@ -1,17 +1,3 @@
-{
- "Resources": {
-  "myusageplan4B391740": {
-   "Type": "AWS::ApiGateway::UsagePlan"
-  }
- },
- "Outputs": {
-  "ExportsOutputRefmyusageplan4B391740F6B819BA": {
-   "Value": {
-    "Ref": "myusageplan4B391740"
-   },
-   "Export": {
-    "Name": "test-apigateway-usageplan-create:ExportsOutputRefmyusageplan4B391740F6B819BA"
-   }
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:683eb5f5517b007beb64f955bfac0815217e3f132ffe9e495ca50e3bdf8a7b95
+size 330

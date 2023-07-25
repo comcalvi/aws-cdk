@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "cdk-integ-s3-assets-bundling-docker-opts/DefaultTest": {
-      "stacks": [
-        "cdk-integ-assets-bundling-docker-opts"
-      ],
-      "assertionStack": "cdk-integ-s3-assets-bundling-docker-opts/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9ffd02763bba3be3ad4d1468c8f237580e67ffb1ec9f5e8ee83b13bace917972
+size 282

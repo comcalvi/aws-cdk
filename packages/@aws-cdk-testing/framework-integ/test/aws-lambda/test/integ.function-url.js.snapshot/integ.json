@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "IntegTest/DefaultTest": {
-      "stacks": [
-        "Stack1"
-      ],
-      "assertionStack": "IntegTest/DefaultTest/DeployAssert",
-      "assertionStackName": "IntegTestDefaultTestDeployAssertE3E7D2A4"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8826043bb152fc5967a054cf2615d0c58b6c8d4e074791c29cadd3e331cf9636
+size 261

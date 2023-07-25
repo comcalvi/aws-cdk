@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "LogRetentionInteg/DefaultTest": {
-      "stacks": [
-        "aws-cdk-log-retention-integ"
-      ],
-      "assertionStack": "LogRetentionInteg/DefaultTest/DeployAssert",
-      "assertionStackName": "LogRetentionIntegDefaultTestDeployAssert6ACC5A74"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2593f852875d9d8479ab71a4181eadc9c60c6bfa0c229c42f2d60569805e7771
+size 306

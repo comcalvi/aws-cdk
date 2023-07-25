@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.opensearch.ultrawarm": {
-      "stacks": [
-        "cdk-integ-opensearch-ultrawarm"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f2b259d6c21e9830f188a0a04fe7aa2b65e868e4ed09370f7910f0c50619c91a
+size 266

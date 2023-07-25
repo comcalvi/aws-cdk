@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.usage-plan.multikey": {
-      "stacks": [
-        "test-apigateway-usageplan-multikey"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:02ee101678b3516ba398ef2aa68efbcef914bb31f8273eeeb103de03560d1ce3
+size 269

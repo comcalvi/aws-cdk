@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.user-pool-idp.oidc": {
-      "stacks": [
-        "integ-user-pool-idp-google"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5ed754fc215d8f97d19437f686a198577e5eed48d03437982403de63adbad6cc
+size 260

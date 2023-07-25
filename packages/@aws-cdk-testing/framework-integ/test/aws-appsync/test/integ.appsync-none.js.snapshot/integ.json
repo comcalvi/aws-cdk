@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "api/DefaultTest": {
-      "stacks": [
-        "stack"
-      ],
-      "assertionStack": "api/DefaultTest/DeployAssert",
-      "assertionStackName": "apiDefaultTestDeployAssert018781F2"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:db082229033bfc2bb4afa6a3fcf986e146bdfec55613b74786521d26d03a6e1b
+size 242

@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.vpn": {
-      "stacks": [
-        "aws-cdk-ec2-vpn"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:258d5d4e8d71b65d702a1f3f1cf9739e4719539e56fd5982dd0d60cd60a3992d
+size 234

@@ -1,14 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "integ.pipeline-code-deploy": {
-      "stacks": [
-        "aws-cdk-codepipeline-codedeploy"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5e96701e73219fa936ac36aa0253b949bf1be39a7658b7ab82142858e866dfbb
+size 267

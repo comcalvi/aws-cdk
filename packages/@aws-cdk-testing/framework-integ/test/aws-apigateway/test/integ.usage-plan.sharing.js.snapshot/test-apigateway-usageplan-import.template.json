@@ -1,22 +1,3 @@
-{
- "Resources": {
-  "myusageplanUsagePlanKeyResourcetestapigatewayusageplanimportmyapikey14CF31667CCB4183": {
-   "Type": "AWS::ApiGateway::UsagePlanKey",
-   "Properties": {
-    "KeyId": {
-     "Ref": "myapikey5C116C09"
-    },
-    "KeyType": "API_KEY",
-    "UsagePlanId": {
-     "Fn::ImportValue": "test-apigateway-usageplan-create:ExportsOutputRefmyusageplan4B391740F6B819BA"
-    }
-   }
-  },
-  "myapikey5C116C09": {
-   "Type": "AWS::ApiGateway::ApiKey",
-   "Properties": {
-    "Enabled": true
-   }
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ee6cc0c01424160dc772ab7e04f41d9e7dcafc658fa73b1bf3427fe16aff647
+size 506

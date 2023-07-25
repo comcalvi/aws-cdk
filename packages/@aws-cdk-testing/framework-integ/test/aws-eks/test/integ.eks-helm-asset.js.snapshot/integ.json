@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "aws-cdk-eks-helm/DefaultTest": {
-      "stacks": [
-        "aws-cdk-eks-helm-test"
-      ],
-      "diffAssets": true,
-      "assertionStack": "aws-cdk-eks-helm/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkekshelmDefaultTestDeployAssert044A589A"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9832e9be45cd5a3a003cce3188a24720fe1807702bc1f23a084f8a7b54723fe2
+size 320

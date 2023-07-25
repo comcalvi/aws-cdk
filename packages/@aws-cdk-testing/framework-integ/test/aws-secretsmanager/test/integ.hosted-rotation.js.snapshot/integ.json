@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.hosted-rotation": {
-      "stacks": [
-        "cdk-integ-secret-hosted-rotation"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:292635794040667e6d46419349ee82fa1ad0305c29d37df3a00bf4df6d244498
+size 263

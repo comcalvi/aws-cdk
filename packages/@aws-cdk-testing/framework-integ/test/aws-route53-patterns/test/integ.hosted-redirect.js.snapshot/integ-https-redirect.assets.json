@@ -1,34 +1,3 @@
-{
-  "version": "32.0.0",
-  "files": {
-    "09d97dcfcef5cdc7c214c4d1d2176add2c61f9f511990346a8cec8f4b8cb587d": {
-      "source": {
-        "path": "asset.09d97dcfcef5cdc7c214c4d1d2176add2c61f9f511990346a8cec8f4b8cb587d",
-        "packaging": "zip"
-      },
-      "destinations": {
-        "current_account-us-east-2": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-2",
-          "objectKey": "09d97dcfcef5cdc7c214c4d1d2176add2c61f9f511990346a8cec8f4b8cb587d.zip",
-          "region": "us-east-2",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-2"
-        }
-      }
-    },
-    "6f003cd17557bc08eaa29932e763809c1541933c8845bc7b5342e750c1fd0581": {
-      "source": {
-        "path": "integ-https-redirect.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "current_account-us-east-2": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-2",
-          "objectKey": "6f003cd17557bc08eaa29932e763809c1541933c8845bc7b5342e750c1fd0581.json",
-          "region": "us-east-2",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-2"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:bc2a441857f7e868dd8d7c65e99fc85db303ab274b83257f9f5269bc8124ddcb
+size 1334

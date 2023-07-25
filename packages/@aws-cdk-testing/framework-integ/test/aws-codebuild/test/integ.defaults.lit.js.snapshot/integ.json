@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.defaults.lit": {
-      "stacks": [
-        "codebuild-default-project"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:796fdb4a4746e48933719ce2bafda12ab7fde7b7843de1874a51ce545d82d342
+size 253

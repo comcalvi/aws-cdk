@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "ConnectionTest/DefaultTest": {
-      "stacks": [
-        "IntegConnectionStack"
-      ],
-      "assertionStack": "ConnectionTest/DefaultTest/DeployAssert",
-      "assertionStackName": "ConnectionTestDefaultTestDeployAssertBA181C0F"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:459f3db7275e48f12ada38538fdaa891839ef924a5ff785c9adf9a8bb3c4b053
+size 290

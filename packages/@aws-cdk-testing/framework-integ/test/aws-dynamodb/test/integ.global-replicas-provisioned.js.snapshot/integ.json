@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "aws-cdk-dynamodb-global-replicas-provisioned-test/DefaultTest": {
-      "stacks": [
-        "aws-cdk-dynamodb-global-replicas-provisioned"
-      ],
-      "diffAssets": true,
-      "assertionStack": "aws-cdk-dynamodb-global-replicas-provisioned-test/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkdynamodbglobalreplicasprovisionedtestDefaultTestDeployAssertE7F91F54"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:87dacbdd5c23eddd0197633d58bb6d4ac1ac73ec15f51b4c4abc61da53da9590
+size 439

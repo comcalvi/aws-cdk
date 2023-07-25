@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "FsxLustreWithS3Test/DefaultTest": {
-      "stacks": [
-        "AwsCdkFsxLustre"
-      ],
-      "assertionStack": "FsxLustreWithS3Test/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ac155561039ba496e4fed04a6adbbf1e5eac6eae1c5efe6836d5a08344c650f
+size 218

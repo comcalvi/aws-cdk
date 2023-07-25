@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "custom-resource-test-node-18-integ/DefaultTest": {
-      "stacks": [
-        "custom-resource-test-node-18-stack"
-      ],
-      "assertionStack": "custom-resource-test-node-18-integ/DefaultTest/DeployAssert",
-      "assertionStackName": "customresourcetestnode18integDefaultTestDeployAssert9B8E9A20"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:587ffd6a91b5a5040dbaf499465a57a3438b8cec5a036e7ddd8bb5e4a4d76a7f
+size 359

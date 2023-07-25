@@ -1,14 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "integ.job-poller": {
-      "stacks": [
-        "aws-stepfunctions-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:340149d93aac4f8dd5554eb3e2a3ff030c650f3c66394200f5f77273e78380cb
+size 249

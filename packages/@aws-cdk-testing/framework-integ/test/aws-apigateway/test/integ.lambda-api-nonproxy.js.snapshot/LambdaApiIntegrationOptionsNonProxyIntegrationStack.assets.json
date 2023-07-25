@@ -1,19 +1,3 @@
-{
-  "version": "20.0.0",
-  "files": {
-    "f6bcb242853a754218034c61cd5b3c8066da7b1aebb6c91294eebeff8e1c09a6": {
-      "source": {
-        "path": "LambdaApiIntegrationOptionsNonProxyIntegrationStack.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "current_account-current_region": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "f6bcb242853a754218034c61cd5b3c8066da7b1aebb6c91294eebeff8e1c09a6.json",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e343b7893a07522684e8ac742fe63f1b3bb98c2fb65dcce6282de468ebf76402
+size 695

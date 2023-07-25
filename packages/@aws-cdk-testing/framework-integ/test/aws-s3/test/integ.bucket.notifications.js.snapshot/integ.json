@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "NotificationTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-s3-notifications"
-      ],
-      "assertionStack": "NotificationTest/DefaultTest/DeployAssert",
-      "assertionStackName": "NotificationTestDefaultTestDeployAssertBFB81666"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1b95931f5d068f1e6b09694811cd3f8840c8feaee9076573ec6b10e07fa6751b
+size 300

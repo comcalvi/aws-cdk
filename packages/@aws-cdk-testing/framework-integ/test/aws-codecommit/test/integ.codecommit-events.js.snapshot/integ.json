@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.codecommit-events": {
-      "stacks": [
-        "aws-cdk-codecommit-events"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:385384c380fe056fbbe2bb66c54f8e619c72c2a2ca7d56659d88bf310f813876
+size 258

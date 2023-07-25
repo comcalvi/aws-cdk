@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "aws-cdk-config-rule-integ/DefaultTest": {
-      "stacks": [
-        "aws-cdk-config-custompolicy"
-      ],
-      "assertionStack": "aws-cdk-config-rule-integ/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkconfigruleintegDefaultTestDeployAssert37C5819B"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:912dd459eb83bbb8b001d99a0d6974b86ba15aaafa3f8e7b4a344e43fe5f4ca9
+size 326

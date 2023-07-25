@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "GaugeAlarmIntegrationTest/DefaultTest": {
-      "stacks": [
-        "gauge-alarm"
-      ],
-      "assertionStack": "GaugeAlarmIntegrationTest/DefaultTest/DeployAssert",
-      "assertionStackName": "GaugeAlarmIntegrationTestDefaultTestDeployAssertF43E2A2D"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9e01a86ec24261595f6d414e9c9a7b979ee163d4be45ae5800082060083a821f
+size 314

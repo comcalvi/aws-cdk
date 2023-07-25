@@ -1,13 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ-test/DefaultTest": {
-      "stacks": [
-        "integ-certificate-name"
-      ],
-      "diffAssets": true,
-      "assertionStack": "integ-test/DefaultTest/DeployAssert",
-      "assertionStackName": "integtestDefaultTestDeployAssert24D5C536"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:de63449d09b1f8afee73e8ed4cdc54f5e31a5a5279dfbae23c1f6fce08ec0243
+size 305

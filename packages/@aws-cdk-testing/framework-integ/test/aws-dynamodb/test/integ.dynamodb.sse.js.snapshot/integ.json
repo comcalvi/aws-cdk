@@ -1,14 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "integ.dynamodb.sse": {
-      "stacks": [
-        "aws-cdk-dynamodb"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:974f54c16898f2d7bbe3d785368dbd6b1becda97df6592f7312ad0c33e319ae2
+size 244

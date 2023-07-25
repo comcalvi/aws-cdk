@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ-test/DefaultTest": {
-      "stacks": [
-        "Private",
-        "BucketOwnerRead",
-        "BucketOwnerFullControl"
-      ],
-      "assertionStack": "integ-test/DefaultTest/DeployAssert",
-      "assertionStackName": "integtestDefaultTestDeployAssert24D5C536"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:94623e72538f6a982b2d24115dbcc916d0593e4ea69570a1bc7c50d25d4f795c
+size 325

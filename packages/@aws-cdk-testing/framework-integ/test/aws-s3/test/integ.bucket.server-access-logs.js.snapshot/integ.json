@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "cdk-integ-s3-access-logs/DefaultTest": {
-      "stacks": [
-        "aws-cdk-s3-access-logs"
-      ],
-      "assertionStack": "cdk-integ-s3-access-logs/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegs3accesslogsDefaultTestDeployAssert37A16466"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:fc21b23c448ca77482f1c801fa2017beb31433662b0e9f00aae10709b864feb1
+size 318

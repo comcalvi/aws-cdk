@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "apigateway-domain-name/DefaultTest": {
-      "stacks": [
-        "aws-cdk-apigw-alias-integ"
-      ],
-      "assertionStack": "apigateway-domain-name/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3b2f4a507e3530805eef2e9b608e5db3acfe5ee617c5f40ecf66b11f7e07afc1
+size 234

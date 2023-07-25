@@ -1,12 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "CloudTrailDataEventsOnlyTest/DefaultTest": {
-      "stacks": [
-        "integ-cloudtrail-data-events"
-      ],
-      "assertionStack": "CloudTrailDataEventsOnlyTest/DefaultTest/DeployAssert",
-      "assertionStackName": "CloudTrailDataEventsOnlyTestDefaultTestDeployAssertA7E52868"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:fe2a6e3444676b67d53b46a474a6caec378aaeb680dc80ee378812d538537602
+size 340

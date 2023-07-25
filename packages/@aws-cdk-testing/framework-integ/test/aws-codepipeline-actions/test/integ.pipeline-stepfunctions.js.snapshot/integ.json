@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ.pipeline-stepfunctions": {
-      "stacks": [
-        "aws-cdk-codepipeline-stepfunctions"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b8f8df81796cf501e169b4c09bedf511b20a085907f83ddaac8ed5ffe7fa5a74
+size 272

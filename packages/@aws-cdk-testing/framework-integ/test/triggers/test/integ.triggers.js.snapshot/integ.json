@@ -1,12 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "TriggerTest/DefaultTest": {
-      "stacks": [
-        "MyStack"
-      ],
-      "assertionStack": "TriggerTest/DefaultTest/DeployAssert",
-      "assertionStackName": "TriggerTestDefaultTestDeployAssert61636546"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:60e9bba591251941302427ebc417642dc6f056882e1711c3f6e547ad64642b84
+size 268

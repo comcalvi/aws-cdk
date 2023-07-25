@@ -1,14 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ.graphql-schema": {
-      "stacks": [
-        "code-first-schema"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1af2ed763323f3ddd5faa84e80732bec72f8fd6e552efd79573e1a2304b3a7f3
+size 247

@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "LambdaInteg/DefaultTest": {
-      "stacks": [
-        "lambda-logssubscription-integ"
-      ],
-      "diffAssets": true,
-      "assertionStack": "LambdaInteg/DefaultTest/DeployAssert",
-      "assertionStackName": "LambdaIntegDefaultTestDeployAssert7BC530B7"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1c75ba808e6143423e5fc582f8fd48ea609d9e364618e5cf75cb1330fbfb3984
+size 316

@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "iam-integ-composite-principal-test/DefaultTest": {
-      "stacks": [
-        "iam-integ-composite-principal"
-      ],
-      "assertionStack": "iam-integ-composite-principal-test/DefaultTest/DeployAssert",
-      "assertionStackName": "iamintegcompositeprincipaltestDefaultTestDeployAssertDD256D71"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:fe50654a5008e25e21e195df470d2bc680d9d93741a28f25cce87d0f231b6c1f
+size 355

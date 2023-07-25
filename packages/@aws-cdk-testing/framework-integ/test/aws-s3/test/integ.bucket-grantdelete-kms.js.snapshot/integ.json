@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "cdk-integ-s3-grant-delete-kms/DefaultTest": {
-      "stacks": [
-        "aws-cdk-s3"
-      ],
-      "assertionStack": "cdk-integ-s3-grant-delete-kms/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegs3grantdeletekmsDefaultTestDeployAssertEC0923BA"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9248731dcd9c1264a065fc3db97ee40b9124faaced5c5521cc33c13574d3e885
+size 320

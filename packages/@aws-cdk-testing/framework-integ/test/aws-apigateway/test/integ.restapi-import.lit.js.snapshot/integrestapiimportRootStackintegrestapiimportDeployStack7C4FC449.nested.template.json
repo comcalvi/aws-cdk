@@ -1,29 +1,3 @@
-{
- "Resources": {
-  "Deployment37BBD5E4": {
-   "Type": "AWS::ApiGateway::Deployment",
-   "Properties": {
-    "RestApiId": {
-     "Ref": "referencetointegrestapiimportRootStackRestApi2647DA4CRef"
-    }
-   }
-  },
-  "Stage0E8C2AF5": {
-   "Type": "AWS::ApiGateway::Stage",
-   "Properties": {
-    "RestApiId": {
-     "Ref": "referencetointegrestapiimportRootStackRestApi2647DA4CRef"
-    },
-    "DeploymentId": {
-     "Ref": "Deployment37BBD5E4"
-    },
-    "StageName": "prod"
-   }
-  }
- },
- "Parameters": {
-  "referencetointegrestapiimportRootStackRestApi2647DA4CRef": {
-   "Type": "String"
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e3b5d7fac6e01663dd9df9d566a9552f181d2a5c4cee78aabe6138c3088fa350
+size 593

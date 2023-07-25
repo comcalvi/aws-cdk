@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.kinesiswithdlq": {
-      "stacks": [
-        "lambda-event-source-kinesis-with-dlq"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:63f1f85761a1caea59ecba1c18935af6001792f464c3e93ce4880c4f355401d1
+size 266

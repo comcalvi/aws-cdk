@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "cdk-code-guru-profiler-group/DefaultTest": {
-      "stacks": [
-        "ProfilerGroupIntegrationTest"
-      ],
-      "assertionStack": "cdk-code-guru-profiler-group/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkcodeguruprofilergroupDefaultTestDeployAssert05871DAC"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d6b9062c158c68d763250a12e7e31b52e1b90e623681643f7c1e7b2dced34ebf
+size 336

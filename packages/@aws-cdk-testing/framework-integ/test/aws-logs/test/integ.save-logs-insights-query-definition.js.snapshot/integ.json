@@ -1,12 +1,3 @@
-{
-  "version": "29.0.0",
-  "testCases": {
-    "LogsInsightsQueryDefinitionIntegTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-logs-insights-querydefinition-integ"
-      ],
-      "assertionStack": "LogsInsightsQueryDefinitionIntegTest/DefaultTest/DeployAssert",
-      "assertionStackName": "LogsInsightsQueryDefinitionIntegTestDefaultTestDeployAssert902BAAD5"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5abdb4ecc9e527ed1a4fb1515b9c7094bb9a761885df5bf182e17cc361722118
+size 379

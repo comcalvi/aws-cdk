@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.assets.bundling.lit": {
-      "stacks": [
-        "cdk-integ-assets-bundling"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4ed53eb0e3b9de930b9dd543e80868113d039dcdfe800604ab8935c11e963b7d
+size 260

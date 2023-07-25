@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "cdk-integ-elasticsearch-vpc-test/DefaultTest": {
-      "stacks": [
-        "cdk-integ-elasticsearch-vpc"
-      ],
-      "assertionStack": "cdk-integ-elasticsearch-vpc-test/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegelasticsearchvpctestDefaultTestDeployAssert0B044175"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a8b8d61c63a5a61b2784bac4de560e5d419e38858d3a17e97e0142c763304c8d
+size 347

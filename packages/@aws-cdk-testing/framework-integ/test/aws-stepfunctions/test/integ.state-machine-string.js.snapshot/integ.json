@@ -1,12 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "IntegTest/DefaultTest": {
-      "stacks": [
-        "aws-stepfunctions-integ"
-      ],
-      "assertionStack": "IntegTest/DefaultTest/DeployAssert",
-      "assertionStackName": "IntegTestDefaultTestDeployAssertE3E7D2A4"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:20ec3e95911125959d46ecc029aedee5cd98aba8cf556cdef8dd1935f6f0d5f0
+size 278

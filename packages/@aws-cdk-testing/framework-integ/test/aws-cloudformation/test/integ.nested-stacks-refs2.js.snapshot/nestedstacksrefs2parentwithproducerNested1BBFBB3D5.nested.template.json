@@ -1,17 +1,3 @@
-{
- "Resources": {
-  "MyTopic86869434": {
-   "Type": "AWS::SNS::Topic"
-  }
- },
- "Outputs": {
-  "nestedstacksrefs2parentwithproducerNested1MyTopic9E26C363TopicName": {
-   "Value": {
-    "Fn::GetAtt": [
-     "MyTopic86869434",
-     "TopicName"
-    ]
-   }
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4f68c2f5c6483567e3e0fff8c5c96ac88354b81114b410d352af4a8fc4326ef5
+size 260

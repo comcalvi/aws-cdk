@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "iam-access-key-1/DefaultTest": {
-      "stacks": [
-        "integ-iam-access-key-1"
-      ],
-      "assertionStack": "iam-access-key-1/DefaultTest/DeployAssert",
-      "assertionStackName": "iamaccesskey1DefaultTestDeployAssert00360C89"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5824ab305eb2d9184ecdcd39a297e3b437809778465ea7b6aebaff992b431457
+size 295

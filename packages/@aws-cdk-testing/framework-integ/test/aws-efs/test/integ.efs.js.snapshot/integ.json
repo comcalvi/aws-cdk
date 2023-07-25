@@ -1,14 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "integ.efs": {
-      "stacks": [
-        "test-efs-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e5939f671c38b1fbf69d21a8b230bd8125b02c8f5456305ce544643dcecebcd9
+size 233

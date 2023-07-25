@@ -1,12 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "iam-instance-profile-test/DefaultTest": {
-      "stacks": [
-        "aws-cdk-iam-instance-profile"
-      ],
-      "assertionStack": "iam-instance-profile-test/DefaultTest/DeployAssert",
-      "assertionStackName": "iaminstanceprofiletestDefaultTestDeployAssert39594193"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:51666fd81d984a44ab8525e76b4348558e6197e893337711ade3257f6f347685
+size 328

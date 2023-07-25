@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "LambdaDestChain3/DefaultTest": {
-      "stacks": [
-        "aws-cdk-lambda-chain"
-      ],
-      "assertionStack": "LambdaDestChain3/DefaultTest/DeployAssert",
-      "assertionStackName": "LambdaDestChain3DefaultTestDeployAssertB72F10E8"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:63b9cba667eb13e303fcaace7beee26fabcc5d9c9b81d44754d499a9844469f2
+size 296

@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "LambdaTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-ec2-lt-metadata-1"
-      ],
-      "assertionStack": "LambdaTest/DefaultTest/DeployAssert",
-      "assertionStackName": "LambdaTestDefaultTestDeployAssert1AF2B360"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:eb5409e7153c865bb562b86db45b99680e64bfaaaccf1d259f570ff4bd95400b
+size 283

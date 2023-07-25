@@ -1,14 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ.lustre-file-system": {
-      "stacks": [
-        "AwsCdkFsxLustre"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9c734973c9829d3306e1a55de9cf6940018d94d334cc355d571726d92ea857bc
+size 249

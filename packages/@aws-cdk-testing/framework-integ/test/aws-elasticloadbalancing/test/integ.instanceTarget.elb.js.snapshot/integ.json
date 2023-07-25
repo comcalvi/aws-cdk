@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "InstanceTargetTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-elb-instance-target-integ"
-      ],
-      "assertionStack": "InstanceTargetTest/DefaultTest/DeployAssert",
-      "assertionStackName": "InstanceTargetTestDefaultTestDeployAssertAF607556"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3c69dcd80159ae7cd6d94ca23d51e88f44cf3e659b8a92f6c280a3fb1d2601f5
+size 315

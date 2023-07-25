@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.stream": {
-      "stacks": [
-        "integ-kinesis-stream"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:65ae2a054f4862e953fa5e8deb660282e2196509a29be6114a1404d28671c354
+size 242

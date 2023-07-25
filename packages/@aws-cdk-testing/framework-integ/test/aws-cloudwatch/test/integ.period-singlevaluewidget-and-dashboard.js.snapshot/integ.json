@@ -1,12 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "singlevaluewidget-with-period/DefaultTest": {
-      "stacks": [
-        "aws-cdk-cloudwatch-singlevaluewidget-period-integ"
-      ],
-      "assertionStack": "singlevaluewidget-with-period/DefaultTest/DeployAssert",
-      "assertionStackName": "singlevaluewidgetwithperiodDefaultTestDeployAssert48DEBCE0"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9a1c0b6219771f7c3dc6bc6b286ca7aae23e8a536d9007518bfc6f5c5437d573
+size 362

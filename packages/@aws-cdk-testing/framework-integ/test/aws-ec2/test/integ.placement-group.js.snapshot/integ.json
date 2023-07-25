@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "BatchEcsJobDefinitionTest/DefaultTest": {
-      "stacks": [
-        "stack"
-      ],
-      "assertionStack": "BatchEcsJobDefinitionTest/DefaultTest/DeployAssert",
-      "assertionStackName": "BatchEcsJobDefinitionTestDefaultTestDeployAssertE5BAAC9B"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:740fd7b67d74a7412e314e2a93ebf4d54a654acd2659ee6e6d9719a1097f13b8
+size 308

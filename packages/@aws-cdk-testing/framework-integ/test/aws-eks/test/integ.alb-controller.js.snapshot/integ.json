@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "aws-cdk-cluster-alb-controller/DefaultTest": {
-      "stacks": [
-        "aws-cdk-eks-cluster-alb-controller-test"
-      ],
-      "diffAssets": true,
-      "assertionStack": "aws-cdk-cluster-alb-controller/DefaultTest/DeployAssert",
-      "assertionStackName": "awscdkclusteralbcontrollerDefaultTestDeployAssert78AE94CA"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:472d85a56c020bed257e89269ba47d9c5485c9184d544f7ef690b14a4503cdbb
+size 379

@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.instance-from-generated-password": {
-      "stacks": [
-        "aws-cdk-rds-fixed-username"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6989666c0693962fad96ded9e0c39406f823d8a7a57fc31615d6e93b7c65d7b3
+size 274

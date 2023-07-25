@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.pipeline-cfn": {
-      "stacks": [
-        "aws-cdk-codepipeline-cloudformation"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:acb1038be4f3377495039f2501e91981ad9819587c73403a30701c4fdeff578d
+size 263

@@ -1,27 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "deletion-protection-integ-test/DefaultTest": {
-      "stacks": [
-        "deletion-protection-stack"
-      ],
-      "hooks": {
-        "postDeploy": [
-          "aws dynamodb update-table --no-cli-pager --region us-east-1 --table-name deletion-protection-test --no-deletion-protection-enabled"
-        ]
-      },
-      "regions": [
-        "us-east-1"
-      ],
-      "cdkCommandOptions": {
-        "deploy": {
-          "args": {
-            "rollback": true
-          }
-        }
-      },
-      "assertionStack": "deletion-protection-integ-test/DefaultTest/DeployAssert",
-      "assertionStackName": "deletionprotectionintegtestDefaultTestDeployAssertA66823A5"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:665938b5e4b4ff0a0ef5a91dc6c0cc5ff594d1daf44263f9e2414c8834e2f9c1
+size 720

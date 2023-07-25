@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "ArchiveTest/DefaultTest": {
-      "stacks": [
-        "StackUnderTest"
-      ],
-      "assertionStack": "ArchiveTest/DefaultTest/DeployAssert",
-      "assertionStackName": "ArchiveTestDefaultTestDeployAssert3405726A"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f2ed4e91c4fcab336abafa653312119284cd0e6f90ae094fbbc1f575959352aa
+size 275

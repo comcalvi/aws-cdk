@@ -1,19 +1,3 @@
-{
-  "version": "21.0.0",
-  "files": {
-    "51dce3b1479f4a685a2f5a815b141fdf3e07e49181ce9da06750e820f5b92859": {
-      "source": {
-        "path": "aws-cdk-config-custompolicy.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "current_account-current_region": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "51dce3b1479f4a685a2f5a815b141fdf3e07e49181ce9da06750e820f5b92859.json",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8a95a7b79a0839124116724b156a3b7f3b97b4f9d345e143ffa5fb34b0c7da88
+size 671

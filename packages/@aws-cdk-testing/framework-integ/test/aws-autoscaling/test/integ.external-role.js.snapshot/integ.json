@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ.external-role": {
-      "stacks": [
-        "integ-iam-external-role"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:08f5adebcdfefd6d3834ab32ea724edda06fa08c3943b0962aaeb7d1af601999
+size 252

@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "BucketGrantWriteTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-s3"
-      ],
-      "assertionStack": "BucketGrantWriteTest/DefaultTest/DeployAssert",
-      "assertionStackName": "BucketGrantWriteTestDefaultTestDeployAssertF3318F24"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6c8cc31ffd9460699cac087e553d4ad3a0bc459895218dc0b00e7a10a095fdff
+size 298

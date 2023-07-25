@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "DynamoDBFilterCriteria/DefaultTest": {
-      "stacks": [
-        "lambda-event-source-filter-criteria-dynamodb"
-      ],
-      "assertionStack": "DynamoDBFilterCriteria/DefaultTest/DeployAssert",
-      "assertionStackName": "DynamoDBFilterCriteriaDefaultTestDeployAssert448231D5"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ad6580fd24f32600c3914f62fbcbf888603c39e77e052649e76400e0ea2382da
+size 338

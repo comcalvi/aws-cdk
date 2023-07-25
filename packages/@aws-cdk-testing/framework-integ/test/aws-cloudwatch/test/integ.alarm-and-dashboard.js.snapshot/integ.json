@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "cdk-cloudwatch-alarms-integ-test/DefaultTest": {
-      "stacks": [
-        "aws-cdk-cloudwatch-alarms"
-      ],
-      "assertionStack": "cdk-cloudwatch-alarms-integ-test/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkcloudwatchalarmsintegtestDefaultTestDeployAssertD2D0B407"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1adf28a65c62df1f1e36ac4ba53e4bf40576768095b630e8bf25c89f9f59af6c
+size 345

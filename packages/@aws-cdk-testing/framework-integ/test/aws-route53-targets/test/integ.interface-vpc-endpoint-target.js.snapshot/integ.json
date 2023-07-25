@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.interface-vpc-endpoint-target": {
-      "stacks": [
-        "aws-cdk-interface-vpc-endpoint"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:78dafe565c87a7f5c4cfa9f1868363143b0327e72049c7e0159b4a0f04132680
+size 275

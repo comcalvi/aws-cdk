@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.cluster": {
-      "stacks": [
-        "aws-cdk-rds-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a6a5fd44b09bb467cbc64fefc659a2018f15e808bf4fd76cba30079b18b91e87
+size 240

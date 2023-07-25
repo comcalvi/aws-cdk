@@ -1,14 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ.instance-init": {
-      "stacks": [
-        "integ-init"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6ed42989edac9e958b6af39aab8756eee9544b67f166ee802636f8ed3edce075
+size 239

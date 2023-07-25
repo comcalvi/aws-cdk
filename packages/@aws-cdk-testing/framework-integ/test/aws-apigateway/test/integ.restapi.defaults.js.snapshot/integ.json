@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "apigateway-restapi-defaults/DefaultTest": {
-      "stacks": [
-        "test-apigateway-restapi-defaults"
-      ],
-      "assertionStack": "apigateway-restapi-defaults/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:80cb3bfa7c110f8411afc0258c3d57c1fc311917d62c4640b656028c09104d85
+size 251

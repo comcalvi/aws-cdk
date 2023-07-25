@@ -1,14 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "integ.graphql-elasticsearch": {
-      "stacks": [
-        "appsync-elasticsearch"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4299eadff2908963e3716516f832a24666b43623fbabe5819715007e6002d10d
+size 258

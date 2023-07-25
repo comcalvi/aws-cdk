@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "integ-iam-role/DefaultTest": {
-      "stacks": [
-        "integ-iam-role-1"
-      ],
-      "assertionStack": "integ-iam-role/DefaultTest/DeployAssert",
-      "assertionStackName": "integiamroleDefaultTestDeployAssert48737E31"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:497499a969eed70c6b98f33da789496343c914e6ee518d32ca46bd2aa9719a19
+size 284

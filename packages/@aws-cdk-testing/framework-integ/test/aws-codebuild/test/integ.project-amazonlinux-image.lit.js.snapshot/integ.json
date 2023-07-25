@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "amazon-linux-2-5-codebuild/DefaultTest": {
-      "stacks": [
-        "codebuild-project-amazonlinux-2-5"
-      ],
-      "stackUpdateWorkflow": false,
-      "assertionStack": "amazon-linux-2-5-codebuild/DefaultTest/DeployAssert",
-      "assertionStackName": "amazonlinux25codebuildDefaultTestDeployAssertB1E0750B"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:56ccf9628f2a66696dca34d4b43caa3deaba010f20ad26e215704eec82efcc96
+size 371

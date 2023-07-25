@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "FileSystemPolicyTest/DefaultTest": {
-      "stacks": [
-        "test-efs-integ"
-      ],
-      "assertionStack": "FileSystemPolicyTest/DefaultTest/DeployAssert",
-      "assertionStackName": "FileSystemPolicyTestDefaultTestDeployAssertD0596FC1"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:62766b8ed44e55948ec94045fab9b6bb190529757f4709adfa11f0a53ccc0058
+size 302

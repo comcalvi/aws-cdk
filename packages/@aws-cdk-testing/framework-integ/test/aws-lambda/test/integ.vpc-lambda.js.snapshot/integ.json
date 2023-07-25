@@ -1,14 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ.vpc-lambda": {
-      "stacks": [
-        "aws-cdk-vpc-lambda"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b1eae3ff0e7d45fb2c9909e553b5623cc5670c87e86b633d4fca5f857b85beba
+size 244

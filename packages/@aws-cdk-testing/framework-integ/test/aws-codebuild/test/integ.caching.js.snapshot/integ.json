@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.caching": {
-      "stacks": [
-        "aws-cdk-codebuild"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6324526077e1b22b747692467a87cba0ccbc8f5f98a5ad93be87c610a0f27cc7
+size 240

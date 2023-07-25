@@ -1,12 +1,3 @@
-{
-  "version": "29.0.0",
-  "testCases": {
-    "opensearch-2.3-stack/DefaultTest": {
-      "stacks": [
-        "appsync-opensearch"
-      ],
-      "assertionStack": "opensearch-2.3-stack/DefaultTest/DeployAssert",
-      "assertionStackName": "opensearch23stackDefaultTestDeployAssert16E12129"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:900b11362474f588323214c30e73601720e69c9339b7077b9f0fbf6cf83fc76a
+size 303

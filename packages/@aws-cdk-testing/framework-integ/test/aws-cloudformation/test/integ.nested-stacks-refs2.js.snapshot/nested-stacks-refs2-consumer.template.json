@@ -1,30 +1,3 @@
-{
- "Resources": {
-  "ConsumerTopic6F402371": {
-   "Type": "AWS::SNS::Topic",
-   "Properties": {
-    "DisplayName": {
-     "Fn::Join": [
-      "",
-      [
-       "Consuming ",
-       {
-        "Fn::Select": [
-         2,
-         {
-          "Fn::Split": [
-           "-",
-           {
-            "Fn::ImportValue": "nested-stacks-refs2-parent-with-producer:ExportsOutputFnGetAttNested1NestedStackNested1NestedStackResourceCD0AD36BOutputsnestedstacksrefs2parentwithproducerNested1MyTopic9E26C363TopicNameF4BCEDAF"
-           }
-          ]
-         }
-        ]
-       }
-      ]
-     ]
-    }
-   }
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3516f96b234808e4461f03f76a2505b6a3c79d6e125a419217e0f9380727b2b8
+size 603

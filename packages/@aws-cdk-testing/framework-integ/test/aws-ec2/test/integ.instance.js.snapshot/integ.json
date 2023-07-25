@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "instance-test/DefaultTest": {
-      "stacks": [
-        "integ-ec2-instance"
-      ],
-      "assertionStack": "instance-test/DefaultTest/DeployAssert",
-      "assertionStackName": "instancetestDefaultTestDeployAssert5516EAF1"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4953c85dc9b6ae066662f5524da7278b5cabf90de9fd753f74e72d9076b57252
+size 284

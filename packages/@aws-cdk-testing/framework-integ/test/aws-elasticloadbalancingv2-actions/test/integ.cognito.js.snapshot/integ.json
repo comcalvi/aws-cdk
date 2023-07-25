@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ-test-cognito/DefaultTest": {
-      "stacks": [
-        "integ-cognito"
-      ],
-      "diffAssets": true,
-      "assertionStack": "integ-test-cognito/DefaultTest/DeployAssert",
-      "assertionStackName": "integtestcognitoDefaultTestDeployAssert6F2623C9"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:43823efe52720ea13884327fcef4aeb8cb0aff9525cca6d66d9d5669f4127483
+size 319

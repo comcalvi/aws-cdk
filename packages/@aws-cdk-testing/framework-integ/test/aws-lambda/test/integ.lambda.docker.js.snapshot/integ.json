@@ -1,12 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "integ/DefaultTest": {
-      "stacks": [
-        "lambda-ecr-docker"
-      ],
-      "assertionStack": "integ/DefaultTest/DeployAssert",
-      "assertionStackName": "integDefaultTestDeployAssert946684A0"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f787c6c5d2fd9008f8b6e15a78e90abc52f9320d3d94619e2a2e4704e6b80486
+size 260

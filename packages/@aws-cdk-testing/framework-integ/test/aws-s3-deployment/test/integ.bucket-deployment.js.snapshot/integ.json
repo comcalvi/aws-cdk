@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ-test-bucket-deployments/DefaultTest": {
-      "stacks": [
-        "test-bucket-deployments-2"
-      ],
-      "diffAssets": true,
-      "assertionStack": "integ-test-bucket-deployments/DefaultTest/DeployAssert",
-      "assertionStackName": "integtestbucketdeploymentsDefaultTestDeployAssertCF25A2DF"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e878cef8e2d2f0747bfe390e74251104e09c91f66507708015eb4ab11a20ed11
+size 363

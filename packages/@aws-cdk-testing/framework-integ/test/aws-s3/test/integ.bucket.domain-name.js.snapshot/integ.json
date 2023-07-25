@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "cdk-integ-bucket-domain-name/DefaultTest": {
-      "stacks": [
-        "aws-cdk-domain-name"
-      ],
-      "assertionStack": "cdk-integ-bucket-domain-name/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegbucketdomainnameDefaultTestDeployAssert72465477"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:97e70d5bdafe184b1ddf1f92b8ac16984ea6db27ea34d274c3e555ea1ae5705a
+size 327

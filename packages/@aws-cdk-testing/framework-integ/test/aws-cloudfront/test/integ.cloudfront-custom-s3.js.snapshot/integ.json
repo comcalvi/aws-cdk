@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.cloudfront-custom-s3": {
-      "stacks": [
-        "cloudfront-custom-s3-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e345906fe842996d207fdded0baa8531012b8238d97ba88840f8072207b0c1b3
+size 262

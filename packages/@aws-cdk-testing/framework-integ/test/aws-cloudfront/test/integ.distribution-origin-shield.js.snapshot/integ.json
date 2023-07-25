@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "DistributionOriginShield/DefaultTest": {
-      "stacks": [
-        "integ-distribution-origin-shield"
-      ],
-      "assertionStack": "DistributionOriginShield/DefaultTest/DeployAssert",
-      "assertionStackName": "DistributionOriginShieldDefaultTestDeployAssertDF7E33F9"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:047529476f66215ecca74a6fcf9d3f8eaa15d1e87b18a2e5e998407eb9113535
+size 332

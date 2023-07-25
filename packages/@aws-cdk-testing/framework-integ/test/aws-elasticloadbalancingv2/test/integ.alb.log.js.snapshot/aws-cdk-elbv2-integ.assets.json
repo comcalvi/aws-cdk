@@ -1,34 +1,3 @@
-{
-  "version": "32.0.0",
-  "files": {
-    "216218e507a977a1bb3592f29c1a62ab3e0a9eb25569109a395315638e154329": {
-      "source": {
-        "path": "asset.216218e507a977a1bb3592f29c1a62ab3e0a9eb25569109a395315638e154329",
-        "packaging": "zip"
-      },
-      "destinations": {
-        "current_account-us-west-2": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-west-2",
-          "objectKey": "216218e507a977a1bb3592f29c1a62ab3e0a9eb25569109a395315638e154329.zip",
-          "region": "us-west-2",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-west-2"
-        }
-      }
-    },
-    "92bdc86ab670adbb9069705ea451d0a86ed020a211bc80270024ef74ad9e06cf": {
-      "source": {
-        "path": "aws-cdk-elbv2-integ.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "current_account-us-west-2": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-west-2",
-          "objectKey": "92bdc86ab670adbb9069705ea451d0a86ed020a211bc80270024ef74ad9e06cf.json",
-          "region": "us-west-2",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-west-2"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:93bdc828873b3abef55df1bb896627bd909b38e81942252ff41d99d2a853dea2
+size 1333

@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ.asg-lt": {
-      "stacks": [
-        "aws-cdk-asg-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e65e92246b522e56e7ad0762d2ed7cd406c6c30166b8fc5233ac455a23aa3727
+size 239

@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "restapi-multiuse/DefaultTest": {
-      "stacks": [
-        "restapi-multiuse-example"
-      ],
-      "assertionStack": "restapi-multiuse/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c83288bc81b7bbc731e2b8f672f73ce1644a2e87397f32965b7735e42b3bb278
+size 221

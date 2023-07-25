@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.load-balancer-origin": {
-      "stacks": [
-        "cloudfront-load-balancer-origin"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:793ea84ffe168664f2fb950232a6ea1bbe17dbc927da4ff6661d969c8292829a
+size 267

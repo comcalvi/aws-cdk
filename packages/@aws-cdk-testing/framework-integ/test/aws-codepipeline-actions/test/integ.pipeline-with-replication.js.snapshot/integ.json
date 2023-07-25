@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "codepipeline-integ-test/DefaultTest": {
-      "stacks": [
-        "integ-pipeline-consumer-stack"
-      ],
-      "stackUpdateWorkflow": false,
-      "assertionStack": "codepipeline-integ-test/DefaultTest/DeployAssert",
-      "assertionStackName": "codepipelineintegtestDefaultTestDeployAssert88EAAC45"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0e51e346941ded0f1b4804aed5c085bcadc16a55f3b901817273a7d98352c33c
+size 360

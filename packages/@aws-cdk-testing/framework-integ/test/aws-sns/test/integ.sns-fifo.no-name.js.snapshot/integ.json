@@ -1,15 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "SnsFifoNoNameTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-sns-fifo-1"
-      ],
-      "regions": [
-        "eu-west-1"
-      ],
-      "assertionStack": "SnsFifoNoNameTest/DefaultTest/DeployAssert",
-      "assertionStackName": "SnsFifoNoNameTestDefaultTestDeployAssert931FC5EA"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1acd320b5c93a53724f3f4ef90819558cf27402c3904408a138a9cb8047265c9
+size 345

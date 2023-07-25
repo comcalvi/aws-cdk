@@ -1,20 +1,3 @@
-{
-  "version": "21.0.0",
-  "files": {
-    "0d750187c0e1bc77f1edfc3af57e55036907d6dfaef463a7acfdc0c42325a18c": {
-      "source": {
-        "path": "ToCrossAccountRuleStack.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "12345678-test-region": {
-          "bucketName": "cdk-hnb659fds-assets-12345678-test-region",
-          "objectKey": "0d750187c0e1bc77f1edfc3af57e55036907d6dfaef463a7acfdc0c42325a18c.json",
-          "region": "test-region",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::12345678:role/cdk-hnb659fds-file-publishing-role-12345678-test-region"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:306e8f01ade4885cee74bb80a5beb5e91d7588b7db8677aa1a6f2576218dd937
+size 659

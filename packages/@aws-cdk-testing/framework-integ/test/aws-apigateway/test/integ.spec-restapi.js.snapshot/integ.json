@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "apigateway-spec-restapi/DefaultTest": {
-      "stacks": [
-        "test-apigateway-spec-restapi"
-      ],
-      "assertionStack": "apigateway-spec-restapi/DefaultTest/DeployAssert",
-      "assertionStackName": "apigatewayspecrestapiDefaultTestDeployAssertD16AA485"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f78373d9c6282e2cfb109dea70d1d3416f03cb1f75243ab6eac1cdd16d3014bd
+size 323

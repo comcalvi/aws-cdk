@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.service-with-private-dns-namespace.lit": {
-      "stacks": [
-        "aws-servicediscovery-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3368f6b6039d2e9b8c47dbd8a9fa6e35c3cc8892b1875f01d8f920b8af26420f
+size 280

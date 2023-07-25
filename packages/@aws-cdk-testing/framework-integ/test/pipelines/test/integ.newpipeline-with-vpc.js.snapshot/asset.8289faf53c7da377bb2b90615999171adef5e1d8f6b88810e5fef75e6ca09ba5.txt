@@ -1,1 +1,3 @@
-This is a file asset that's just here for kicks.
+version https://git-lfs.github.com/spec/v1
+oid sha256:52e0d8fe87f8623b5ac9eec5dda8a19d73e8d4fad203fb39cc9e089ac65bc2d4
+size 48

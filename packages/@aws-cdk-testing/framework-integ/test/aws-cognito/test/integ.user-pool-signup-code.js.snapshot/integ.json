@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.user-pool-signup-code": {
-      "stacks": [
-        "integ-user-pool-signup-code"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:dca6fca92e92181902fa7a4a168faac27663d36bb7e215da188730be96cfd9c9
+size 264

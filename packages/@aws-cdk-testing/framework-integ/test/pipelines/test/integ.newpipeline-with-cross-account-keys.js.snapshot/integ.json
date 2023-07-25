@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "LambdaTest/DefaultTest": {
-      "stacks": [
-        "PipelineStack"
-      ],
-      "assertionStack": "LambdaTest/DefaultTest/DeployAssert",
-      "assertionStackName": "LambdaTestDefaultTestDeployAssert1AF2B360"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:183e642f51686e8827aa5814905bc4cd67795b1a64cb8c9489641723559a3159
+size 271

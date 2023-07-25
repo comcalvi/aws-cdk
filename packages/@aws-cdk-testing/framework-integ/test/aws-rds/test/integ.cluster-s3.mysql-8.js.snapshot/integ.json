@@ -1,14 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ.cluster-s3.mysql-8": {
-      "stacks": [
-        "aws-cdk-rds-s3-mysql-8-integ"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ba4ff028d6969e60daba177fb301d428a5086831fd8c3ea637155298dacfc2d
+size 262

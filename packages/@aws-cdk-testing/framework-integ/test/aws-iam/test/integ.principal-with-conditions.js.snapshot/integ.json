@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "PrincipalWithCondition/DefaultTest": {
-      "stacks": [
-        "integ-principal-with-conditions"
-      ],
-      "assertionStack": "PrincipalWithCondition/DefaultTest/DeployAssert",
-      "assertionStackName": "PrincipalWithConditionDefaultTestDeployAssertA4D5A2E9"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:719f7ca2b7ab4b5b09eafdaf953684bd75c7c9b3a324a360aa3cb7969525f9ae
+size 325

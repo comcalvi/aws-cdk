@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "cdk-ecr-integ-test-basic/DefaultTest": {
-      "stacks": [
-        "aws-ecr-integ-stack"
-      ],
-      "assertionStack": "cdk-ecr-integ-test-basic/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkecrintegtestbasicDefaultTestDeployAssert4F7FBFB4"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:14f437550c47dc3614a475e808059ea65bb11bd2f64c730ff4ebd1d77ca256e4
+size 315

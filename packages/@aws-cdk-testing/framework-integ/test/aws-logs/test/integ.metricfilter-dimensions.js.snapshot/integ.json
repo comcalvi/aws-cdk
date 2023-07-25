@@ -1,12 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "metricfilter-dimensions/DefaultTest": {
-      "stacks": [
-        "aws-cdk-metricfilter-dimensions-integ"
-      ],
-      "assertionStack": "metricfilter-dimensions/DefaultTest/DeployAssert",
-      "assertionStackName": "metricfilterdimensionsDefaultTestDeployAssertF7E39B09"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4dd60cee4a1e76e21dd3bccd3d0d481f00fb1426c36515d1c67c13b06f012cc5
+size 333

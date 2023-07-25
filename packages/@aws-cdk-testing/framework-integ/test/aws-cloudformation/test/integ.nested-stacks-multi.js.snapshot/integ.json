@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.nested-stacks-multi": {
-      "stacks": [
-        "nested-stacks-multi"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:463785cffff983b8a59d12032b21b945da63ae632e7f3f4b054170653270a6c7
+size 254

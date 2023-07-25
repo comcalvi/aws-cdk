@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "IntegTest-BatchDefaultEnvVarsStack/DefaultTest": {
-      "stacks": [
-        "RuleStack"
-      ],
-      "assertionStack": "IntegTest-BatchDefaultEnvVarsStack/DefaultTest/DeployAssert",
-      "assertionStackName": "IntegTestBatchDefaultEnvVarsStackDefaultTestDeployAssertC15EFFF2"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:993cfd69e818ec16a6c098488de84e15c81c35f4599d42888d7c021d74be9796
+size 338

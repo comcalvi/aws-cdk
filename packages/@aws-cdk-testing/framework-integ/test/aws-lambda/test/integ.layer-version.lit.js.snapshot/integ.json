@@ -1,14 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "integ.layer-version.lit": {
-      "stacks": [
-        "aws-cdk-layer-version-1"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:92c3e7103ae01659f6e6a859285457bc926f660f49502501053f0242040c2fb1
+size 256

@@ -1,12 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "vpc-reserved-azs/DefaultTest": {
-      "stacks": [
-        "integtest-vpc-reserved-azs"
-      ],
-      "assertionStack": "vpc-reserved-azs/DefaultTest/DeployAssert",
-      "assertionStackName": "vpcreservedazsDefaultTestDeployAssertE48D2C6D"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:de6ae3f03aad2a8536761e9db6beb71b77354b5e3c25534aec8c77d6f9c9c817
+size 300

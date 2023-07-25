@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ.pipeline-ecs-deploy": {
-      "stacks": [
-        "aws-cdk-codepipeline-ecs-deploy"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7d6e1f9ba21bd9ca17d0d743d3a67b91e3b7d5a2347bc7986f7f105b8de36c9c
+size 266

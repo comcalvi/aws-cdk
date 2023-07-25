@@ -1,16 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.newpipeline-with-vpc": {
-      "stacks": [
-        "PipelineStack"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {
-    "@aws-cdk/core:newStyleStackSynthesis": "true"
-  },
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:560a27aa10cdf834469288bd096db746473012a02569c2dc902b61da24a40370
+size 303

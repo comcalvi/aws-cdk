@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "PipelineWithCustomStepStackOutputTest/DefaultTest": {
-      "stacks": [
-        "StackOutputPipelineStack"
-      ],
-      "assertionStack": "PipelineWithCustomStepStackOutputTest/DefaultTest/DeployAssert",
-      "assertionStackName": "PipelineWithCustomStepStackOutputTestDefaultTestDeployAssert6C17E8C5"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:11bbde50329cd324630b619d45d796f77af8ea18dc3e41341187eca4d7b67c14
+size 363

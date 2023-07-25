@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "DashboardIntegrationTest/DefaultTest": {
-      "stacks": [
-        "DashboardIntegrationTestStack"
-      ],
-      "assertionStack": "DashboardIntegrationTest/DefaultTest/DeployAssert",
-      "assertionStackName": "DashboardIntegrationTestDefaultTestDeployAssert5BE38902"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:f5a5769168ee3fd56f0742b5e256fa7c5a181260d2a64f27cc8c6f6cabcf278a
+size 329

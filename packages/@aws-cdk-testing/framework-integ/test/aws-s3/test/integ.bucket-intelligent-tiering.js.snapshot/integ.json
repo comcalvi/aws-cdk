@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "cdk-integ-intelligent-tiering/DefaultTest": {
-      "stacks": [
-        "aws-cdk-s3"
-      ],
-      "assertionStack": "cdk-integ-intelligent-tiering/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegintelligenttieringDefaultTestDeployAssertCA983383"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7b9a12019a9e7bc0103c1ab1e21360d7787827ada3297169c51c6084c076347d
+size 322

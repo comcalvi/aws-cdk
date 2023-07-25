@@ -1,12 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "CloudTrailDefaultsTest/DefaultTest": {
-      "stacks": [
-        "integ-cloudtrail-defaults"
-      ],
-      "assertionStack": "CloudTrailDefaultsTest/DefaultTest/DeployAssert",
-      "assertionStackName": "CloudTrailDefaultsTestDefaultTestDeployAssertBD9995EA"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:bcd2ab687c034478ca15e33e2af0d8f6f41c215c4cc00ea06fde7d59f8ec6b63
+size 319

@@ -1,12 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "cdk-integ-s3-bucket/DefaultTest": {
-      "stacks": [
-        "s3-bucket-routing"
-      ],
-      "assertionStack": "cdk-integ-s3-bucket/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegs3bucketDefaultTestDeployAssertB89636B8"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:cc2258243544010cf85b6d5dc175751b5b0703b2fbc3bd719d711157821b8585
+size 299

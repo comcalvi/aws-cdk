@@ -1,13 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "Bundling/DefaultTest": {
-      "stacks": [
-        "cdk-integ-lambda-bundling"
-      ],
-      "stackUpdateWorkflow": false,
-      "assertionStack": "Bundling/DefaultTest/DeployAssert",
-      "assertionStackName": "BundlingDefaultTestDeployAssertAACA0CAF"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:230b518d8ffa4bb2f25d66fa52a247401dd0bd41ff2ba528ff12eef75917f693
+size 313

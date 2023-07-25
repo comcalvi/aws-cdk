@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "IntegClusterIO/DefaultTest": {
-      "stacks": [
-        "aws-cdk-rds-io-integ"
-      ],
-      "assertionStack": "IntegClusterIO/DefaultTest/DeployAssert",
-      "assertionStackName": "IntegClusterIODefaultTestDeployAssertFEBBB413"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:da8f01e6bf0722c16dab5a62edcc98111ed776bbb9b967c90247ca1cd309a298
+size 290

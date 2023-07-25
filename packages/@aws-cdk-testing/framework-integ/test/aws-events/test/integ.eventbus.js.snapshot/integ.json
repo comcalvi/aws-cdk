@@ -1,12 +1,3 @@
-{
-  "version": "22.0.0",
-  "testCases": {
-    "IntegTest-BatchDefaultEnvVarsStack/DefaultTest": {
-      "stacks": [
-        "Stack"
-      ],
-      "assertionStack": "IntegTest-BatchDefaultEnvVarsStack/DefaultTest/DeployAssert",
-      "assertionStackName": "IntegTestBatchDefaultEnvVarsStackDefaultTestDeployAssertC15EFFF2"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:afeb867c18ce7405e6b1570b8d8500f4672824c8f38361112588153aa21e26f0
+size 334

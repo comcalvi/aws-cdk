@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "VolumeTest/DefaultTest": {
-      "stacks": [
-        "aws-cdk-ec2-volume-1"
-      ],
-      "assertionStack": "VolumeTest/DefaultTest/DeployAssert",
-      "assertionStackName": "VolumeTestDefaultTestDeployAssert896AAE82"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:df0be19ae834ee0fcb305132f48fb1a2e6bcf9f406a3de534b71a59eae203389
+size 278

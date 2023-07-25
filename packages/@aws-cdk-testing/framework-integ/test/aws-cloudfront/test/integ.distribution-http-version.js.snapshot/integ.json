@@ -1,11 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "DistributionHttpVersion/DefaultTest": {
-      "stacks": [
-        "integ-distribution-http-version"
-      ],
-      "assertionStack": "DistributionHttpVersion/DefaultTest/DeployAssert"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:edd564a607a7b872b3a86ff551bded5dda6dfc61af9a90e640ed2eb06b91d333
+size 242

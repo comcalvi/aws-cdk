@@ -1,14 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ.dynamodb": {
-      "stacks": [
-        "lambda-event-source-dynamodb"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:238b3200b5f0771aa433d1f450b3a96531cd44231a25ef7dd17d893a261550ab
+size 252

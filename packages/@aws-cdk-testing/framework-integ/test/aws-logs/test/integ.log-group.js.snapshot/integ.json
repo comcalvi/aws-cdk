@@ -1,12 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "LogGroupInteg/DefaultTest": {
-      "stacks": [
-        "aws-cdk-log-group-integ"
-      ],
-      "assertionStack": "LogGroupInteg/DefaultTest/DeployAssert",
-      "assertionStackName": "LogGroupIntegDefaultTestDeployAssertA9999A13"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ecb279b70fca51a4514681c415b4450bbb1fdb1bc258a1e81f54923e70b3a341
+size 290

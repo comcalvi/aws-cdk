@@ -1,18 +1,3 @@
-{
-  "version": "31.0.0",
-  "testCases": {
-    "integ-project-standard-images/DefaultTest": {
-      "stacks": [
-        "Standard1",
-        "Standard2",
-        "Standard3",
-        "Standard4",
-        "Standard5",
-        "Standard6",
-        "Standard7"
-      ],
-      "assertionStack": "integ-project-standard-images/DefaultTest/DeployAssert",
-      "assertionStackName": "integprojectstandardimagesDefaultTestDeployAssertFEF871A7"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9d84804f43c42f924f776af6c2a4529d9ec848a24ccbdbdae4d9597def89b339
+size 447

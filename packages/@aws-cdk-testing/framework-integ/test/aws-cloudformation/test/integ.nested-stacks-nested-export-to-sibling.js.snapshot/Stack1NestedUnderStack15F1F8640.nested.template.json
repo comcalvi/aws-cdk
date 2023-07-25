@@ -1,17 +1,3 @@
-{
- "Resources": {
-  "TopicInNestedUnderStack115E329C4": {
-   "Type": "AWS::SNS::Topic"
-  }
- },
- "Outputs": {
-  "Stack1NestedUnderStack1TopicInNestedUnderStack136BDF841TopicName": {
-   "Value": {
-    "Fn::GetAtt": [
-     "TopicInNestedUnderStack115E329C4",
-     "TopicName"
-    ]
-   }
-  }
- }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2e57cb577ecdf0f00be4ccc25e9903b466935a47b7b18d27967587c51e6b0271
+size 292

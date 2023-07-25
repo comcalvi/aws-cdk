@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.elasticsearch.ultrawarm": {
-      "stacks": [
-        "cdk-integ-elasticsearch-ultrawarm"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ae242e5a9949b8619ea03955d3e440edf1a90a927c72928b2515f76074e412a
+size 272

@@ -1,20 +1,3 @@
-{
-  "version": "21.0.0",
-  "testCases": {
-    "IntegTest/DefaultTest": {
-      "stacks": [
-        "integ-lambda-customize-roles"
-      ],
-      "cdkCommandOptions": {
-        "deploy": {
-          "enabled": false
-        },
-        "destroy": {
-          "enabled": false
-        }
-      },
-      "assertionStack": "IntegTest/DefaultTest/DeployAssert",
-      "assertionStackName": "IntegTestDefaultTestDeployAssertE3E7D2A4"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7d470f0cab88d75dc6cd69c9d64a4b07f399cad67d416a628cb2c93f0e13dc98
+size 437

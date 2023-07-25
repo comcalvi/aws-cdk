@@ -1,13 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "IntegTestAlbOidc/DefaultTest": {
-      "stacks": [
-        "IntegAlbOidc"
-      ],
-      "diffAssets": true,
-      "assertionStack": "IntegTestAlbOidc/DefaultTest/DeployAssert",
-      "assertionStackName": "IntegTestAlbOidcDefaultTestDeployAssert2476ECB6"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3aedbb79cc187e9eb1da7d84f4a3e4feba1768202b7b7681fd6ea42511b5350c
+size 314

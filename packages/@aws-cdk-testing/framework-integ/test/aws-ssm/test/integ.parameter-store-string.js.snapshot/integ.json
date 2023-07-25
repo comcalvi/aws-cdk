@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "SSMParameterStoreTest/DefaultTest": {
-      "stacks": [
-        "sspms-using"
-      ],
-      "assertionStack": "sspms-cleanup",
-      "assertionStackName": "sspms-cleanup"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d24625655bce9a7f7ea42ff19b30839e95c711455bee53f94f4fe0a8e56b254f
+size 230

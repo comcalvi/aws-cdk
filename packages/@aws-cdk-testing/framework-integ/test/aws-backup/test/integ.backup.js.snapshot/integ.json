@@ -1,14 +1,3 @@
-{
-  "version": "32.0.0",
-  "testCases": {
-    "integ.backup": {
-      "stacks": [
-        "cdk-backup"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7362fddc1a01f793804e5fec68a2c4dd6bd2acf92424fac39fe28acf58d35026
+size 232

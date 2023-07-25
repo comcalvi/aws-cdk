@@ -1,12 +1,3 @@
-{
-  "version": "30.1.0",
-  "testCases": {
-    "cdk-rds-integ-secret-rotation/DefaultTest": {
-      "stacks": [
-        "aws-cdk-rds-integ-secret-rotation"
-      ],
-      "assertionStack": "cdk-rds-integ-secret-rotation/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkrdsintegsecretrotationDefaultTestDeployAssert9780868B"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5a74e17b45ab9559334fa572d24e4332363e69ca9c6ef33bb5e6a23a198d9d01
+size 344

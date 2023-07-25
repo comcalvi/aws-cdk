@@ -1,12 +1,3 @@
-{
-  "version": "30.0.0",
-  "testCases": {
-    "cdk-integ-dashboard-with-graph-widget-with-statistic/DefaultTest": {
-      "stacks": [
-        "DashboardWithGraphWidgetWithStatisticIntegrationTest"
-      ],
-      "assertionStack": "cdk-integ-dashboard-with-graph-widget-with-statistic/DefaultTest/DeployAssert",
-      "assertionStackName": "cdkintegdashboardwithgraphwidgetwithstatisticDefaultTestDeployAssertD4707D74"
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:4ee3dfbe4c9553244126d63339a711d7b85312c0a36df81731efe79862f75607
+size 429

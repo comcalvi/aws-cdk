@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.assets.directory.lit": {
-      "stacks": [
-        "aws-cdk-asset-test"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:7c262ec0365e67f4e370355cb85c30db6f84e37dd9a49c5a49a234e1329dd53f
+size 254

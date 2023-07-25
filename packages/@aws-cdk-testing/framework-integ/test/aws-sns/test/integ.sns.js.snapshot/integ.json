@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.sns": {
-      "stacks": [
-        "SNSInteg"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1d47754677dfc85ec2a5b439403d0db220367a7bb48a7138ce3759ae3b3b7116
+size 227

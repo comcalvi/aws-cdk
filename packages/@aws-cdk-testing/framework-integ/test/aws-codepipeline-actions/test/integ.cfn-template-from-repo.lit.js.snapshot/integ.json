@@ -1,14 +1,3 @@
-{
-  "version": "20.0.0",
-  "testCases": {
-    "integ.cfn-template-from-repo.lit": {
-      "stacks": [
-        "aws-cdk-codepipeline-cloudformation"
-      ],
-      "diffAssets": false,
-      "stackUpdateWorkflow": true
-    }
-  },
-  "synthContext": {},
-  "enableLookups": false
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:09bd61f12c213d79669d76c32a2615e223599ea5d731381e65aa79b77eebb0da
+size 277
