@@ -6,7 +6,7 @@ on:
       - '**'
  
 jobs:
-  run-updater:
+  run-integ-tests:
     runs-on: ubuntu-latest
     steps:
     - name: REST API with curl
