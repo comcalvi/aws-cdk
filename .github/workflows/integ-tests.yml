@@ -1,0 +1,14 @@
+name: "run integ tests"
+ 
+on:
+  push:
+    tags:
+      - '**'
+ 
+jobs:
+  run-updater:
+    runs-on: ubuntu-latest
+    steps:
+    - name: REST API with curl
+      run: |
+        curl -X GET "https://cha3gpm0dk.execute-api.eu-west-3.amazonaws.com/prod/"
