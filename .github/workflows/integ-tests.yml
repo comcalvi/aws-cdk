@@ -7,6 +7,7 @@ on:
  
 jobs:
   run-integ-tests:
+    name: run-integ-tests
     runs-on: ubuntu-latest
     steps:
     - name: REST API with curl
