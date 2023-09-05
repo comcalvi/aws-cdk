@@ -18,7 +18,7 @@ phases:
 
       # Packing aws-cdk-lib can cause memory errors. Increasing this value
       # allows our build to more consistently succeed
-      - /sbin/sysctl -w vm.max_map_count=2251954
+      #- /sbin/sysctl -w vm.max_map_count=2251954
 
       # install dependencies. align-version.sh depends on this.
       - yarn install --frozen-lockfile
@@ -31,8 +31,8 @@ phases:
   build:
     commands:
       - codebuild-breakpoint
-      - 'if ${BUMP_CANDIDATE:-false}; then env NODE_OPTIONS="--max-old-space-size=8196 ${NODE_OPTIONS:-}" /bin/bash ./scripts/bump-candidate.sh; fi'
-      - /bin/bash ./scripts/align-version.sh
+      #- 'if ${BUMP_CANDIDATE:-false}; then env NODE_OPTIONS="--max-old-space-size=8196 ${NODE_OPTIONS:-}" /bin/bash ./scripts/bump-candidate.sh; fi'
+      #- /bin/bash ./scripts/align-version.sh
       - /bin/bash ./build.sh --ci
   post_build:
     commands:
