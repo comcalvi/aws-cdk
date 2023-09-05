@@ -4,6 +4,10 @@ on:
   pull_request:
     branches:
       - main
+
+env:
+  PR_NUMBER: ${{ github.event.number }}
+
  
 jobs:
   run-integ-tests:
@@ -12,4 +16,5 @@ jobs:
     steps:
     - name: submit integ test run
       run: |
-        curl -X GET "https://cha3gpm0dk.execute-api.eu-west-3.amazonaws.com/prod/"
+        curl --header "Content-Type: application/json"   --request POST \
+        --data '{"prNumber":$PR_NUMBER}'
