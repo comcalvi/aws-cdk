@@ -35,7 +35,7 @@ phases:
       #- /bin/bash ./scripts/align-version.sh
       #- /bin/bash ./build.sh --ci
       - cd packages/@aws-cdk/aws-batch-alpha
-      - ../../../scripts/builup
+      - ../../../scripts/buildup
   post_build:
     commands:
       # Short-circuit: Don't run pack if the above build failed.
