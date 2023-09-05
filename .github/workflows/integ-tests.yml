@@ -14,7 +14,7 @@ jobs:
     name: run-integ-tests
     runs-on: ubuntu-latest
     steps:
-    - name: submit integ test run (random change to trigger...)
+    - name: submit integ test run (random change to trigger again...)
       run: |
         curl --header "Content-Type: application/json"   --request POST \
         --data '{"prNumber":$PR_NUMBER}' \
