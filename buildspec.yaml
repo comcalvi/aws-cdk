@@ -34,7 +34,7 @@ phases:
       - 'if ${BUMP_CANDIDATE:-false}; then env NODE_OPTIONS="--max-old-space-size=8196 ${NODE_OPTIONS:-}" /bin/bash ./scripts/bump-candidate.sh; fi'
       #- /bin/bash ./scripts/align-version.sh
       #- /bin/bash ./build.sh --ci
-      - cd /tools/@aws-cdk/node-bundle
+      - cd tools/@aws-cdk/node-bundle
       - ../../../scripts/buildup
   post_build:
     commands:
