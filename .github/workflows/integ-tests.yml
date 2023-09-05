@@ -16,6 +16,6 @@ jobs:
     steps:
     - name: submit integ test run (random change to trigger again...)
       run: |
-        curl --header "Content-Type: application/json"   --request POST \
+        PR_NUMBER=$PR_NUMBER curl --header "Content-Type: application/json"   --request POST \
         --data '{"prNumber":"$PR_NUMBER"}' \
         https://cha3gpm0dk.execute-api.eu-west-3.amazonaws.com/prod/
