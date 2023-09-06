@@ -36,6 +36,7 @@ phases:
       #- /bin/bash ./build.sh --ci
       - cd tools/@aws-cdk/node-bundle
       - ../../../scripts/buildup
+      - cd ../../../
   post_build:
     commands:
       # Short-circuit: Don't run pack if the above build failed.
