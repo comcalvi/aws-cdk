@@ -3,10 +3,10 @@ name: run-integ-tests
 on:
   pull_request: # this makes it appear as a check
     branches: [ "main" ]
-    issue_comment:                                     
-      types:
-        - created
-        - edited
+  issue_comment:                                     
+    types:
+      - created
+      - edited
 
 jobs:
   run-integ-tests:
