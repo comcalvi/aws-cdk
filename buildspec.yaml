@@ -41,7 +41,8 @@ phases:
       - ls
       - cd ../
       - mkdir dist
-      - mv aws-cdk dist
+      - cp -r aws-cdk dist
+      - cp -r dist aws-cdk/dist
       #- mv packages dist
   post_build:
     commands:
