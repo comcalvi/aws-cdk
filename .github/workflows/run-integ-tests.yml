@@ -1,4 +1,4 @@
-name: run integ tests
+name: run-integ-tests
 
 on:
   issue_comment:                                     
