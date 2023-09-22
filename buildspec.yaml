@@ -32,7 +32,7 @@ phases:
     commands:
       - codebuild-breakpoint
       - 'if ${BUMP_CANDIDATE:-false}; then env NODE_OPTIONS="--max-old-space-size=8196 ${NODE_OPTIONS:-}" /bin/bash ./scripts/bump-candidate.sh; fi'
-      - /bin/bash ./scripts/align-version.sh
+      #- /bin/bash ./scripts/align-version.sh
       #- /bin/bash ./build.sh --ci
       - cd tools/@aws-cdk/node-bundle
       - ../../../scripts/buildup
@@ -42,7 +42,7 @@ phases:
       - cd ../
       - mkdir dist
       - mv aws-cdk dist
-      - mv packages dist
+      #- mv packages dist
   post_build:
     commands:
       # Short-circuit: Don't run pack if the above build failed.
