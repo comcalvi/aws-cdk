@@ -7,7 +7,7 @@ on:
 jobs:
   run-integ-tests:
     name: run integ tests
-    if: ${{ (github.event.issue.pull_request) && (github.event.issue.state == 'open') && contains(github.event.comment.body, 'run them tests') }}
+    #if: ${{ (github.event.issue.pull_request) && (github.event.issue.state == 'open') && contains(github.event.comment.body, 'run them tests') }}
     runs-on: ubuntu-latest
     steps:
     - name: submit integ test run
