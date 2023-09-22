@@ -39,8 +39,8 @@ phases:
       - cd ../../../
       - pwd
       - ls
-      - cd ../ # dist must be inside of aws-cdk/, but dist contains the artifacts....this is convoluted
-      - mkdir dist
+      - cd ../
+      - mkdir dist # dist must be inside of aws-cdk/, but dist contains the artifacts....this is convoluted
       - cp -r aws-cdk dist
       - mv dist aws-cdk/dist 
       #- mv packages dist
