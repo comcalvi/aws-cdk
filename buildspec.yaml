@@ -30,9 +30,6 @@ phases:
       - /bin/bash ./scripts/cache-load.sh
   build:
     commands:
-      #- echo $CODEBUILD_RESOLVED_SOURCE_VERSION # This is the commit hash
-      #- echo $CODEBUILD_SOURCE_VERSION # This is pr/<the PR Number>
-      - printenv | grep CODEBUILD
       - codebuild-breakpoint
       - 'if ${BUMP_CANDIDATE:-false}; then env NODE_OPTIONS="--max-old-space-size=8196 ${NODE_OPTIONS:-}" /bin/bash ./scripts/bump-candidate.sh; fi'
       #- /bin/bash ./scripts/align-version.sh
@@ -57,7 +54,7 @@ artifacts:
   files:
     - "**/*"
   base-directory: dist
-  name: "$CODEBUILD_SOURCE_VERSION/$CODEBUILD_RESOLVED_SOURCE_VERSION"
+  name: "$CODEBUILD_SOURCE_VERSION/$CODEBUILD_RESOLVED_SOURCE_VERSION" # evalutes to "pr/<prNumber>/<commitHash>"
 reports:
   jest-tests:
     files:
