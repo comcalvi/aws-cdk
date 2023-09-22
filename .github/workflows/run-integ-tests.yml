@@ -1,18 +1,8 @@
 name: run-integ-tests
 
 on:
-  pull_request_target:
-    types:
-      - labeled
-      - unlabeled
-      - edited
-      - opened
-      - synchronize
-      - reopened
-  pull_request_review:
-    types:
-      - submitted
-
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   run-integ-tests:
