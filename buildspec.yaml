@@ -30,7 +30,8 @@ phases:
       - /bin/bash ./scripts/cache-load.sh
   build:
     commands:
-      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
+      #- echo $CODEBUILD_RESOLVED_SOURCE_VERSION # This is the commit hash
+      - printenv | grep CODEBUILD
       - codebuild-breakpoint
       - 'if ${BUMP_CANDIDATE:-false}; then env NODE_OPTIONS="--max-old-space-size=8196 ${NODE_OPTIONS:-}" /bin/bash ./scripts/bump-candidate.sh; fi'
       #- /bin/bash ./scripts/align-version.sh
