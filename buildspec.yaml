@@ -8,10 +8,10 @@ phases:
 
       # baked in our image.
       # this also takes care of launching the docker daemon.
-      - /root/ecr-proxy/start.sh
+      #- /root/ecr-proxy/start.sh
 
       # CodeBuild always runs as root, allow npm to operate as such
-      - npm config set unsafe-perm true
+      #- npm config set unsafe-perm true
 
       # Install yarn if it wasn't already present in the image
       - yarn --version || npm -g install yarn
@@ -32,18 +32,29 @@ phases:
     commands:
       - codebuild-breakpoint
       - 'if ${BUMP_CANDIDATE:-false}; then env NODE_OPTIONS="--max-old-space-size=8196 ${NODE_OPTIONS:-}" /bin/bash ./scripts/bump-candidate.sh; fi'
-      - /bin/bash ./scripts/align-version.sh
-      - /bin/bash ./build.sh --ci
+      #- /bin/bash ./scripts/align-version.sh
+      #- /bin/bash ./build.sh --ci
+      - cd tools/@aws-cdk/node-bundle
+      - ../../../scripts/buildup
+      - cd ../../../
+      - pwd
+      - ls
+      - cd ../
+      - mkdir dist # dist must be inside of aws-cdk/, but dist contains the artifacts....this is convoluted
+      - cp -r aws-cdk dist
+      - mv dist aws-cdk/dist 
+      #- mv packages dist
   post_build:
     commands:
       # Short-circuit: Don't run pack if the above build failed.
-      - '[ ${CODEBUILD_BUILD_SUCCEEDING:-0} -eq 1 ] || exit 1'
-      - "[ -f .BUILD_COMPLETED ] && /bin/bash ./pack.sh"
-      - /bin/bash ./scripts/cache-store.sh
+      #- '[ ${CODEBUILD_BUILD_SUCCEEDING:-0} -eq 1 ] || exit 1'
+      #- "[ -f .BUILD_COMPLETED ] && /bin/bash ./pack.sh"
+      #- /bin/bash ./scripts/cache-store.sh
 artifacts:
   files:
     - "**/*"
   base-directory: dist
+  name: "$CODEBUILD_SOURCE_VERSION/$CODEBUILD_RESOLVED_SOURCE_VERSION" # evalutes to "pr/<prNumber>/<commitHash>"
 reports:
   jest-tests:
     files:
