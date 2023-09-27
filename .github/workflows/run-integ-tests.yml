@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: submit integ test run
-      # this needs to wait until the cached build is available...WOOOOOOOOOooo
+      # this needs to wait until the cached build is available...WOOOOOOOOooo
+      # can use $GITHUB_SHA to get the last commit hash on the PR
       run: |
         curl --header "Content-Type: application/json" --request POST \
         --data '{"prNumber":${{ github.event.number }}}' \
