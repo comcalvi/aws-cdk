@@ -1,7 +1,7 @@
 name: run-integ-tests
 
 on:
-  pull_request: # this makes it appear as a check
+  pull_request:
     branches: [ "main" ]
 
 jobs:
