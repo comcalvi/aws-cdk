@@ -41,7 +41,7 @@ phases:
       - ls
       - cd ../
       - mkdir dist # dist must be inside of aws-cdk/, but dist contains the artifacts....this is convoluted
-      - cp -r aws-cdk dist
+      - cp -r aws-cdk/* dist # must contain the contents of aws-cdk, and not aws-cdk itself, because the buildspec must be in the top level, and aws-cdk/buidlspec.yaml is not the top level
       - mv dist aws-cdk/dist 
       #- mv packages dist
   post_build:
