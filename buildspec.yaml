@@ -5,16 +5,13 @@ version: 0.2
 phases:
   install:
     commands:
-      # Start the docker daemon. Copied from https://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker-custom-image.html#sample-docker-custom-image-files
-      - nohup /usr/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
-      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
 
       # baked in our image.
       # this also takes care of launching the docker daemon.
-      #- /root/ecr-proxy/start.sh
+      - /root/ecr-proxy/start.sh
 
       # CodeBuild always runs as root, allow npm to operate as such
-      #- npm config set unsafe-perm true
+      - npm config set unsafe-perm true
 
       # Install yarn if it wasn't already present in the image
       - yarn --version || npm -g install yarn
