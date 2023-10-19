@@ -8,7 +8,7 @@ phases:
 
       # baked in our image.
       # this also takes care of launching the docker daemon.
-      - /root/ecr-proxy/start.sh
+      #- /root/ecr-proxy/start.sh
 
       # CodeBuild always runs as root, allow npm to operate as such
       - npm config set unsafe-perm true
