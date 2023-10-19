@@ -9,8 +9,8 @@ jobs:
     name: build CDK
     runs-on: ubuntu-latest
     steps:
-      - name: pwd
-        run: pwd
+      - name: ls
+        run: ls
       - name: CDK BUILD
         run: yarn build
   run-integ-tests:
