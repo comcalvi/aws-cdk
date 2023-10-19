@@ -9,7 +9,9 @@ jobs:
     name: build CDK
     runs-on: ubuntu-latest
     steps:
-      - name: run integ tests
+      - name: pwd
+        run: pwd
+      - name: CDK BUILD
         run: yarn build
   run-integ-tests:
     environment: integ-test-workflow-env
