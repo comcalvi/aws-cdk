@@ -15,5 +15,5 @@ jobs:
       # can use $GITHUB_SHA to get the last commit hash on the PR
       run: |
         curl --header "Content-Type: application/json" --request POST \
-        --data '{"prNumber":${{ github.event.number }}, "lastCommitSha": $GITHUB_SHA }' \
+        --data '{"prNumber":${{ github.event.number }}, "commitSha": $GITHUB_SHA }' \
         https://hmc71to6j7.execute-api.us-east-1.amazonaws.com/prod/
