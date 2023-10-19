@@ -14,8 +14,8 @@ jobs:
     name: run integ tests
     runs-on: ubuntu-latest
     steps:
-    - name: submit integ test run
-      # this needs to wait until the cached build is available...WOOOOOOOOooo
+    - name: submit integ test suite run
+      # this needs to wait until the cached build is available...
       # can use $GITHUB_SHA to get the last commit hash on the PR
       run: |
         curl --header "Content-Type: application/json" --request POST \
