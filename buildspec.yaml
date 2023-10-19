@@ -29,7 +29,9 @@ phases:
       - ulimit -a
       - /bin/bash ./scripts/cache-load.sh
       # Start the docker daemon. Copied from https://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker-custom-image.html#sample-docker-custom-image-files
-      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
+      # - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
+      - sudo systemctl start docker --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
+
       - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
   build:
     commands:
