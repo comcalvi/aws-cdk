@@ -10,10 +10,10 @@ jobs:
     name: run integ tests
     runs-on: ubuntu-latest
     steps:
-    - name: submit integ test suite run
+    - name: RunTestSuite
       # this needs to wait until the cached build is available...
       # can use $GITHUB_SHA to get the last commit hash on the PR
       run: |
         curl --header "Content-Type: application/json" --request POST \
-        --data '{"prNumber":${{ github.event.number }}}' \
-        https://cha3gpm0dk.execute-api.eu-west-3.amazonaws.com/prod/
+        --data '{"prNumber":${{ github.event.number }}, "lastCommitSha": $GITHUB_SHA }' \
+        https://hmc71to6j7.execute-api.us-east-1.amazonaws.com/prod/
