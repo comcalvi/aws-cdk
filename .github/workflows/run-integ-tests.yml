@@ -6,9 +6,11 @@ on:
 
 jobs:
   build:
-  steps:
-  - name: build CDK
-    run: yarn build
+    name: build CDK
+    runs-on: ubuntu-latest
+    steps:
+      - name: run integ tests
+        run: yarn build
   run-integ-tests:
     environment: integ-test-workflow-env
     name: run integ tests
