@@ -8,7 +8,7 @@ These workflows and actions are configured in the AWS CDK GitHub repository.
 
 [auto-approve.yml](auto-approve.yml): Approves merging PRs with the
 `auto-approve` label.
-Owner: Core CDK team
+Owner: Core CDK team.
 
 ### PR Linter Trigger
 
