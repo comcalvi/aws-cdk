@@ -5,6 +5,10 @@ on:
     branches: [ "main" ]
 
 jobs:
+  build:
+  steps:
+  - name: build CDK
+    run: yarn build
   run-integ-tests:
     environment: integ-test-workflow-env
     name: run integ tests
@@ -17,4 +21,3 @@ jobs:
         curl --header "Content-Type: application/json" --request POST \
         --data '{"prNumber":${{ github.event.number }}}' \
         https://cha3gpm0dk.execute-api.eu-west-3.amazonaws.com/prod/
-
