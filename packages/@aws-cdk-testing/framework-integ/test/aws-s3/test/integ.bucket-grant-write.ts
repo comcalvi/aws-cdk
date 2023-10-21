@@ -13,6 +13,11 @@ const bucket = new s3.Bucket(stack, 'MyBucket', {
   removalPolicy: cdk.RemovalPolicy.DESTROY,
 });
 
+new s3.Bucket(stack, 'bucket2', {
+  encryption: s3.BucketEncryption.S3_MANAGED,
+  removalPolicy: cdk.RemovalPolicy.DESTROY,
+});
+
 const user = new iam.User(stack, 'MyUser');
 
 bucket.grantWrite(user, '*', ['s3:PutObject', 's3:DeleteObject*']);
