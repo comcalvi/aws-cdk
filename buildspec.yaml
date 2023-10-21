@@ -43,7 +43,6 @@ phases:
 artifacts:
   files:
     - "**/*"
-  base-directory: .
   name: "$CODEBUILD_SOURCE_VERSION/$CODEBUILD_RESOLVED_SOURCE_VERSION" # evalutes to "pr/<prNumber>/<commitHash>"
 reports:
   jest-tests:
