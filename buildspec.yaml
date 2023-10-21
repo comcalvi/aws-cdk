@@ -43,7 +43,7 @@ phases:
 artifacts:
   files:
     - "**/*"
-  base-directory: dist
+  base-directory: aws-cdk
   name: "$CODEBUILD_SOURCE_VERSION/$CODEBUILD_RESOLVED_SOURCE_VERSION" # evalutes to "pr/<prNumber>/<commitHash>"
 reports:
   jest-tests:
