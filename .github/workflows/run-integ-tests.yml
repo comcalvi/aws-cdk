@@ -13,4 +13,4 @@ jobs:
       - uses: comcalvi/run-integ-tests@main
         with:
           pr-number: ${{ github.event.number }}
-          commit-sha: $GITHUB_SHA
+          commit-sha: ${{ github.event.pull_request.head.sha }}
