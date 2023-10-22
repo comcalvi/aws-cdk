@@ -1,3 +1,5 @@
-import { cli } from '../lib';
+//import { cli } from '../lib';
 
-cli();
+//cli();
+
+console.log('skipping CLI...')
