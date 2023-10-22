@@ -13,7 +13,7 @@ const bucket = new s3.Bucket(stack, 'MyBucket', {
   removalPolicy: cdk.RemovalPolicy.DESTROY,
 });
 
-new s3.Bucket(stack, 'bucket2', {
+new s3.Bucket(stack, 'MyBucket2', {
   encryption: s3.BucketEncryption.S3_MANAGED,
   removalPolicy: cdk.RemovalPolicy.DESTROY,
 });
