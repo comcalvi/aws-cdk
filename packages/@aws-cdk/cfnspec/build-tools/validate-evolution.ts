@@ -41,7 +41,7 @@ export async function validateSpecificationEvolution(specProducer: () => Promise
       '└─▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄',
     ].join('\n') + '\n');
 
-    child_process.execSync(`git checkout ${commit}`);
+    child_process.execSync(`git checkout ${commit} --force`);
     specs.push(await specProducer());
   }
 
