@@ -2,4 +2,5 @@
 
 //cli();
 
-console.log('skipping CLI...')
+// eslint-disable-next-line no-console
+console.log('skipping CLI...');
