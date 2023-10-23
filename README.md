@@ -19,7 +19,7 @@ the power of modern programming languages. Using the CDK’s library of
 infrastructure constructs, you can easily encapsulate AWS best practices in your
 infrastructure definition and share it without worrying about boilerplate logic.
 
-The CDK is available in the following languages:
+The CDK is available in the following languages;
 
 * JavaScript, TypeScript ([Node.js ≥ 14.15.0](https://nodejs.org/download/release/latest-v14.x/))
   * We recommend using a version in [Active LTS](https://nodejs.org/en/about/releases/)

@@ -1,0 +1,16 @@
+name: run-integ-tests
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run-integ-tests:
+    environment: integ-test-workflow-env
+    name: run integ tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: comcalvi/run-integ-tests@main
+        with:
+          pr-number: ${{ github.event.number }}
+          commit-sha: ${{ github.event.pull_request.head.sha }}
